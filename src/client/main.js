@@ -7,9 +7,7 @@ import './ansi.css';
 
 class Client {
 
-  constructor(root) {
-    this.root = root;
-    
+  constructor() {
     // Terminal UI elements
     this.terminal = null;
     this.output = null;
@@ -28,6 +26,8 @@ class Client {
     this.serverProto = null;
     this.serverUrl = null;
     this.conn = null;
+    
+    this.initTerminal();
   }
   
   // pueblo command links, prompt for user input and replace ?? token if present
@@ -42,62 +42,40 @@ class Client {
   
   /////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // construct a terminal inside the given root element
+  // find and initialize terminal components
   initTerminal() {
-    var root = document.createElement('div');
-    root.className = "terminal";
-    this.root.append(root);
-    
-    var client = this;
-    client.terminal = root;
-    
-    // Build the terminal window in a document fragment
-    var fragment = document.createDocumentFragment();
+    // The terminal container, pass focus to the input box when clicked
+    this.terminal = document.getElementById('Terminal');
+    this.terminal.onclick = () => { this.input.focus(); };
     
     // Output window
-    client.output = new Emulator(document.createElement('div'));
-    client.output.root.className = "output ansi-37 ansi-40";
-    client.output.onCommand = function(cmd) { client.onCommand(cmd); };
-    fragment.appendChild(client.output.root);
+    this.output = new Emulator(document.getElementById('Terminal-output'));
+    this.output.onCommand = (cmd) => { this.onCommand(cmd); };
     
     // Quicklinks bar
-    client.quicklinks = document.createElement('div');
-    client.quicklinks.className = "quicklinks ansi-37 ansi-40";
-    fragment.appendChild(client.quicklinks);
+    this.quicklinks = document.getElementById('Terminal-links');
     
-    client.addQuickLink('WHO', 'who');
-    client.addQuickLink('LOOK', 'look');
-    client.addQuickLink('INVENTORY', 'inventory');
-    client.addQuickLink('@MAIL', '@mail');
-    client.addQuickLink('+BB', '+bb');
-    client.addQuickLink('CLEAR', function() { client.output.clear(); client.prompt.clear(); client.input.clear(); });
+    //this.addQuickLink('WHO', 'who');
+    //this.addQuickLink('LOOK', 'look');
+    //this.addQuickLink('INVENTORY', 'inventory');
+    //this.addQuickLink('@MAIL', '@mail');
+    //this.addQuickLink('+BB', '+bb');
+    //this.addQuickLink('CLEAR', function() { client.output.clear(); client.prompt.clear(); client.input.clear(); });
     
     // Prompt window
-    client.prompt = new Emulator(document.createElement('div'));
-    client.prompt.root.className = "prompt ansi-37 ansi-40";
-    fragment.appendChild(client.prompt.root);
+    this.prompt = new Emulator(document.getElementById('Terminal-prompt'));
     
     // Input window
-    client.input = new UserInput(document.createElement('textarea'));
-    client.input.root.className = "input";
-    client.input.root.setAttribute('autocomplete', 'off');
-    client.input.root.setAttribute('autofocus', '');
-    fragment.appendChild(client.input.root);
-    
-    // Add our terminal components to the container
-    client.terminal.append(fragment);
-    
-    // make sure focus goes back to the input
-    client.terminal.onclick = function() { client.input.focus(); };
+    this.input = new UserInput(document.getElementById('Terminal-input'));
     
     // enter key passthrough from UserInput.pressKey
-    client.input.onEnter = function(cmd) { client.sendCommand(cmd); };
+    this.input.onEnter = (cmd) => { this.sendCommand(cmd); };
 
     // escape key passthrough from UserInput.pressKey
-    client.input.onEscape = function () { client.input.clear(); };
+    this.input.onEscape = () => { this.input.clear(); };
 
-    root.onresize = function() { client.output.scrollDown(); };
-    root.onunload = function() { client.sendText('QUIT'); client.close(); };
+    this.terminal.onresize = () => { this.output.scrollDown(); };
+    this.terminal.onunload = () => { this.sendText('QUIT'); this.close(); };
     
   }
 

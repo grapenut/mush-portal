@@ -108,7 +108,7 @@ class Header extends React.Component {
           </AppBar>
         </div>
         <div className={classes.drawerFrame}>
-          <SwipeableDrawer variant="temporary" anchor="top" open={this.state.isDrawerOpen} classes={{paper: classes.drawerPaper}} onClose={this.closeDrawer}>
+          <SwipeableDrawer variant="temporary" anchor="top" open={this.state.isDrawerOpen} classes={{paper: classes.drawerPaper}} onClose={this.closeDrawer} onOpen={this.openDrawer}>
             <div className={classes.drawerContent} tabIndex={0} role="button" onClick={this.closeDrawer} onKeyDown={this.closeDrawer}>
               This is where we will have the local client settings, host address, and username/password.
             </div>
