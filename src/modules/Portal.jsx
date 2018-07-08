@@ -1,4 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import { withStyles } from '@material-ui/core/styles';
 
 import Header from './Header';
 import Menubar from './MenuBar';
@@ -7,11 +10,19 @@ import Feed from './Feed';
 import Input from './Input';
 import Footer from './Footer';
 
-export default class Portal extends React.Component {
+const styles = theme => ({
+  portal: {
+    flex: 1,
+    flexGrow: 1,
+  },
+});
+
+class Portal extends React.Component {
   render() {
+    const { classes, theme } = this.props;
     return (
-      <div className="client">
-        <Header title="MUSH Web Portal" />
+      <div className={classes.portal}>
+        <Header title="MUSH Portal" />
         <Menubar />
         <Terminal terminal={this.props.terminal} output={this.props.output} links={this.props.links} prompt={this.props.prompt} />
         <Feed />
@@ -21,3 +32,6 @@ export default class Portal extends React.Component {
     );
   }
 }
+
+export default withStyles(styles, { withTheme: true })(Portal);
+

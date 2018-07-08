@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import Portal from './modules/Portal';
 import Client from './client/main';
+import './style.css';
 
 // ========================================
 
