@@ -10,10 +10,18 @@ import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
   frame: {
-    flexGrow: 1,
   },
-  hide: {
-    display: 'none',
+  text: {
+    background: "black",
+    color: "silver",
+    margin: 0,
+    border: "none",
+    outline: "none",
+    "vertical-align": "middle",
+    padding: "0.5em 0.5% 0.5em 0.5%",
+    resize: "none",
+    height: "3em",
+    width: "100%",
   },
 });
 
@@ -26,11 +34,11 @@ class Input extends React.Component {
   };
   
   render() {
-    const { classes, theme } = this.props;
+    const { classes, theme, id } = this.props;
     
     return (
       <div className={classes.frame}>
-        <textarea id={this.props.input} autoComplete="off" autoFocus></textarea>
+        <textarea id={id} className={classes.text}  autoComplete="off" autoFocus></textarea>
       </div>
     );
   }

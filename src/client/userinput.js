@@ -107,10 +107,6 @@ class UserInput {
   constructor(root) {
     var that = this;
     
-    if (root === null) {
-      return null;
-    }
-    
     this.root = root;
     
     // user-defined handlers for main actions

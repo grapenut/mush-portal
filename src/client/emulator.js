@@ -23,10 +23,6 @@ class Emulator {
   constructor(root) {
     this.root = root;
     
-    if (root === null) {
-      return null;
-    }
-    
     // setup the pueblo xch_cmd callback
     this.onCommand = null;
 
@@ -493,6 +489,10 @@ class Emulator {
   /////////////////////////////////////////////////////
   // clear the output and current ansi state
   clear() {
+    if (this.root === null) {
+      return null;
+    }
+
     this.root.innerHTML = '';
 
     this.stack = [this.root];
@@ -519,6 +519,10 @@ class Emulator {
     var scrollCount = 0;
     var scrollDuration = 500.0;
     var oldTimestamp = performance.now();
+    
+    if (root === null) {
+      return null;
+    }
 
     function step (newTimestamp) {
       var bottom = root.scrollHeight - root.clientHeight;

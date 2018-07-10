@@ -6,13 +6,15 @@ import './style.css';
 
 // ========================================
 
-var terminal = "Terminal"
-var output = "Terminal-output";
-var prompt = "Terminal-prompt";
-var links = "Terminal-links";
-var input = "Terminal-input";
+var terminal_ids = {
+  terminal: "Terminal",
+  output: "Terminal-output",
+  prompt: "Terminal-prompt",
+  links: "Terminal-links",
+  input: "Terminal-input",
+  };
 
-ReactDOM.render(<Portal terminal={terminal} output={output} prompt={prompt} links={links} input={input} />, document.getElementById('root'));
+ReactDOM.render(<Portal terminal_ids={terminal_ids} />, document.getElementById('root'));
 
 var serverSSL = window.location.protocol === "https:";
 var defaultAddress = "node.grapenut.org";
@@ -22,7 +24,7 @@ var serverAddress = window.location.search.substring(1) ? window.location.search
 var serverPort = window.location.search.substring(1) ? window.location.search.substring(1).split(":")[1] : defaultPort;
 
 // The connection URL is ws://host:port/wsclient (or wss:// for SSL connections)
-var client = new Client();
+var client = new Client(terminal_ids);
 client.connect(serverAddress, serverPort, serverSSL);
 
 

@@ -3,6 +3,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import AppBar from '@material-ui/core/AppBar';
+import FeedTab from './FeedTab';
 
 
 //////////////////////////////////////////////////////////////////////
@@ -10,10 +14,9 @@ import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
   frame: {
-    flexGrow: 1,
+    width: "50%",
   },
-  hide: {
-    display: 'none',
+  tab: {
   },
 });
 
@@ -22,18 +25,42 @@ const styles = theme => ({
 
 
 class Feed extends React.Component {
-  state = {
-  };
+  constructor(props) {
+    super(props);
+    this.state = { 
+      current: 0,
+      feed: null,
+      tablist: [],
+    };
+  }
   
+  addTab(name, content) {
+    var { tablist } = this.state;
+    tablist.push({ name, content });
+    this.setState({ tablist });
+  }
+  
+  changeTab = (event, current) => {
+    this.setState({ current });
+  }
+
   render() {
     const { classes, theme } = this.props;
-    
+    const { current, feed, tablist } = this.state;
+
     return (
       <div className={classes.frame}>
+        <AppBar position="static">
+          <Tabs value={current} onChange={this.changeTab}>
+            <Tab label="Feed" />
+            { tablist.map(tab => <Tab label={tab.name} />) }
+          </Tabs>
+        </AppBar>
+        { current === 0 && <FeedTab variant="fixed"></FeedTab> }
+        { tablist.map((tab, i) => { current === i+1 && <FeedTab>{tab.content}</FeedTab> }) }
       </div>
     );
   }
-
 }
 
 export default withStyles(styles, { withTheme: true })(Feed);

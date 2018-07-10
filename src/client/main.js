@@ -7,7 +7,7 @@ import './ansi.css';
 
 class Client {
 
-  constructor() {
+  constructor(ids) {
     // Terminal UI elements
     this.terminal = null;
     this.output = null;
@@ -27,7 +27,7 @@ class Client {
     this.serverUrl = null;
     this.conn = null;
     
-    this.initTerminal();
+    this.initTerminal(ids);
   }
   
   // pueblo command links, prompt for user input and replace ?? token if present
@@ -43,17 +43,17 @@ class Client {
   /////////////////////////////////////////////////////////////////////////////////////////////////
 
   // find and initialize terminal components
-  initTerminal() {
+  initTerminal(ids) {
     // The terminal container, pass focus to the input box when clicked
-    this.terminal = document.getElementById('Terminal');
+    this.terminal = document.getElementById(ids.terminal);
     this.terminal.onclick = () => { this.input.focus(); };
     
     // Output window
-    this.output = new Emulator(document.getElementById('Terminal-output'));
+    this.output = new Emulator(document.getElementById(ids.output));
     this.output.onCommand = (cmd) => { this.onCommand(cmd); };
     
     // Quicklinks bar
-    this.quicklinks = document.getElementById('Terminal-links');
+    this.quicklinks = document.getElementById(ids.links);
     
     //this.addQuickLink('WHO', 'who');
     //this.addQuickLink('LOOK', 'look');
@@ -63,13 +63,13 @@ class Client {
     //this.addQuickLink('CLEAR', function() { client.output.clear(); client.prompt.clear(); client.input.clear(); });
     
     // Prompt window
-    this.prompt = new Emulator(document.getElementById('Terminal-prompt'));
+    this.prompt = new Emulator(document.getElementById(ids.prompt));
     
     // Input window
-    this.input = new UserInput(document.getElementById('Terminal-input'));
+    this.input = new UserInput(document.getElementById(ids.input));
     
     // enter key passthrough from UserInput.pressKey
-    this.input.onEnter = (cmd) => { this.sendCommand(cmd); };
+    this.input.onEnter = (cmd) => { this.sendCommand(cmd); this.prompt && this.prompt.clear(); };
 
     // escape key passthrough from UserInput.pressKey
     this.input.onEscape = () => { this.input.clear(); };
@@ -87,6 +87,11 @@ class Client {
     var client = this;
     var link = document.createElement('a');
     var text = document.createTextNode(label);
+    
+    if (client.quicklinks === null) {
+      return null;
+    }
+    
     link.appendChild(text);
     
     if (typeof(cmd) === "function") {
@@ -167,7 +172,12 @@ class Client {
     
     this.conn.onHTML = function (fragment) { client.output.appendHTML(fragment); };
     this.conn.onPueblo = function (tag, attrs) { client.output.appendPueblo(tag, attrs); };
-    this.conn.onPrompt = function (text) { client.prompt.clear(); client.prompt.appendText(text + '\r\n'); };
+    this.conn.onPrompt = function (text) {
+      if (client.prompt !== null) {
+        client.prompt.clear();
+        client.prompt.appendText(text + '\r\n');
+      }
+    };
 
     // handle incoming JSON objects. requires server specific implementation
     this.conn.onObject = function (obj) {
