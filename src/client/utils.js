@@ -4,7 +4,7 @@ class Utils {
   // Link scanner function search line for links and returns an array
   static extractLinks(line) {
     var links = [], result;
-    var regex = /(^|[^a-zA-Z0-9]+)(?:((?:http|https):\/\/[-a-zA-Z0-9_.~:\/?#[\]@!$&'()*+,;=%]+[-a-zA-Z0-9_~:\/?#@!$&*+;=%])|([-.+a-zA-Z0-9_]+@[-a-zA-Z0-9]+(?:\.[-a-zA-Z0-9]+)+)|(@[a-zA-Z]\w*))/g;
+    var regex = /(^|[^a-zA-Z0-9]+)(?:((?:http|https):\/\/[-a-zA-Z0-9_.~:/?#[\]@!$&'()*+,;=%]+[-a-zA-Z0-9_~:/?#@!$&*+;=%])|([-.+a-zA-Z0-9_]+@[-a-zA-Z0-9]+(?:\.[-a-zA-Z0-9]+)+)|(@[a-zA-Z]\w*))/g;
 
 
     regex.lastIndex = 0;

@@ -145,7 +145,7 @@ class Client {
 
     root.scrollTop = this.root.scrollHeight;
     return;
-    
+/*    
     // animated scrolling alternative
     var scrollCount = 0;
     var scrollDuration = 500.0;
@@ -164,6 +164,7 @@ class Client {
     };
     
     window.requestAnimationFrame(step);
+*/
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
