@@ -1,7 +1,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import Typography from '@material-ui/core/Typography';
 import { withStyles } from '@material-ui/core/styles';
 
@@ -39,11 +38,12 @@ class Footer extends React.Component {
   }
   
   componentDidMount() {
-    this.state.client.react.statusbar = this;
+    var client = this.state.client;
+    client.react.statusbar = this;
   }
   
   render() {
-    const { classes, theme, client } = this.props;
+    const { classes } = this.props;
     const { status } = this.state;
     
     return (
@@ -54,8 +54,13 @@ class Footer extends React.Component {
       </div>
     );
   }
-
 }
+
+Footer.propTypes = {
+  classes: PropTypes.object.isRequired,
+  theme: PropTypes.object.isRequired,
+  client: PropTypes.object.isRequired,
+};
 
 export default withStyles(styles, { withTheme: true })(Footer);
 

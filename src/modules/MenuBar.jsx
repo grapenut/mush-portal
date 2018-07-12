@@ -1,7 +1,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 
 
@@ -18,7 +17,7 @@ const styles = theme => ({
 //////////////////////////////////////////////////////////////////////
 
 
-class Menubar extends React.Component {
+class MenuBar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -27,19 +26,25 @@ class Menubar extends React.Component {
   }
   
   componentDidMount() {
-    this.state.client.react.menubar = this;
+    var client = this.state.client;
+    client.react.menubar = this;
   }
   
   render() {
-    const { classes, theme, client } = this.props;
+    const { classes } = this.props;
     
     return (
       <div className={classes.frame}>
       </div>
     );
   }
-
 }
 
-export default withStyles(styles, { withTheme: true })(Menubar);
+MenuBar.propTypes = {
+  classes: PropTypes.object.isRequired,
+  theme: PropTypes.object.isRequired,
+  client: PropTypes.object.isRequired,
+};
+
+export default withStyles(styles, { withTheme: true })(MenuBar);
 

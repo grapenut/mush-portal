@@ -1,7 +1,6 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
@@ -91,11 +90,12 @@ class Header extends React.Component {
   };
   
   componentDidMount() {
-    this.state.client.react.header = this;
+    var client = this.state.client;
+    client.react.header = this;
   }
   
   render() {
-    const { classes, theme, client } = this.props;
+    const { classes } = this.props;
     const { title , open } = this.state;
     
     return (
@@ -127,8 +127,13 @@ class Header extends React.Component {
       </div>
     );
   }
-
 }
+
+Header.propTypes = {
+  classes: PropTypes.object.isRequired,
+  theme: PropTypes.object.isRequired,
+  client: PropTypes.object.isRequired,
+};
 
 export default withStyles(styles, { withTheme: true })(Header);
 

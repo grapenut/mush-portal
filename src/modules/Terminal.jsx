@@ -82,11 +82,13 @@ class Terminal extends React.Component {
 
   componentDidMount() {
     this.setState({ input: document.getElementById(this.state.inputid) });
-    this.state.client.react.terminal = this;
+    
+    var client = this.state.client;
+    client.react.terminal = this;
   }
 
   render() {
-    const { classes, theme, ids} = this.props;
+    const { classes, ids } = this.props;
     
     return (
       <div className={classes.frame} onClick={this.focusInput}>
@@ -100,8 +102,14 @@ class Terminal extends React.Component {
       </div>
     );
   }
-
 }
+
+Terminal.propTypes = {
+  classes: PropTypes.object.isRequired,
+  theme: PropTypes.object.isRequired,
+  ids: PropTypes.object.isRequired,
+  client: PropTypes.object.isRequired,
+};
 
 export default withStyles(styles, { withTheme: true })(Terminal);
 

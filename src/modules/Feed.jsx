@@ -46,7 +46,8 @@ class Feed extends React.Component {
   }
 
   componentDidMount() {
-    this.state.client.react.feed = this;
+    var client = this.state.client;
+    client.react.feed = this;
   }
 
   render() {
@@ -67,6 +68,13 @@ class Feed extends React.Component {
     );
   }
 }
+
+Feed.propTypes = {
+  classes: PropTypes.object.isRequired,
+  theme: PropTypes.object.isRequired,
+  ids: PropTypes.object.isRequired,
+  client: PropTypes.object.isRequired,
+};
 
 export default withStyles(styles, { withTheme: true })(Feed);
 

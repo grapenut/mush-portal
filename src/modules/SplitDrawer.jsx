@@ -1,12 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 import Hidden from '@material-ui/core/Hidden';
-import Drawer from '@material-ui/core/Drawer';
-import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
+//import Drawer from '@material-ui/core/Drawer';
+//import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
+//import Feed from './Feed';
 import Typography from '@material-ui/core/Typography';
-import Feed from './Feed';
 import Terminal from './Terminal';
 
 const defaultDrawerWidth = 240;
@@ -125,12 +124,14 @@ class SplitDrawer extends React.Component {
   componentDidMount() {
     document.addEventListener('mousemove', e => this.mouseMove(e));
     document.addEventListener('mouseup', e => this.mouseUp(e));
-    this.state.client.react.drawer = this;
+    
+    var client = this.state.client;
+    client.react.drawer = this;
   }
 
   render() {
-    const { classes, theme, terminal_ids, feed_ids, client } = this.props;
-    const { open, width, dragging } = this.state;
+    const { classes, terminal_ids, feed_ids, client } = this.props;
+    const { open, width } = this.state;
     
     return (
       <div className={classes.frame}>
@@ -163,6 +164,14 @@ class SplitDrawer extends React.Component {
     );
   }
 }
+
+SplitDrawer.propTypes = {
+  classes: PropTypes.object.isRequired,
+  theme: PropTypes.object.isRequired,
+  terminal_ids: PropTypes.object.isRequired,
+  feed_ids: PropTypes.object.isRequired,
+  client: PropTypes.object.isRequired,
+};
 
 export default withStyles(styles, { withTheme: true })(SplitDrawer);
 
