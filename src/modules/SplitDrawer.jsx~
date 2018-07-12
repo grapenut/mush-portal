@@ -93,8 +93,6 @@ class SplitDrawer extends React.Component {
     if (e.clientX === this.state.lastX) {
       this.toggleDrawer();
     } else if (offsetRight < minDrawerWidth) {
-      let initialRight = document.body.offsetWidth - (this.state.lastX - document.body.offsetLeft)
-      this.setState({ width: { width: initialRight } });
       this.closeDrawer();
     }
   };
