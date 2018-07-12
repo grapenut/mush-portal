@@ -28,6 +28,7 @@ const styles = theme => ({
     "background-color": theme.palette.primary.main,
     "vertical-align": "middle",
     "text-align": "center",
+    cursor: "col-resize",
   },
   draghint: {
     flex: 1,
@@ -59,6 +60,7 @@ class SplitDrawer extends React.Component {
       lastX: 0,
       width: { width: defaultDrawerWidth },
       lastWidth: { width: defaultDrawerWidth },
+      client: props.client,
     };
   }
 
@@ -123,16 +125,17 @@ class SplitDrawer extends React.Component {
   componentDidMount() {
     document.addEventListener('mousemove', e => this.mouseMove(e));
     document.addEventListener('mouseup', e => this.mouseUp(e));
+    this.state.client.react.drawer = this;
   }
 
   render() {
-    const { classes, theme, terminal_ids, feed_ids } = this.props;
+    const { classes, theme, terminal_ids, feed_ids, client } = this.props;
     const { open, width, dragging } = this.state;
     
     return (
       <div className={classes.frame}>
         <div className={classes.main}>
-          <Terminal ids={terminal_ids} />
+          <Terminal ids={terminal_ids} client={client} />
         </div>
         <Hidden smDown implementation="css">
           <div id={feed_ids.dragbar} className={classes.dragbar} onMouseDown={this.mouseDown}>
@@ -152,7 +155,7 @@ class SplitDrawer extends React.Component {
             classes={{ paper: classes.drawerPaper }}
             PaperProps={{ style: width }}
           >
-            <Feed ids={feed_ids} />
+            <Feed ids={feed_ids} client={client} />
           </SwipeableDrawer>
 */}
         </div>

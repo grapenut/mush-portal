@@ -70,7 +70,10 @@ const styles = theme => ({
 class Terminal extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { inputid: props.ids.input };
+    this.state = {
+      inputid: props.ids.input,
+      client: props.client,
+    };
   }
   
   focusInput = () => {
@@ -79,6 +82,7 @@ class Terminal extends React.Component {
 
   componentDidMount() {
     this.setState({ input: document.getElementById(this.state.inputid) });
+    this.state.client.react.terminal = this;
   }
 
   render() {

@@ -32,11 +32,19 @@ const styles = theme => ({
 
 
 class Input extends React.Component {
-  state = {
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      client: props.client,
+    };
+  }
+  
+  componentDidMount() {
+    this.state.client.react.input = this;
+  }
   
   render() {
-    const { classes, theme, id } = this.props;
+    const { classes, theme, id, client } = this.props;
     
     return (
       <div className={classes.frame}>

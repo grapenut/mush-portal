@@ -7,7 +7,7 @@ import './ansi.css';
 
 class Client {
 
-  constructor(ids) {
+  constructor() {
     // Terminal UI elements
     this.output = null;
     this.quicklinks = null;
@@ -18,6 +18,17 @@ class Client {
     this.tabs = null;
     this.feed = null;
     
+    // React Components
+    this.react = {
+      header: null,
+      menubar: null,
+      drawer: null,
+      terminal: null,
+      feed: null,
+      input: null,
+      statusbar: null,
+    };
+    
     // Server connection info
     this.serverAddress = null;
     this.serverPort = null;
@@ -25,8 +36,6 @@ class Client {
     this.serverProto = null;
     this.serverUrl = null;
     this.conn = null;
-    
-    this.initTerminal(ids);
   }
   
   // pueblo command links, prompt for user input and replace ?? token if present
@@ -86,6 +95,14 @@ class Client {
       this.input.onEscape = () => { this.input.clear(); };
     }
 
+  }
+  
+  // initialize feed elements
+  initFeed(ids) {
+  
+    this.feed = document.getElementById(ids.feed);
+    this.tabs = document.getElementById(ids.tabbar);
+  
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -230,7 +247,10 @@ class Client {
     // handle incoming JSON objects. requires server specific implementation
     this.conn.onObject = function (obj) {
       console.log('JSON', obj);
-      if (obj.hasOwnProperty('script')) {
+      if (obj.hasOwnProperty('op')) {
+        if (obj.op === 'login') {
+          // open login dialog
+        }
       }
     };
   }

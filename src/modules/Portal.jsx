@@ -39,20 +39,33 @@ const styles = theme => ({
 });
 
 class Portal extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      client: props.client,
+    };  
+  }
+  
+  componentDidMount() {
+    this.state.client.react.portal = this;
+    this.state.client.initTerminal(this.props.terminal_ids);
+    this.state.client.initFeed(this.props.feed_ids);
+  }
+  
   render() {
-    const { classes, theme, terminal_ids, feed_ids } = this.props;
+    const { classes, theme, terminal_ids, feed_ids, client } = this.props;
     return (
       <div className={classes.frame}>
         <div className={classes.top}>
-          <Header title="MUSH Portal" />
-          <Menubar />
+          <Header title="MUSH Portal" client={client} />
+          <Menubar client={client} />
         </div>
         <div className={classes.middle}>
-          <SplitDrawer terminal_ids={terminal_ids} feed_ids={feed_ids} />
+          <SplitDrawer terminal_ids={terminal_ids} feed_ids={feed_ids} client={client} />
         </div>
         <div className={classes.bottom}>
-          <Input id={terminal_ids.input} />
-          <Footer />
+          <Input id={terminal_ids.input} client={client} />
+          <Footer client={client} />
         </div>
       </div>
     );

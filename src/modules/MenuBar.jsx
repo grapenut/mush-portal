@@ -10,10 +10,7 @@ import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
   frame: {
-    flexGrow: 1,
-  },
-  hide: {
-    display: 'none',
+    width: "100%",
   },
 });
 
@@ -22,11 +19,19 @@ const styles = theme => ({
 
 
 class Menubar extends React.Component {
-  state = {
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      client: props.client,
+    };
+  }
+  
+  componentDidMount() {
+    this.state.client.react.menubar = this;
+  }
   
   render() {
-    const { classes, theme } = this.props;
+    const { classes, theme, client } = this.props;
     
     return (
       <div className={classes.frame}>

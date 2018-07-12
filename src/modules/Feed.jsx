@@ -31,6 +31,7 @@ class Feed extends React.Component {
       current: 0,
       feed: null,
       tablist: [],
+      client: props.client,
     };
   }
   
@@ -44,8 +45,12 @@ class Feed extends React.Component {
     this.setState({ current });
   }
 
+  componentDidMount() {
+    this.state.client.react.feed = this;
+  }
+
   render() {
-    const { classes, theme, ids } = this.props;
+    const { classes, theme, ids, client } = this.props;
     const { current, feed, tablist } = this.state;
 
     return (

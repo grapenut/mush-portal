@@ -63,14 +63,15 @@ class Header extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isDrawerOpen: false,
+      open: false,
       title: props.title,
+      client: props.client,
     };
   }
 
   
   toggleDrawer = () => {
-    if (this.state.isDrawerOpen) {
+    if (this.state.open) {
       this.closerDrawer();
     } else {
       this.openDrawer();
@@ -78,19 +79,24 @@ class Header extends React.Component {
   };
 
   openDrawer = () => {
-    this.setState({isDrawerOpen: true});
+    this.setState({open: true});
   };
   
   closeDrawer = () => {
-    this.setState({isDrawerOpen: false});
+    this.setState({open: false});
   };
   
   setTitle = t => {
     this.setState({title: t});
   };
   
+  componentDidMount() {
+    this.state.client.react.header = this;
+  }
+  
   render() {
-    const { classes, theme, title } = this.props;
+    const { classes, theme, client } = this.props;
+    const { title , open } = this.state;
     
     return (
       <div className={classes.root}>
@@ -98,7 +104,7 @@ class Header extends React.Component {
           <AppBar className={classes.header} position="static">
             <Toolbar disableGutters={!this.state.open}>
               <Typography variant="title" color="inherit" noWrap className={classes.title}>
-                {this.state.title}
+                {title}
               </Typography>
               <div className={classes.flex}></div>
               <IconButton className={classes.drawerButton} color='inherit' aria-label="open drawer" onClick={this.toggleDrawer}>
@@ -108,7 +114,7 @@ class Header extends React.Component {
           </AppBar>
         </div>
         <div className={classes.drawerFrame}>
-          <Drawer variant="temporary" anchor="top" open={this.state.isDrawerOpen} classes={{paper: classes.drawerPaper}} onClose={this.closeDrawer} onOpen={this.openDrawer}>
+          <Drawer variant="temporary" anchor="top" open={open} classes={{paper: classes.drawerPaper}} onClose={this.closeDrawer}>
             <div className={classes.drawerContent} tabIndex={0} role="button" onClick={this.closeDrawer} onKeyDown={this.closeDrawer}>
               This is where we will have the local client settings, host address, and username/password.
             </div>
