@@ -10,18 +10,20 @@ import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
   frame: {
+    "background-color": theme.palette.primary.main,
+    display: "flex",
   },
   text: {
-    background: "black",
+    flex: 1,
+    "background-color": "black",
     color: "silver",
-    margin: 0,
+    margin: "1px 0 0 0",
     border: "none",
     outline: "none",
     "vertical-align": "middle",
-    padding: "0.5em 0.5% 0.5em 0.5%",
+    padding: "0.25em",
     resize: "none",
     height: "3em",
-    width: "100%",
   },
 });
 

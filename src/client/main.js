@@ -9,7 +9,6 @@ class Client {
 
   constructor(ids) {
     // Terminal UI elements
-    this.terminal = null;
     this.output = null;
     this.quicklinks = null;
     this.prompt = null;
@@ -44,39 +43,49 @@ class Client {
 
   // find and initialize terminal components
   initTerminal(ids) {
-    // The terminal container, pass focus to the input box when clicked
-    this.terminal = document.getElementById(ids.terminal);
-    this.terminal.onclick = () => { this.input.focus(); };
-    
     // Output window
-    this.output = new Emulator(document.getElementById(ids.output));
-    this.output.onCommand = (cmd) => { this.onCommand(cmd); };
+    var output_el = document.getElementById(ids.output);
+    if (output_el !== null) {
+      this.output = new Emulator(output_el);
+      this.output.onCommand = (cmd) => { this.onCommand(cmd); };
+
+      output_el.onunload = () => { this.sendText('QUIT'); this.close(); };
+      output_el.onresize = () => { this.output && this.output.scrollDown(); };
+    }
     
     // Quicklinks bar
     this.quicklinks = document.getElementById(ids.links);
-    
-    //this.addQuickLink('WHO', 'who');
-    //this.addQuickLink('LOOK', 'look');
-    //this.addQuickLink('INVENTORY', 'inventory');
-    //this.addQuickLink('@MAIL', '@mail');
-    //this.addQuickLink('+BB', '+bb');
-    //this.addQuickLink('CLEAR', function() { client.output.clear(); client.prompt.clear(); client.input.clear(); });
+    if (this.quicklinks !== null) {
+      this.addQuickLink('WHO', 'who');
+      this.addQuickLink('LOOK', 'look');
+      this.addQuickLink('INVENTORY', 'inventory');
+      this.addQuickLink('@MAIL', '@mail');
+      this.addQuickLink('+BB', '+bb');
+      this.addQuickLink('CLEAR', () => {
+        this.output && this.output.clear();
+        this.prompt && this.prompt.clear();
+        this.input && this.input.clear();
+      });
+    }
     
     // Prompt window
-    this.prompt = new Emulator(document.getElementById(ids.prompt));
+    var prompt_el = document.getElementById(ids.prompt);
+    if (prompt_el !== null) {
+      this.prompt = new Emulator(prompt_el);
+    }
     
     // Input window
-    this.input = new UserInput(document.getElementById(ids.input));
-    
-    // enter key passthrough from UserInput.pressKey
-    this.input.onEnter = (cmd) => { this.sendCommand(cmd); this.prompt && this.prompt.clear(); };
+    var input_el = document.getElementById(ids.input);
+    if (input_el !== null) {
+      this.input = new UserInput(input_el);
 
-    // escape key passthrough from UserInput.pressKey
-    this.input.onEscape = () => { this.input.clear(); };
+      // enter key passthrough from UserInput.pressKey
+      this.input.onEnter = (cmd) => { this.sendCommand(cmd); this.prompt && this.prompt.clear(); };
 
-    this.terminal.onresize = () => { this.output.scrollDown(); };
-    this.terminal.onunload = () => { this.sendText('QUIT'); this.close(); };
-    
+      // escape key passthrough from UserInput.pressKey
+      this.input.onEscape = () => { this.input.clear(); };
+    }
+
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -110,20 +119,22 @@ class Client {
     return link;
   }
 
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-
+  //////////////////////////////////////////////////////
   // animate scrolling the terminal window to the bottom
-  scrollFeed() {
-    // TODO: May want to animate this, to make it less abrupt.
-    //this.root.scrollTop = this.root.scrollHeight;
-    //return;
+  scrollDown(root) {
+    if (!root) {
+      return;
+    }
+
+    root.scrollTop = this.root.scrollHeight;
+    return;
     
-    var root = this.feed;   
+    // animated scrolling alternative
     var scrollCount = 0;
     var scrollDuration = 500.0;
     var oldTimestamp = performance.now();
-
-    function step (newTimestamp) {
+    
+    var step = (newTimestamp) => {
       var bottom = root.scrollHeight - root.clientHeight;
       var delta = (bottom - root.scrollTop) / 2.0;
 
@@ -133,10 +144,11 @@ class Client {
       root.scrollTo(0, Math.round(root.scrollTop + delta));
       oldTimestamp = newTimestamp;
       window.requestAnimationFrame(step);
-    }
+    };
+    
     window.requestAnimationFrame(step);
   }
-  
+
   /////////////////////////////////////////////////////////////////////////////////////////////////
 
   // connect to the game server and setup message handlers
@@ -159,19 +171,55 @@ class Client {
     this.conn.onError = function (evt) { client.appendMessage('logMessage', '%% Connection error!'); console.log(evt); };
     this.conn.onClose = function (evt) { client.appendMessage('logMessage', '%% Connection closed.'); };
 
-    // handle incoming text, html, pueblo, or command prompts
+    // handle incoming text
     this.conn.onText = function (text) {
       var re_fugueedit = /^FugueEdit > /;
-      if (text.match(re_fugueedit)) {
-        var str = text.replace(re_fugueedit, "");
-        client.input.root.value = str;
-      } else {
+      var scroll = false;
+      if (client.output) {
+        if (client.input) {
+          if (text.match(re_fugueedit)) {
+            var str = text.replace(re_fugueedit, "");
+            client.input.root.value = str;
+            return;
+          }
+        }
+
+        if (client.output.nearBottom()) {
+          scroll = true;
+        }
+        
         client.output.appendText(text);
+        scroll && client.output.scrollDown();
       }
     };
     
-    this.conn.onHTML = function (fragment) { client.output.appendHTML(fragment); };
-    this.conn.onPueblo = function (tag, attrs) { client.output.appendPueblo(tag, attrs); };
+    // handle incoming html
+    this.conn.onHTML = function (fragment) {
+      var scroll = false;
+      if (client.output) {
+        if (client.output.nearBottom()) {
+          scroll = true;
+        }
+        
+        client.output.appendHTML(fragment);
+        scroll && client.output.scrollDown();
+      }
+    };
+    
+    // handle incoming pueblo
+    this.conn.onPueblo = function (tag, attrs) {
+      var scroll = false;
+      if (client.output) {
+        if (client.output.nearBottom()) {
+          scroll = true;
+        }
+        
+        client.output.appendPueblo(tag, attrs);
+        scroll && client.output.scrollDown();
+      }
+    };
+    
+    // handle incoming command prompts
     this.conn.onPrompt = function (text) {
       if (client.prompt !== null) {
         client.prompt.clear();

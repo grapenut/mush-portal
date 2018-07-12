@@ -15,18 +15,19 @@ const styles = theme => ({
     margin: 0,
     padding: 0,
     border: "none",
-    background: "black",
+    "background-color": theme.palette.primary.main,
     width: "100%",
     height: "100%",
   },
   terminal: {
     flex: 1,
+    margin: 0,
     padding: "0.25em",
     position: "relative",
-    overflow: "auto",
+    overflow: "hidden",
   },
   output: {
-    "overflow-y": "auto",
+    "overflow-y": "scroll",
     "overflow-x": "hidden",
     "white-space": "pre-wrap",
     "word-wrap": "break-word",
@@ -34,31 +35,30 @@ const styles = theme => ({
     margin: 0,
     border: 0,
     padding: 0,
-    width: "calc(100% - 0.5em)",
-    height: "calc(100% - 0.5em)",
+    top: "0.25em",
+    left: "0.25em",
+    bottom: "0.25em",
+    right: "0.25em",
   },
   taskbar: {
-    padding: "0.25em",
+    padding: "0",
     position: "relative",
     overflow: "hidden",
   },
   links: {
     overflow: "hidden",
-    width: "100%",
     "vertical-align": "middle",
     "text-align": "center",
     height: "1em",
-  },
-  seperator: {
-    height: "0.5em",
+    padding: "0.25em",
   },
   prompt: {
     overflow: "hidden",
     "white-space": "pre-wrap",
     "text-align": "left",
     "vertical-align": "middle",
-    width: "100%",
     height: "1em",
+    padding: "0.25em",
   },
 });
 
@@ -69,23 +69,30 @@ const styles = theme => ({
 class Terminal extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { };
+    this.state = { inputid: props.ids.input };
   }
   
+  focusInput = () => {
+    this.state.input && this.state.input.focus();
+  };
+
+  componentDidMount() {
+    this.setState({ input: document.getElementById(this.state.inputid) });
+  }
+
   render() {
     const { classes, theme, ids} = this.props;
     
     return (
-      <div id={ids.terminal} className={classes.frame}>
-        <div className={classes.terminal}>
+      <div className={classes.frame} onClick={this.focusInput}>
+        <div className={classNames(classes.terminal, "ansi-37 ansi-40")}>
           <div id={ids.output} className={classNames(classes.output, "ansi-37 ansi-40")}></div>
         </div>
-{/*        <div className={classes.taskbar}>
+        <div className={classes.taskbar}>
           <div id={ids.links} className={classNames(classes.links, "ansi-1-34 ansi-40")}></div>
-          <div className={classes.seperator} />
           <div id={ids.prompt} className={classNames(classes.prompt, "ansi-37 ansi-40")}></div>
         </div>
-*/}      </div>
+      </div>
     );
   }
 

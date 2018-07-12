@@ -12,9 +12,15 @@ var terminal_ids = {
   prompt: "Terminal-prompt",
   links: "Terminal-links",
   input: "Terminal-input",
-  };
+};
 
-ReactDOM.render(<Portal terminal_ids={terminal_ids} />, document.getElementById('root'));
+var feed_ids = {
+  dragbar: "Feed-dragbar",
+  tabbar: "Feed-tabbar",
+  feed: "Feed-main",
+};
+
+ReactDOM.render(<Portal terminal_ids={terminal_ids} feed_ids={feed_ids} />, document.getElementById('root'));
 
 var serverSSL = window.location.protocol === "https:";
 var defaultAddress = "node.grapenut.org";

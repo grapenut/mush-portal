@@ -360,12 +360,10 @@ class Emulator {
   }
 
   /////////////////////////////////////////////////////
-  // append DOM element and scroll to the end of output
+  // append DOM element
   appendChild(child) {
     var last = (this.span || this.stack[this.stack.length - 1]);
     last.appendChild(child);
-    
-    this.scrollDown();
   }
   
   /////////////////////////////////////////////////////
@@ -508,23 +506,40 @@ class Emulator {
     this.ansiDirty = false;
   }
   
-  /////////////////////////////////////////////////////
+  // are we already scrolled down to the bottom?
+  nearBottom() {
+    var root = this.root;
+    
+    if (!root) {
+      return false;
+    }
+    
+    var f = Math.abs(root.scrollHeight - root.offsetHeight - root.scrollTop);
+    if (f <= 100.0) {
+      return true;
+    }
+    
+    return false;
+  }
+
+  //////////////////////////////////////////////////////
   // animate scrolling the terminal window to the bottom
   scrollDown() {
-    // TODO: May want to animate this, to make it less abrupt.
-    //this.root.scrollTop = this.root.scrollHeight;
-    //return;
-    
     var root = this.root;
+
+    if (!root) {
+      return;
+    }
+
+    root.scrollTop = root.scrollHeight;
+    return;
+    
+    // animated scrolling alternative
     var scrollCount = 0;
     var scrollDuration = 500.0;
     var oldTimestamp = performance.now();
     
-    if (root === null) {
-      return null;
-    }
-
-    function step (newTimestamp) {
+    var step = (newTimestamp) => {
       var bottom = root.scrollHeight - root.clientHeight;
       var delta = (bottom - root.scrollTop) / 2.0;
 
@@ -534,9 +549,11 @@ class Emulator {
       root.scrollTo(0, Math.round(root.scrollTop + delta));
       oldTimestamp = newTimestamp;
       window.requestAnimationFrame(step);
-    }
+    };
+    
     window.requestAnimationFrame(step);
   }
+
   
 }
 

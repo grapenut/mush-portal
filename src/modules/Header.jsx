@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
-import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
+import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -108,7 +108,7 @@ class Header extends React.Component {
           </AppBar>
         </div>
         <div className={classes.drawerFrame}>
-          <SwipeableDrawer variant="temporary" anchor="top" open={this.state.isDrawerOpen} classes={{paper: classes.drawerPaper}} onClose={this.closeDrawer} onOpen={this.openDrawer}>
+          <Drawer variant="temporary" anchor="top" open={this.state.isDrawerOpen} classes={{paper: classes.drawerPaper}} onClose={this.closeDrawer} onOpen={this.openDrawer}>
             <div className={classes.drawerContent} tabIndex={0} role="button" onClick={this.closeDrawer} onKeyDown={this.closeDrawer}>
               This is where we will have the local client settings, host address, and username/password.
             </div>
@@ -116,7 +116,7 @@ class Header extends React.Component {
             <Button className={classes.drawerClose} onClick={this.closeDrawer}>
               Close
             </Button>
-          </SwipeableDrawer>
+          </Drawer>
         </div>
       </div>
     );

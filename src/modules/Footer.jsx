@@ -34,7 +34,7 @@ class Footer extends React.Component {
     
     return (
       <div className={classes.frame}>
-        <Typography align="right" variant="button" color="" noWrap>
+        <Typography align="right" variant="button" color="inherit" noWrap>
           Status bar
         </Typography>
       </div>

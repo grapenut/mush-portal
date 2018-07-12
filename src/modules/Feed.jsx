@@ -45,18 +45,18 @@ class Feed extends React.Component {
   }
 
   render() {
-    const { classes, theme } = this.props;
+    const { classes, theme, ids } = this.props;
     const { current, feed, tablist } = this.state;
 
     return (
       <div className={classes.frame}>
         <AppBar position="static">
-          <Tabs value={current} onChange={this.changeTab}>
+          <Tabs id={ids.tabbar} value={current} onChange={this.changeTab}>
             <Tab label="Feed" />
             { tablist.map(tab => <Tab label={tab.name} />) }
           </Tabs>
         </AppBar>
-        { current === 0 && <FeedTab variant="fixed"></FeedTab> }
+        { current === 0 && <FeedTab id={ids.feed} variant="fixed"></FeedTab> }
         { tablist.map((tab, i) => { current === i+1 && <FeedTab>{tab.content}</FeedTab> }) }
       </div>
     );
