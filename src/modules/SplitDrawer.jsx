@@ -54,10 +54,10 @@ class SplitDrawer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      open: true,
+      open: false,
       dragging: false,
       lastX: 0,
-      width: { width: defaultDrawerWidth },
+      width: { width: 0 },
       lastWidth: { width: defaultDrawerWidth },
       client: props.client,
     };
@@ -87,10 +87,15 @@ class SplitDrawer extends React.Component {
   };
   
   mouseUp = (e) => {
-    let offsetRight = document.body.offsetWidth - (e.clientX - document.body.offsetLeft);
+    if (!this.state.dragging) {
+      return;
+    }
+  
+    this.clearSelection();
 
     this.setState({ dragging: false });
 
+    let offsetRight = document.body.offsetWidth - (e.clientX - document.body.offsetLeft);
     if (e.clientX === this.state.lastX) {
       this.toggleDrawer();
     } else if (offsetRight < minDrawerWidth) {
@@ -105,6 +110,8 @@ class SplitDrawer extends React.Component {
     if (!this.state.dragging) {
       return;
     }
+    
+    this.clearSelection();
 
     let offsetRight = document.body.offsetWidth - (e.clientX - document.body.offsetLeft);
     if (offsetRight < minDrawerWidth) {
@@ -127,6 +134,26 @@ class SplitDrawer extends React.Component {
     
     var client = this.state.client;
     client.react.drawer = this;
+  }
+
+  clearSelection() {
+    var sel;
+    if ( (sel = document.selection) && sel.empty ) {
+          sel.empty();
+    } else {
+      if (window.getSelection) {
+          window.getSelection().removeAllRanges();
+      }
+      var activeEl = document.activeElement;
+      if (activeEl) {
+        var tagName = activeEl.nodeName.toLowerCase();
+        if ( tagName == "textarea" ||
+            (tagName == "input" && activeEl.type == "text") ) {
+          // Collapse the selection to the end
+          activeEl.selectionStart = activeEl.selectionEnd;
+        }
+      }
+    }
   }
 
   render() {

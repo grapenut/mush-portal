@@ -71,18 +71,16 @@ class Terminal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      inputid: props.ids.input,
       client: props.client,
     };
   }
   
   focusInput = () => {
-    this.state.input && this.state.input.focus();
+    var client = this.state.client;
+    client.focus();
   };
 
   componentDidMount() {
-    this.setState({ input: document.getElementById(this.state.inputid) });
-    
     var client = this.state.client;
     client.react.terminal = this;
   }

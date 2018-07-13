@@ -21,6 +21,7 @@ var feed_ids = {
 };
 
 var client = new Client();
+document.client = client;
 
 ReactDOM.render(<Portal terminal_ids={terminal_ids} feed_ids={feed_ids} client={client} />, document.getElementById('root'));
 

@@ -166,6 +166,10 @@ class Client {
     window.requestAnimationFrame(step);
 */
   }
+  
+  focus() {
+    this.input && this.input.focus();
+  }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -249,8 +253,29 @@ class Client {
     this.conn.onObject = function (obj) {
       console.log('JSON', obj);
       if (obj.hasOwnProperty('op')) {
-        if (obj.op === 'login') {
-          // open login dialog
+        switch (obj.op) {
+          case 'login':
+            // open login dialog
+            client.react.login && client.react.login.openLogin(obj.msg);
+            break;
+          case 'loginfail':
+            // reopen login dialog with error notice
+            client.react.login && client.react.login.openLogin(obj.msg);
+            break;
+          case 'createfail':
+            client.react.login && client.react.login.openLogin(obj.msg);
+            break;
+          case 'addmenuitem':
+            client.react.menubar && client.react.menubar.addMenuBarItem(obj.menuitem);
+            break;
+          case 'changetitle':
+            client.react.header && client.react.header.setTitle(obj.msg);
+            break;
+          case '':
+            break;
+          default:
+            console.log('Unknown opcode: ', obj);
+            break;
         }
       }
     };

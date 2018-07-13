@@ -7,6 +7,7 @@ import MenuBar from './MenuBar';
 import SplitDrawer from './SplitDrawer';
 import Input from './Input';
 import Footer from './Footer';
+import Login from './Login';
 
 const styles = theme => ({
   frame: {
@@ -70,6 +71,7 @@ class Portal extends React.Component {
           <Input id={terminal_ids.input} client={client} />
           <Footer client={client} />
         </div>
+        <Login fullscreen client={client} />
       </div>
     );
   }
