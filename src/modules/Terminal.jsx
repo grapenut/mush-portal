@@ -3,6 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
 
 
 //////////////////////////////////////////////////////////////////////
@@ -18,6 +19,12 @@ const styles = theme => ({
     "background-color": theme.palette.primary.main,
     width: "100%",
     height: "100%",
+    "font-family": "'Courier New', monospace",
+    "font-weight": "normal",
+    "font-size": "10pt",
+    [theme.breakpoints.down('sm')]: {
+      "font-size": "5pt",
+    },
   },
   terminal: {
     flex: 1,
@@ -61,6 +68,11 @@ const styles = theme => ({
     height: "1em",
     padding: "0.25em",
   },
+  scrollcount: {
+    position: "absolute",
+    right: 0,
+    bottom: 0,
+  },
 });
 
 
@@ -71,31 +83,45 @@ class Terminal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      client: props.client,
+      lines: 0,
     };
+    this.client = props.client;
   }
   
   focusInput = () => {
-    var client = this.state.client;
-    client.focus();
+    this.client.focus();
   };
 
   componentDidMount() {
-    var client = this.state.client;
-    client.react.terminal = this;
+    document.addEventListener('resize', e => this.onChange() );
+    this.client.react.terminal = this;
+  }
+  
+  onChange = () => {
+    this.setState({ lines: this.linesOfScroll() });
+  };
+  
+  linesOfScroll() {
+    return this.client.output.linesOfScroll();
   }
 
   render() {
     const { classes, ids } = this.props;
+    const { lines } = this.state;
     
     return (
       <div className={classes.frame} onClick={this.focusInput}>
         <div className={classNames(classes.terminal, "ansi-37 ansi-40")}>
-          <div id={ids.output} className={classNames(classes.output, "ansi-37 ansi-40")}></div>
+          <div id={ids.output} className={classNames(classes.output, "ansi-37 ansi-40")} onScroll={this.onChange}></div>
         </div>
         <div className={classes.taskbar}>
           <div id={ids.links} className={classNames(classes.links, "ansi-1-34 ansi-40")}></div>
           <div id={ids.prompt} className={classNames(classes.prompt, "ansi-37 ansi-40")}></div>
+          <div className={classes.scrollcount}>
+            <Typography variant="button" color="error" align="right">
+              {lines > 0 && "...and "+lines+" more lines..."}
+            </Typography>
+          </div>
         </div>
       </div>
     );

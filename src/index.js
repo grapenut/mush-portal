@@ -7,7 +7,6 @@ import './style.css';
 // ========================================
 
 var terminal_ids = {
-  terminal: "Terminal",
   output: "Terminal-output",
   prompt: "Terminal-prompt",
   links: "Terminal-links",
@@ -15,9 +14,8 @@ var terminal_ids = {
 };
 
 var feed_ids = {
-  dragbar: "Feed-dragbar",
-  tabbar: "Feed-tabbar",
   feed: "Feed-main",
+  feedtab: "Feed-tab",
 };
 
 var client = new Client();

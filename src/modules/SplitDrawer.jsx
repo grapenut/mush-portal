@@ -1,14 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import Hidden from '@material-ui/core/Hidden';
+//import Hidden from '@material-ui/core/Hidden';
 //import Drawer from '@material-ui/core/Drawer';
-//import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
-//import Feed from './Feed';
+import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
+import Feed from './Feed';
 import Typography from '@material-ui/core/Typography';
 import Terminal from './Terminal';
 
-const defaultDrawerWidth = 240;
+const defaultDrawerWidth = 600;
 const minDrawerWidth = 50;
 
 const styles = theme => ({
@@ -37,6 +37,8 @@ const styles = theme => ({
   },
   drawerPaper: {
     position: 'relative',
+    height: "100%",
+    border: 0,
   },
   main: {
     flex: 1,
@@ -46,6 +48,9 @@ const styles = theme => ({
       easing: theme.transitions.easing.sharp,
       duration: theme.transitions.duration.leavingScreen,
     }),
+  },
+  expand: {
+    height: "100%",
   },
 });
 
@@ -59,8 +64,8 @@ class SplitDrawer extends React.Component {
       lastX: 0,
       width: { width: 0 },
       lastWidth: { width: defaultDrawerWidth },
-      client: props.client,
     };
+    this.client = props.client;
   }
 
   openDrawer = () => {
@@ -132,8 +137,7 @@ class SplitDrawer extends React.Component {
     document.addEventListener('mousemove', e => this.mouseMove(e));
     document.addEventListener('mouseup', e => this.mouseUp(e));
     
-    var client = this.state.client;
-    client.react.drawer = this;
+    this.client.react.drawer = this;
   }
 
   clearSelection() {
@@ -147,8 +151,8 @@ class SplitDrawer extends React.Component {
       var activeEl = document.activeElement;
       if (activeEl) {
         var tagName = activeEl.nodeName.toLowerCase();
-        if ( tagName == "textarea" ||
-            (tagName == "input" && activeEl.type == "text") ) {
+        if ( tagName === "textarea" ||
+            (tagName === "input" && activeEl.type === "text") ) {
           // Collapse the selection to the end
           activeEl.selectionStart = activeEl.selectionEnd;
         }
@@ -160,32 +164,33 @@ class SplitDrawer extends React.Component {
     const { classes, terminal_ids, feed_ids, client } = this.props;
     const { open, width } = this.state;
     
+    const iOS = process.browser && /iPad|iPhone|iPod/.test(navigator.userAgent);
+
     return (
       <div className={classes.frame}>
         <div className={classes.main}>
           <Terminal ids={terminal_ids} client={client} />
         </div>
-        <Hidden smDown implementation="css">
-          <div id={feed_ids.dragbar} className={classes.dragbar} onMouseDown={this.mouseDown}>
-            <Typography variant="button" color="inherit" noWrap className={classes.draghint}>
-              {open ? "Drag to resize" : "Click to open feed"}
-            </Typography>
-          </div>
-        </Hidden>
+        <div className={classes.dragbar} onMouseDown={this.mouseDown}>
+          <Typography variant="button" color="inherit" noWrap className={classes.draghint}>
+            {open ? "Drag to resize" : "Click to open feed"}
+          </Typography>
+        </div>
         <div className={classes.drawer} style={width}>
-{/*
           <SwipeableDrawer
             variant="persistent"
             anchor="right"
             open={open}
             onClose={this.closeDrawer}
             onOpen={this.openDrawer}
-            classes={{ paper: classes.drawerPaper }}
+            classes={{ paper: classes.drawerPaper, docked: classes.expand }}
             PaperProps={{ style: width }}
+            disableBackdropTransition={!iOS}
+            disableDiscovery={iOS}
+            disableSwipeToOpen={false}
           >
             <Feed ids={feed_ids} client={client} />
           </SwipeableDrawer>
-*/}
         </div>
       </div>
     );

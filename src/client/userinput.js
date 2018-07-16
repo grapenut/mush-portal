@@ -72,6 +72,16 @@ class UserInput {
 
       // pass through to the local callback for the escape key
       that.onEscape && that.onEscape();
+    
+    } else if (key.code === 33) {
+    
+      // pass through to the local callback for the pageup key
+      that.onPageUp && that.onPageUp();
+
+    } else if (key.code === 34) {
+
+      // pass through to the local callback for the pagedown key
+      that.onPageUp && that.onPageDown();
 
     } else { 
       // didn't capture anything, pass it through
@@ -112,6 +122,8 @@ class UserInput {
     // user-defined handlers for main actions
     this.onEnter = null;
     this.onEscape = null;
+    this.onPageUp = null;
+    this.onPageDown = null;
 
     // user-defined keys for command history
     this.keyCycleForward = null;

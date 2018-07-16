@@ -9,21 +9,6 @@ import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
   frame: {
-    "background-color": theme.palette.primary.main,
-    display: "flex",
-  },
-  text: {
-    flex: 1,
-    "background-color": "black",
-    color: "silver",
-    margin: "1px 0 0 0",
-    border: "none",
-    outline: "none",
-    "vertical-align": "middle",
-    padding: "0.25em",
-    resize: "none",
-    height: "3em",
-    "font-size": "16px",
   },
 });
 
@@ -31,7 +16,7 @@ const styles = theme => ({
 //////////////////////////////////////////////////////////////////////
 
 
-class Input extends React.Component {
+class Template extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -40,26 +25,24 @@ class Input extends React.Component {
   }
   
   componentDidMount() {
-    this.client.react.input = this;
+    this.client.react.template = this;
   }
-  
+
   render() {
-    const { classes, id } = this.props;
+    const { classes } = this.props;
     
     return (
       <div className={classes.frame}>
-        <textarea id={id} className={classes.text}  autoComplete="off" autoFocus></textarea>
       </div>
     );
   }
 }
 
-Input.propTypes = {
+Template.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
-  id: PropTypes.string.isRequired,
   client: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles, { withTheme: true })(Input);
+export default withStyles(styles, { withTheme: true })(Template);
 

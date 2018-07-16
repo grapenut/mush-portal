@@ -23,6 +23,8 @@ class Emulator {
   constructor(root) {
     this.root = root;
     
+    this.lineHeight = this.calcLineHeight();
+    
     // setup the pueblo xch_cmd callback
     this.onCommand = null;
 
@@ -507,20 +509,63 @@ class Emulator {
   }
   
   // are we already scrolled down to the bottom?
-  nearBottom() {
+  nearBottom(threshold) {
     var root = this.root;
     
     if (!root) {
       return false;
     }
     
-    var f = Math.abs(root.scrollHeight - root.offsetHeight - root.scrollTop);
-    if (f <= 100.0) {
+    if (this.linesOfScroll() <= threshold) {
       return true;
     }
     
     return false;
   }
+  
+  // calculate the height of a single line of text
+  calcLineHeight() {
+    var element = this.root;
+    if (!element) {
+      return 0.0;
+    }
+    
+    var temp = document.createElement(element.nodeName);
+    temp.setAttribute("style","margin:0px;padding:0px;font-family:"+element.style.fontFamily+";font-size:"+element.style.fontSize);
+    temp.innerHTML = "test";
+    temp = element.parentNode.appendChild(temp);
+    var ret = temp.clientHeight;
+    temp.parentNode.removeChild(temp);
+    return ret;
+  }
+  
+  // return the number of lines of text below the current viewport
+  linesOfScroll() {
+    var root = this.root;
+    if (!root) {
+      return 0.0;
+    }
+    
+    if (this.lineHeight <= 0.0) {
+      return 0.0;
+    }
+    
+    return Math.round(Math.abs((root.scrollHeight - root.offsetHeight - root.scrollTop) / this.lineHeight));
+  }
+
+  //////////////////////////////////////////////////////
+  // scroll one page up
+  scrollPageUp() {
+    var root = this.root;
+    root.scrollTop -= root.clientHeight - this.lineHeight*5;
+  }
+
+  //////////////////////////////////////////////////////
+  // scroll one page down
+  scrollPageDown() {
+    var root = this.root;
+    root.scrollTop += root.clientHeight - this.lineHeight*4;
+  }  
 
   //////////////////////////////////////////////////////
   // animate scrolling the terminal window to the bottom

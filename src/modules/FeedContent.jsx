@@ -9,41 +9,40 @@ import { withStyles } from '@material-ui/core/styles';
 
 const styles = theme => ({
   frame: {
+    flex: 1,
   },
 });
 
 
 //////////////////////////////////////////////////////////////////////
 
-class FeedTab extends React.Component {
+class FeedContent extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
-      feedlist: [],
+      content: null,
     };
+
     this.client = props.client;
   }
   
-  componentDidMount() {
-    this.client.react.feedtab = this;
-  }
-  
   render() {
-    const { classes } = this.props;
+    const { classes, children } = this.props;
     
     return (
       <div className={classes.frame}>
-        This is the main feed tab. It is a grid of FeedContent components. Those components can be pinned, tabbed, zoomed, or deleted.
+        {children}
       </div>
     );
   }
 }
 
-FeedTab.propTypes = {
+FeedContent.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
   client: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles, { withTheme: true })(FeedTab);
+export default withStyles(styles, { withTheme: true })(FeedContent);
 

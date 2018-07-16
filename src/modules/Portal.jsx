@@ -3,10 +3,9 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
 import Header from './Header';
-import MenuBar from './MenuBar';
 import SplitDrawer from './SplitDrawer';
 import Input from './Input';
-import Footer from './Footer';
+import StatusBar from './StatusBar';
 import Login from './Login';
 
 const styles = theme => ({
@@ -41,19 +40,15 @@ class Portal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      client: props.client,
-    };  
+    };
+    this.client = props.client;  
   }
   
   componentDidMount() {
-    var client = this.state.client;
-    if (!client) {
-      return;
-    }
-    
-    client.react.portal = this;
-    client.initTerminal(this.props.terminal_ids);
-    client.initFeed(this.props.feed_ids);
+    this.client.react.portal = this;
+    this.client.initTerminal(this.props.terminal_ids);
+    this.client.initFeed(this.props.feed_ids);
+    window.scrollTo(0,1);
   }
   
   render() {
@@ -62,14 +57,13 @@ class Portal extends React.Component {
       <div className={classes.frame}>
         <div className={classes.top}>
           <Header title="MUSH Portal" client={client} />
-          <MenuBar client={client} />
         </div>
         <div className={classes.middle}>
           <SplitDrawer terminal_ids={terminal_ids} feed_ids={feed_ids} client={client} />
         </div>
         <div className={classes.bottom}>
           <Input id={terminal_ids.input} client={client} />
-          <Footer client={client} />
+          <StatusBar client={client} />
         </div>
         <Login fullscreen client={client} />
       </div>

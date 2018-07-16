@@ -8,6 +8,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import Typography from '@material-ui/core/Typography';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 
 import PersonIcon from '@material-ui/icons/Person';
@@ -19,13 +20,6 @@ const styles = theme => ({
   },
   left: {
     marginRight: "auto",
-  },
-  text: {
-    "font-size": "16pt",
-  },
-  block: {
-    display: "flex",
-    "flex-direction": "column",
   },
 });
 
@@ -41,7 +35,13 @@ class Login extends React.Component {
 
   openLogin = (msg) => {
     this.setState({ open: true });
-    this.setState({ msg: msg });
+    
+    if (msg) {
+      this.setState({ msg: msg });
+    } else {
+      this.setState({ msg: null });
+    }
+    
     this.focusInput('username');
   };
 
@@ -111,7 +111,6 @@ class Login extends React.Component {
               <span dangerouslySetInnerHTML={{ __html: msg }} />
             </DialogContentText>
             <TextField
-              className={classes.text}
               margin="dense"
               id="username"
               label="Character Name"
@@ -120,7 +119,6 @@ class Login extends React.Component {
               onKeyPress={this.catchReturn}
             />
             <TextField
-              className={classes.text}
               margin="dense"
               id="password"
               label="Password"
@@ -130,15 +128,16 @@ class Login extends React.Component {
             />
           </DialogContent>
           <DialogActions>
-            <Button className={classes.left} classes={{ label: classes.block }} onClick={this.submitCreate} color="primary" variant="contained">
+            <Button className={classes.left} onClick={this.submitCreate} color="primary" variant="contained">
               <PersonAddIcon />
               Register
             </Button>
-            <Button classes={{ label: classes.block }} onClick={this.submitGuest} color="primary" variant="raised">
+            <Typography />
+            <Button onClick={this.submitGuest} color="primary" variant="raised">
               <PersonOutlineIcon />
               Guest
             </Button>
-            <Button classes={{ label: classes.block }} onClick={this.submitLogin} color="primary" variant="extendedFab" aria-label="login">
+            <Button onClick={this.submitLogin} color="primary" variant="extendedFab" aria-label="login">
               <PersonIcon />
               Login
             </Button>

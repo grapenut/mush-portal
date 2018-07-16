@@ -3,11 +3,8 @@ html, body {
   height: 100%;
   width: 100%;
   margin: 0;
-  overflow: auto;
+  overflow: hidden;
   background: rgba(64,64,64,1.0);
-  font-family: 'Courier New', monospace;
-  font-size: 10pt;
-  font-weight: normal;
 }
 
 a {
@@ -36,6 +33,7 @@ textarea {
 }
 
 #root {
+  top: 1px;
   width: 100%;
   height: 100%;
 }

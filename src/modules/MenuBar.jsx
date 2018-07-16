@@ -24,13 +24,12 @@ class MenuBar extends React.Component {
     super(props);
     this.state = {
       chips: [ ],
-      client: props.client,
     };
+    this.client = props.client;
   }
   
   componentDidMount() {
-    var client = this.state.client;
-    client.react.menubar = this;
+    this.client.react.menubar = this;
   }
 
   addMenuBarItem(obj) {

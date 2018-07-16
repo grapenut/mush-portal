@@ -103,7 +103,12 @@ class Connection {
       break;
 
     case Connection.CHANNEL_JSON:
-      this.onObject && this.onObject(window.JSON.parse(data));
+      try {
+        this.onObject && this.onObject(window.JSON.parse(data));
+      }
+      catch (e) {
+        console.log("JSON ERROR ", e, data);
+      }
       break;
 
     case Connection.CHANNEL_HTML:

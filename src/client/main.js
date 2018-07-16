@@ -1,9 +1,14 @@
 
+import React from 'react';
+
 import Connection from './connection';
 import Emulator from './emulator';
 import UserInput from './userinput';
 import Utils from './utils';
 import './ansi.css';
+
+import Mailbox from '../modules/Mailbox.jsx';
+import MailIcon from '@material-ui/icons/Mail';
 
 class Client {
 
@@ -36,6 +41,11 @@ class Client {
     this.serverProto = null;
     this.serverUrl = null;
     this.conn = null;
+    
+    this.lastCommand = null;
+    
+    // number of lines of scroll within which the output scroll down when new items are received
+    this.scrollThreshold = 5;
   }
   
   // pueblo command links, prompt for user input and replace ?? token if present
@@ -93,6 +103,12 @@ class Client {
 
       // escape key passthrough from UserInput.pressKey
       this.input.onEscape = () => { this.input.clear(); };
+      
+      // pageup key passthrough from UserInput.pressKey
+      this.input.onPageUp = () => { this.output && this.output.scrollPageUp(); };
+
+      // pagedown key passthrough from UserInput.pressKey
+      this.input.onPageDown = () => { this.output && this.output.scrollPageDown(); };
     }
 
   }
@@ -167,8 +183,26 @@ class Client {
 */
   }
   
+  // input focus passthrough
   focus() {
     this.input && this.input.focus();
+  }
+  
+  // wrapper that scrolls the output if needed
+  scrollIfNeeded(fun) {
+    var scroll = false;
+    
+    if (this.output) {
+      if (this.output.nearBottom(this.scrollThreshold)) {
+        scroll = true;
+      }
+      
+      fun()
+      
+      scroll && this.output.scrollDown();
+      
+      this.react.terminal && this.react.terminal.onChange();
+    }
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -189,14 +223,13 @@ class Client {
     this.conn = new Connection(this.serverUrl);
 
     // just log a standard message on these socket status events
-    this.conn.onOpen = function (evt) { client.appendMessage('logMessage', '%% Connected.'); };
-    this.conn.onError = function (evt) { client.appendMessage('logMessage', '%% Connection error!'); console.log(evt); };
-    this.conn.onClose = function (evt) { client.appendMessage('logMessage', '%% Connection closed.'); };
+    this.conn.onOpen = function (evt) { client.scrollIfNeeded(() => client.appendMessage('logMessage', '%% Connected.')); };
+    this.conn.onError = function (evt) { client.scrollIfNeeded(() => client.appendMessage('logMessage', '%% Connection error!')); console.log(evt); };
+    this.conn.onClose = function (evt) { client.scrollIfNeeded(() => client.appendMessage('logMessage', '%% Connection closed.')); };
 
     // handle incoming text
     this.conn.onText = function (text) {
       var re_fugueedit = /^FugueEdit > /;
-      var scroll = false;
       if (client.output) {
         if (client.input) {
           if (text.match(re_fugueedit)) {
@@ -206,38 +239,21 @@ class Client {
           }
         }
 
-        if (client.output.nearBottom()) {
-          scroll = true;
-        }
-        
-        client.output.appendText(text);
-        scroll && client.output.scrollDown();
+        client.scrollIfNeeded(() => client.output.appendText(text));
       }
     };
     
     // handle incoming html
     this.conn.onHTML = function (fragment) {
-      var scroll = false;
       if (client.output) {
-        if (client.output.nearBottom()) {
-          scroll = true;
-        }
-        
-        client.output.appendHTML(fragment);
-        scroll && client.output.scrollDown();
+        client.scrollIfNeeded(() => client.output.appendHTML(fragment));
       }
     };
     
     // handle incoming pueblo
     this.conn.onPueblo = function (tag, attrs) {
-      var scroll = false;
       if (client.output) {
-        if (client.output.nearBottom()) {
-          scroll = true;
-        }
-        
-        client.output.appendPueblo(tag, attrs);
-        scroll && client.output.scrollDown();
+        client.scrollIfNeeded(() => client.output.appendPueblo(tag, attrs));
       }
     };
     
@@ -251,12 +267,12 @@ class Client {
 
     // handle incoming JSON objects. requires server specific implementation
     this.conn.onObject = function (obj) {
-      console.log('JSON', obj);
       if (obj.hasOwnProperty('op')) {
         switch (obj.op) {
-          case 'login':
+          case 'connect':
             // open login dialog
             client.react.login && client.react.login.openLogin(obj.msg);
+            client.react.statusbar && client.react.statusbar.setStatus("Connecting...");
             break;
           case 'loginfail':
             // reopen login dialog with error notice
@@ -265,11 +281,36 @@ class Client {
           case 'createfail':
             client.react.login && client.react.login.openLogin(obj.msg);
             break;
-          case 'addmenuitem':
-            client.react.menubar && client.react.menubar.addMenuBarItem(obj.menuitem);
-            break;
           case 'changetitle':
-            client.react.header && client.react.header.setTitle(obj.msg);
+            client.react.header && client.react.header.setTitle(obj.title);
+            break;
+          case 'mailstats':
+            client.react.header && client.react.header.setUnreadMail(obj.unread);
+            break;
+          case 'maillist':
+            if (client.react.mailbox) {
+              client.react.mailbox.updateMailList(obj.folder, obj.maillist);
+            } else {
+              client.react.feed.addTab("Mailbox", <MailIcon />, <Mailbox client={client} folder={obj.folder} maillist={obj.maillist} /> );
+            }
+            client.react.header.setUnreadMail(obj.unread);
+            if (obj.opentab) {
+              client.react.feed.focusTab("Mailbox");
+            }
+            
+            break;
+          case 'bbstats':
+            client.react.header && client.react.header.setUnreadBB(obj.unread);
+            break;
+          case 'login':
+            client.react.statusbar && client.react.statusbar.setTimer("Connected");
+            break;
+          case 'logout':
+            client.react.header && client.react.login.openLogin(obj.msg);
+            client.react.statusbar && client.react.statusbar.setStatus("Connecting...");
+            break;
+          case 'disconnect':
+            client.react.statusbar && client.react.statusbar.setStatus(null);
             break;
           case '':
             break;
@@ -277,6 +318,8 @@ class Client {
             console.log('Unknown opcode: ', obj);
             break;
         }
+      } else {
+        console.log('Unhandled JSON: ', obj);
       }
     };
   }
@@ -304,11 +347,11 @@ class Client {
     if (this.isConnected()) {
       if (cmd !== '') {
         this.sendText(cmd);
-        this.appendMessage('localEcho', cmd);
+        this.scrollIfNeeded(() => this.appendMessage('localEcho', cmd));
       }
     } else { // connection was broken, let's reconnect
       this.reconnect();
-      this.appendMessage('logMessage', '%% Reconnecting to server...');
+      this.scrollIfNeeded(() => this.appendMessage('logMessage', '%% Reconnecting to server...'));
     }
   }
 
