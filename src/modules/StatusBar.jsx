@@ -79,7 +79,6 @@ class StatusBar extends React.Component {
   }
   
   setStatus(s) {
-    
     this.setState({ status: s });
   }
   

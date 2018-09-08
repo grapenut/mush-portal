@@ -25,6 +25,11 @@
     <noscript>
       You need to enable JavaScript to run this app.
     </noscript>
+    <script>
+      window.onbeforeunload = function(e) {
+        return "Leaving this page will close your connection. Are you sure?";
+      }
+    </script>
     <div id="root"></div>
     <!--
       This HTML file is a template.

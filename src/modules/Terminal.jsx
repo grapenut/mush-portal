@@ -95,6 +95,7 @@ class Terminal extends React.Component {
   componentDidMount() {
     document.addEventListener('resize', e => this.onChange() );
     this.client.react.terminal = this;
+    this.client.initTerminal(this.props.ids);
   }
   
   onChange = () => {

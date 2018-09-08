@@ -23,7 +23,9 @@ const styles = theme => ({
     padding: "0.25em",
     resize: "none",
     height: "3em",
-    "font-size": "16px",
+    "font-family": "'Courier New', monospace",
+    "font-weight": "normal",
+    "font-size": "16pt",
   },
 });
 

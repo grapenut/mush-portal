@@ -3,10 +3,17 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
 import Header from './Header';
-import SplitDrawer from './SplitDrawer';
+import Terminal from './Terminal';
+import Game from './Game';
+import MailBox from './Mail/MailBox';
+import CharacterBuilder from './CharacterBuilder';
 import Input from './Input';
 import StatusBar from './StatusBar';
 import Login from './Login';
+
+import 'golden-layout/src/css/goldenlayout-base.css';
+import 'golden-layout/src/css/goldenlayout-dark-theme.css';
+import GoldenLayout from 'golden-layout';
 
 const styles = theme => ({
   frame: {
@@ -39,30 +46,40 @@ const styles = theme => ({
 class Portal extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-    };
-    this.client = props.client;  
+    this.state = { };
+    this.client = props.client;
+    this.config = props.config;
+    this.setNode = this.setNode.bind(this);
   }
   
   componentDidMount() {
+    this.layout = new GoldenLayout(this.config, this.node);
+    this.layout.registerComponent('Terminal', Terminal);
+    this.layout.registerComponent('Game', Game);
+    this.layout.registerComponent('Mailbox', MailBox);
+    this.layout.registerComponent('Chargen', CharacterBuilder);
+    this.layout.init();
+    
     this.client.react.portal = this;
-    this.client.initTerminal(this.props.terminal_ids);
-    this.client.initFeed(this.props.feed_ids);
+    this.client.layout = this.layout;
+
     window.scrollTo(0,1);
   }
   
+  setNode(node) {
+    this.node = node;
+  }
+  
   render() {
-    const { classes, terminal_ids, feed_ids, client } = this.props;
+    const { classes,  client, config } = this.props;
     return (
       <div className={classes.frame}>
         <div className={classes.top}>
           <Header title="MUSH Portal" client={client} />
         </div>
-        <div className={classes.middle}>
-          <SplitDrawer terminal_ids={terminal_ids} feed_ids={feed_ids} client={client} />
-        </div>
+        <div className={classes.middle} ref={this.setNode}></div>
         <div className={classes.bottom}>
-          <Input id={terminal_ids.input} client={client} />
+          <Input id={config.content[0].content[0].props.ids.input} client={client} />
           <StatusBar client={client} />
         </div>
         <Login fullscreen client={client} />
@@ -74,8 +91,7 @@ class Portal extends React.Component {
 Portal.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
-  terminal_ids: PropTypes.object.isRequired,
-  feed_ids: PropTypes.object.isRequired,
+  config: PropTypes.object.isRequired,
   client: PropTypes.object.isRequired,
 };
 

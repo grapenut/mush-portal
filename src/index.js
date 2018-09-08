@@ -1,27 +1,43 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import jQuery from 'jquery';
 import Portal from './modules/Portal';
-import Client from './client/main';
+import Client from './client';
 import './style.css';
 
 // ========================================
 
-var terminal_ids = {
-  output: "Terminal-output",
-  prompt: "Terminal-prompt",
-  links: "Terminal-links",
-  input: "Terminal-input",
-};
-
-var feed_ids = {
-  feed: "Feed-main",
-  feedtab: "Feed-tab",
-};
-
 var client = new Client();
-document.client = client;
+window.client = client;
 
-ReactDOM.render(<Portal terminal_ids={terminal_ids} feed_ids={feed_ids} client={client} />, document.getElementById('root'));
+var config = {
+  content: [{
+    type: 'row',
+    isClosable: false,
+    content: [{
+      type: 'react-component',
+      isClosable: false,
+      title: 'Terminal',
+      id: 'Terminal',
+      component: 'Terminal',
+      props: {
+        client: client,
+        ids: {
+          output: "Terminal-output",
+          prompt: "Terminal-prompt",
+          links: "Terminal-links",
+          input: "Terminal-input",
+        }
+      }
+    }]
+  }]
+};
+
+window.jQuery = jQuery;
+window.React = React;
+window.ReactDOM = ReactDOM;
+
+ReactDOM.render(<Portal client={client} config={config} />, document.getElementById('root'));
 
 var serverSSL = window.location.protocol === "https:";
 var defaultAddress = "node.grapenut.org";
