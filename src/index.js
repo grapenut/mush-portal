@@ -10,9 +10,6 @@ import './style.css';
 var client = new Client();
 window.client = client;
 
-// load custom JSON event handlers
-client.loadScript('./events.js');
-
 // restore layout config from cookie
 var config = JSON.parse(localStorage.getItem('savedConfig'), function(key, value) {
   if (key === 'client') {
@@ -51,6 +48,9 @@ window.ReactDOM = ReactDOM;
 // render the react app layout
 // ReactDOM.render(<Portal client={client} config={config} />, document.getElementById('root'));
 ReactDOM.render(React.createElement(Portal, { client, config }, null), document.getElementById('root'));
+
+// load custom JSON event handlers
+client.loadScript('./events.js');
 
 // setup client address and connect
 var serverSSL = window.location.protocol === "https:";

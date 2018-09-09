@@ -3,8 +3,8 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
 import Phaser from 'phaser';
-import BootScene from './Game/BootScene';
-import CharEditScene from './Game/CharEditScene';
+import BootScene from './BootScene';
+import CharEditScene from './CharEditScene';
 
 const styles = theme => ({
   frame: {

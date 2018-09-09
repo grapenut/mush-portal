@@ -4,7 +4,7 @@ import { withStyles } from '@material-ui/core/styles';
 
 import Header from './Header';
 import Terminal from './Terminal';
-import Game from './Game';
+import Game from './Game/index';
 import MailBox from './Mail';
 import CharGen from './CharGen';
 import Input from './Input';
