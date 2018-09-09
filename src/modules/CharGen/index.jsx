@@ -7,7 +7,7 @@ const styles = theme => ({
   },
 });
 
-class CharacterBuilder extends React.Component {
+class CharGen extends React.Component {
   constructor(props) {
     super(props);
     this.state = { };
@@ -25,10 +25,10 @@ class CharacterBuilder extends React.Component {
   }
 }
 
-CharacterBuilder.propTypes = {
+CharGen.propTypes = {
   classes: PropTypes.object.isRequired,
   client: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles, { withTheme: true })(CharacterBuilder);
+export default withStyles(styles, { withTheme: true })(CharGen);
 

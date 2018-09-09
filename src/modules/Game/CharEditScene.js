@@ -81,10 +81,15 @@ class CharEditScene extends Phaser.Scene
       assetText.destroy();
     });
     
-    // load scene assets
+    // load assets from JSON
     this.load.image('logo', 'assets/logo.png');
-    for (var i = 0; i < 500; i++) {
-                this.load.image('logo'+i, 'assets/logo.png');
+    this.load.json('character', 'assets/character.json');
+    var assets = this.cache.json.get('character');
+    console.log('assets ' + assets);
+    if (assets) {
+      assets.forEach(function(img) {
+        this.load.image(img, assets[img]);
+      });
     }
   }
 

@@ -5,8 +5,8 @@ import { withStyles } from '@material-ui/core/styles';
 import Header from './Header';
 import Terminal from './Terminal';
 import Game from './Game';
-import MailBox from './Mail/MailBox';
-import CharacterBuilder from './CharacterBuilder';
+import MailBox from './Mail';
+import CharGen from './CharGen';
 import Input from './Input';
 import StatusBar from './StatusBar';
 import Login from './Login';
@@ -58,7 +58,7 @@ class Portal extends React.Component {
     layout.registerComponent('Terminal', Terminal);
     layout.registerComponent('Game', Game);
     layout.registerComponent('Mailbox', MailBox);
-    layout.registerComponent('Chargen', CharacterBuilder);
+    layout.registerComponent('Chargen', CharGen);
     layout.init();
     
     this.client.react.portal = this;

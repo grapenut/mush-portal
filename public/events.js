@@ -1,16 +1,12 @@
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+// client-side MUSH event handlers
+/////////////////////////////////////////////////////////////////////
 
-// client JSON events
-
-// open login dialog
-client.events.on('connect', (obj) => {
-  client.react.login && client.react.login.openLogin(obj.msg);
-  client.react.statusbar && client.react.statusbar.setStatus("Connecting...");
-});
-
-// change the appbar header title
-client.events.on('changetitle', (obj) => {
-  client.react.header && client.react.header.setTitle(obj.title);
-});
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+// spawn windows
+/////////////////////////////////////////////////////////////////////
 
 // open the chargen window
 client.events.on('chargen', (obj) => {
@@ -29,11 +25,6 @@ client.events.on('phaser', (obj) => {
     client.phaser.events.emit('state', obj.state);
   }
   client.focusWindow("Game");
-});
-
-// update the unread mail count on the appbar header
-client.events.on('unreadmail', (obj) => {
-  client.react.header && client.react.header.setUnreadMail(obj.unread);
 });
 
 // open the mail reader window
@@ -64,6 +55,34 @@ client.events.on('mailitem', (obj) => {
   }
 });
 
+
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+// spawn overlays/modals
+/////////////////////////////////////////////////////////////////////
+
+// open login dialog
+client.events.on('connect', (obj) => {
+  client.react.login && client.react.login.openLogin(obj.msg);
+  client.react.statusbar && client.react.statusbar.setStatus("Connecting...");
+});
+
+
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+// update header/footer furniture
+/////////////////////////////////////////////////////////////////////
+
+// change the appbar header title
+client.events.on('changetitle', (obj) => {
+  client.react.header && client.react.header.setTitle(obj.title);
+});
+
+// update the unread mail count on the appbar header
+client.events.on('unreadmail', (obj) => {
+  client.react.header && client.react.header.setUnreadMail(obj.unread);
+});
+
 // update the unread bb message count on the appbar header
 client.events.on('unreadbb', (obj) => {
   client.react.header && client.react.header.setUnreadBB(obj.unread);
@@ -78,3 +97,9 @@ client.events.on('login', (obj) => {
 client.events.on('logout', (obj) => {
   client.react.statusbar && client.react.statusbar.setStatus(null);
 });
+
+
+
+
+
+
