@@ -5,20 +5,18 @@
   "dependencies": {
     "@material-ui/core": "^1.4.2",
     "@material-ui/icons": "^1.1.0",
-    "brim": "^1.0.13",
     "golden-layout": "^1.5.9",
     "jquery": "^3.3.1",
     "phaser": "^3.12.0",
     "react": "^16.4.2",
     "react-dom": "^16.4.2",
-    "react-scripts": "1.1.4",
-    "react-sortable-hoc": "^0.8.3"
+    "react-scripts": "1.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "start": "react-app-rewired start",
+    "build": "react-app-rewired build",
+    "test": "react-app-rewired test --env=jsdom",
+    "eject": "react-app-rewired eject"
   },
   "devDependencies": {
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
@@ -26,6 +24,7 @@
     "babel-preset-expo": "^4.0.0",
     "flow-bin": "^0.76.0",
     "jest-expo": "^28.0.0",
+    "react-app-rewired": "^1.6.2",
     "react-test-renderer": "^16.4.2"
   }
 }

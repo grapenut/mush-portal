@@ -39,18 +39,21 @@ class Input extends React.Component {
     this.state = {
     };
     this.client = props.client;
+    this.input = React.createRef();
   }
   
   componentDidMount() {
     this.client.react.input = this;
+    
+    this.client.initInput(this.input.current);
   }
   
   render() {
-    const { classes, id } = this.props;
+    const { classes } = this.props;
     
     return (
       <div className={classes.frame}>
-        <textarea id={id} className={classes.text}  autoComplete="off" autoFocus></textarea>
+        <textarea ref={this.input} className={classes.text}  autoComplete="off" autoFocus></textarea>
       </div>
     );
   }
@@ -59,7 +62,6 @@ class Input extends React.Component {
 Input.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
-  id: PropTypes.string.isRequired,
   client: PropTypes.object.isRequired,
 };
 

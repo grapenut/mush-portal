@@ -49,37 +49,44 @@ class Portal extends React.Component {
     this.state = { };
     this.client = props.client;
     this.config = props.config;
-    this.setNode = this.setNode.bind(this);
+
+    this.middle = React.createRef();
   }
   
   componentDidMount() {
-    this.layout = new GoldenLayout(this.config, this.node);
-    this.layout.registerComponent('Terminal', Terminal);
-    this.layout.registerComponent('Game', Game);
-    this.layout.registerComponent('Mailbox', MailBox);
-    this.layout.registerComponent('Chargen', CharacterBuilder);
-    this.layout.init();
+    var layout = new GoldenLayout(this.config, this.middle.current);
+    layout.registerComponent('Terminal', Terminal);
+    layout.registerComponent('Game', Game);
+    layout.registerComponent('Mailbox', MailBox);
+    layout.registerComponent('Chargen', CharacterBuilder);
+    layout.init();
     
     this.client.react.portal = this;
-    this.client.layout = this.layout;
+    this.client.layout = layout;
+    
+    layout.on('stateChanged', () => {
+      var config = JSON.stringify(layout.toConfig(), function(key, value) {
+        if (key === 'client') {
+          return null;
+        }
+        return value;
+      });
+      localStorage.setItem('savedConfig', config);
+    });
 
     window.scrollTo(0,1);
   }
   
-  setNode(node) {
-    this.node = node;
-  }
-  
   render() {
-    const { classes,  client, config } = this.props;
+    const { classes,  client } = this.props;
     return (
       <div className={classes.frame}>
         <div className={classes.top}>
           <Header title="MUSH Portal" client={client} />
         </div>
-        <div className={classes.middle} ref={this.setNode}></div>
+        <div className={classes.middle} ref={this.middle}></div>
         <div className={classes.bottom}>
-          <Input id={config.content[0].content[0].props.ids.input} client={client} />
+          <Input client={client} />
           <StatusBar client={client} />
         </div>
         <Login fullscreen client={client} />

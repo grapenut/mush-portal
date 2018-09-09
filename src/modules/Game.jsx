@@ -33,6 +33,9 @@ class Game extends React.Component {
     var game = new Phaser.Game(this.config);
     var client = this.client;
     client.phaser = game;
+    
+    //this.props.glContainer.setSize(this.config.width, this.config.height);
+    
     this.props.glContainer.on('destroy', function() {
       game.destroy();
       client.phaser = null;

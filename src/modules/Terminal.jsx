@@ -86,6 +86,9 @@ class Terminal extends React.Component {
       lines: 0,
     };
     this.client = props.client;
+    this.output = React.createRef();
+    this.quicklinks = React.createRef();
+    this.prompt = React.createRef();
   }
   
   focusInput = () => {
@@ -95,7 +98,7 @@ class Terminal extends React.Component {
   componentDidMount() {
     document.addEventListener('resize', e => this.onChange() );
     this.client.react.terminal = this;
-    this.client.initTerminal(this.props.ids);
+    this.client.initOutput(this.output.current, this.quicklinks.current, this.prompt.current);
   }
   
   onChange = () => {
@@ -107,17 +110,17 @@ class Terminal extends React.Component {
   }
 
   render() {
-    const { classes, ids } = this.props;
+    const { classes } = this.props;
     const { lines } = this.state;
     
     return (
       <div className={classes.frame} onClick={this.focusInput}>
         <div className={classNames(classes.terminal, "ansi-37 ansi-40")}>
-          <div id={ids.output} className={classNames(classes.output, "ansi-37 ansi-40")} onScroll={this.onChange}></div>
+          <div ref={this.output} className={classNames(classes.output, "ansi-37 ansi-40")} onScroll={this.onChange}></div>
         </div>
         <div className={classes.taskbar}>
-          <div id={ids.links} className={classNames(classes.links, "ansi-1-34 ansi-40")}></div>
-          <div id={ids.prompt} className={classNames(classes.prompt, "ansi-37 ansi-40")}></div>
+          <div ref={this.quicklinks} className={classNames(classes.links, "ansi-1-34 ansi-40")}></div>
+          <div ref={this.prompt} className={classNames(classes.prompt, "ansi-37 ansi-40")}></div>
           <div className={classes.scrollcount}>
             <Typography variant="button" color="error" align="right">
               {lines > 0 && "...and "+lines+" more lines..."}
@@ -132,7 +135,6 @@ class Terminal extends React.Component {
 Terminal.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
-  ids: PropTypes.object.isRequired,
   client: PropTypes.object.isRequired,
 };
 

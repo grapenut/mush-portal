@@ -4,7 +4,7 @@ $(document).ready(function() {
 
     // Get querystring paramters
     var params = jHash.val();
-    
+
     // on hash (url) change event, interpret and redraw
     jHash.change(function() {
         params = jHash.val();
@@ -19,8 +19,8 @@ $(document).ready(function() {
             redraw();
         });
     });
-    
-    // When radio button is unchecked, its children should be too. 
+
+    // When radio button is unchecked, its children should be too.
     $("input[type=radio]").each(function() {
         $(this).change(function() {
             var name = $(this).attr("name");
@@ -42,12 +42,12 @@ $(document).ready(function() {
             }, 0);
         });
     });
-    
+
     // Do not multiple toggle when clicking on children
     $("#chooser>ul>li>ul>li>ul>li").click(function(event) {
         event.stopPropagation();
     });
-    
+
     // Toggle display of a list elements children when clicked
     // Do not do so twice, once on label then on input
     // Again, do not multiple toggle when clicking on children
@@ -59,7 +59,7 @@ $(document).ready(function() {
         }
         event.stopPropagation();
     });
-    
+
     // Toggle display of a list elements children when clicked
     // Again, do not multiple toggle when clicking on children
     $("#chooser>ul>li").click(function(event) {
@@ -68,13 +68,13 @@ $(document).ready(function() {
         $ul.toggle('slow').promise().done(drawPreviews);
         event.stopPropagation();
     });
-    
+
     // When clicking on collapse all link, collapse all uls in #chooser
     $("#collapse").click(function() {
         $("#chooser>ul ul").hide('slow');
         $("#chooser>ul span.expanded").removeClass("expanded").addClass("condensed");
     });
-    
+
     // Redraw afer reset
     $("input[type=reset]").click(function() {
         // Sadly we need to use setTimeout
@@ -84,20 +84,25 @@ $(document).ready(function() {
             redraw();
         }, 0, false);
     });
-    
+
     var canvas = $("#spritesheet").get(0);
     var ctx = canvas.getContext("2d");
-    
+
+    function renameImageDownload(link, canvasItem, filename) {
+        link.href = canvasItem.toDataURL();
+        link.download = filename;
+    };
+
     // Save canvas as PNG
     $("#saveAsPNG").click(function() {
-        Canvas2Image.saveAsPNG(canvas);
+        renameImageDownload(this, canvas, 'Download.png');
     });
-    
+
     // Determine if an oversize element used
     var oversize = $("input[type=radio]").filter(function() {
         return $(this).data("oversize");
     }).length > 0;
-    
+
     // Expand canvas if oversize element used
     if (oversize) {
         canvas.width = 1536;
@@ -110,7 +115,7 @@ $(document).ready(function() {
 
     // called each time redrawing
     function redraw() {
-        
+
         // start over
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -120,7 +125,7 @@ $(document).ready(function() {
         }).length > 0;
 
         // If an oversize element is being used, expand canvas,
-        // otherwise return it to normal size        
+        // otherwise return it to normal size
         if (oversize) {
             canvas.width = 1536;
             canvas.height = 1344 + 768;
@@ -130,23 +135,23 @@ $(document).ready(function() {
         }
         $("#chooser>ul").css("height", canvas.height);
         oversize = !!oversize;
-        
+
         // non oversize elements
         $("input[type=radio]:checked, input[type=checkbox]:checked").filter(function() {
             return !$(this).data("oversize");
         }).each(function(index) {
-        
+
             // save this in closure
             var $this = $(this);
-        
+
             // Determine if male or female selected
             var isMale = $("#sex-male").prop("checked");
             var isFemale = $("#sex-female").prop("checked");
-            
+
             // if data-file specified
             if ($(this).data("file")) {
                 var img = getImage($(this).data("file"));
-                
+
                 // if data-behind specified, draw behind existing pixels
                 if ($(this).data("behind")) {
                     ctx.globalCompositeOperation = "destination-over";
@@ -155,7 +160,7 @@ $(document).ready(function() {
                 } else
                     drawImage(ctx, img);
             }
-            
+
             // if data-file_behind specified
             if ($(this).data("file_behind")) {
                 var img = getImage($(this).data("file_behind"));
@@ -163,7 +168,7 @@ $(document).ready(function() {
                 drawImage(ctx, img);
                 ctx.globalCompositeOperation = "source-over";
             }
-            
+
             // Deal with shield/chain hat overlap issue
             if ($(this).data("file_hat") && $("#hat_chain").prop("checked")) {
                 var img = getImage($(this).data("file_hat"));
@@ -173,7 +178,7 @@ $(document).ready(function() {
                 var img = getImage($(this).data("file_no_hat"));
                 drawImage(ctx, img);
             }
-            
+
             // if data-file_male and data-file_female is specified
             if (isMale && $(this).data("file_male")) {
                 var img = getImage($(this).data("file_male"));
@@ -183,9 +188,9 @@ $(document).ready(function() {
                 var img = getImage($(this).data("file_female"));
                 drawImage(ctx, img);
             }
-            
+
             // if data-file_male_light... and data-file_female_light... is specified
-            var bodytypes = ["light", "dark", "dark2", "tanned", "tanned2"];
+            var bodytypes = ["light", "dark", "dark2", "tanned", "tanned2", "darkelf", "darkelf2"];
             if (isMale) {
                 _.each(bodytypes, function(bodytype) {
                     if ($("#body-" + bodytype).prop("checked") && $this.data("file_male_" + bodytype)) {
@@ -202,7 +207,7 @@ $(document).ready(function() {
                     }
                 });
             }
-            
+
             // Draw shadows for plain or ponytail2 hairstyles appropriate to body color
             var id = $(this).attr("id");
             if (_.startsWith(id, "hair-")) {
@@ -223,7 +228,7 @@ $(document).ready(function() {
                 });
             }
         });
-        
+
         // Oversize weapons: Copy existing canvas poses to new locations
         // with 192x192 padding rather than 64x64
         // data-oversize="1" means thrust weapon
@@ -261,7 +266,7 @@ $(document).ready(function() {
                 }
             });
         }
-        
+
         // Clear everything if illegal combination used
         // Probably should try to prevent this
         $("input[type=radio], input[type=checkbox]").each(function(index) {
@@ -299,7 +304,7 @@ $(document).ready(function() {
             }
         });
     }
-    
+
     // Change checkboxes based on parameters
     function interpretParams() {
         $("input[type=radio]").each(function() {
@@ -311,7 +316,7 @@ $(document).ready(function() {
             $(this).prop("checked", _.toBool(params[$(this).attr('id')]));
         });
     }
-    
+
     // Set parameters in response to click on any radio button or checkbox
     function setParams() {
         $("input[type=radio]:checked").each(function() {
@@ -323,20 +328,20 @@ $(document).ready(function() {
         });
         $("input[type=checkbox]").each(function() {
             if (_.toBool($(this).attr("checked")) != $(this).prop("checked") ||
-                    _.toBool(params[$(this).attr('id')]) != $(this).prop("checked"))
+                _.toBool(params[$(this).attr('id')]) != $(this).prop("checked"))
                 params[$(this).attr('id')] = $(this).prop("checked") ? 1 : 0;
         });
         jHash.val(params);
     }
-    
+
     // Cache images
     var images = {};
-    
+
     function getImage(imgRef) {
         if (images[imgRef])
             return images[imgRef];
         else {
-        
+
             // Load image if not in cache
             var img = new Image();
             img.src = "Universal-LPC-spritesheet/" + imgRef;
@@ -345,13 +350,13 @@ $(document).ready(function() {
             return img;
         }
     }
-    
+
     function getImage2(imgRef, callback) {
         if (images[imgRef]) {
             callback(images[imgRef]);
             return images[imgRef];
         } else {
-        
+
             // Load image if not in cache
             var img = new Image();
             img.src = "Universal-LPC-spritesheet/" + imgRef;
@@ -360,7 +365,7 @@ $(document).ready(function() {
             return img;
         }
     }
-    
+
     // Do not stop running all javascript if image not available
     function drawImage(ctx, img) {
         try {
@@ -369,14 +374,14 @@ $(document).ready(function() {
             console.error("Error: could not find " + img.src);
         }
     }
-    
+
     // Draw now - on ready
     interpretParams();
     if (Object.keys(params).length == 0) {
         $("input[type=reset]").click();
         setParams();
     }
-    redraw();    
+    redraw();
 
     // Draw preview images
     function drawPreviews() {
@@ -427,7 +432,7 @@ $(document).ready(function() {
             }
         });
     };
-    
+
     // Preview Animation
     var anim = $("#previewAnimations").get(0);
     var animCtx = anim.getContext("2d");
@@ -436,7 +441,7 @@ $(document).ready(function() {
     var animRowNum = parseInt($selectedAnim.data("num"));
     var animRowFrames = parseInt($selectedAnim.data("cycle"));
     var currentFrame = 0;
-    
+
     $("#whichAnim").change(function() {
         $selectedAnim = $("#whichAnim>:selected");
         animRowStart = parseInt($selectedAnim.data("row"));
@@ -444,7 +449,7 @@ $(document).ready(function() {
         animRowFrames = parseInt($selectedAnim.data("cycle"));
         currentFrame = 0;
     });
-    
+
     function nextFrame() {
         currentFrame = (currentFrame + 1) % animRowFrames;
         animCtx.clearRect(0, 0, anim.width, anim.height);

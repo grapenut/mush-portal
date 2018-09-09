@@ -5,6 +5,8 @@ import UserInput from './userinput';
 import Utils from './utils';
 import './ansi.css';
 
+const EventEmitter = require('events');
+
 class Client {
 
   constructor() {
@@ -13,8 +15,11 @@ class Client {
     this.quicklinks = null;
     this.prompt = null;
     this.input = null;
+    
+    // App Components
     this.phaser = null;
     this.layout = null;
+    this.events = new EventEmitter();
     
     // React Components
     this.react = {
@@ -45,6 +50,17 @@ class Client {
     this.reconnectTimer = 2000;
     this.reconnectCount = 0;
     this.reconnectMaxCount = 10;
+    
+    var client = this;
+    
+  }
+  
+  // load additional scripts for custom events
+  loadScript(src) {
+    var tag = document.createElement('script');
+    tag.async = false;
+    tag.src = src;
+    document.getElementsByTagName('body')[0].appendChild(tag);
   }
   
   // pueblo command links, prompt for user input and replace ?? token if present
@@ -70,20 +86,37 @@ class Client {
   
   /////////////////////////////////////////////////////////////////////////////////////////////////
 
+  initInput(input) {
+    // Input window
+    if (input !== null) {
+      this.input = new UserInput(input);
+
+      // enter key passthrough from UserInput.pressKey
+      this.input.onEnter = (cmd) => { this.sendCommand(cmd); this.prompt && this.prompt.clear(); };
+
+      // escape key passthrough from UserInput.pressKey
+      this.input.onEscape = () => { this.input.clear(); };
+      
+      // pageup key passthrough from UserInput.pressKey
+      this.input.onPageUp = () => { this.output && this.output.scrollPageUp(); };
+
+      // pagedown key passthrough from UserInput.pressKey
+      this.input.onPageDown = () => { this.output && this.output.scrollPageDown(); };
+    }
+  }
+
   // find and initialize terminal components
-  initTerminal(ids) {
+  initOutput(output, quicklinks, prompt) {
     // Output window
-    var output_el = document.getElementById(ids.output);
-    if (output_el !== null) {
-      this.output = new Emulator(output_el);
+    if (output !== null) {
+      this.output = new Emulator(output);
       this.output.onCommand = (cmd) => { this.onCommand(cmd); };
 
-      output_el.onunload = () => { this.sendText('QUIT'); this.close(); };
-      output_el.onresize = () => { this.output && this.output.scrollDown(); };
+      output.onunload = () => { this.sendText('QUIT'); this.close(); };
+      output.onresize = () => { this.output && this.output.scrollDown(); };
     }
     
     // Quicklinks bar
-    this.quicklinks = document.getElementById(ids.links);
     if (this.quicklinks !== null) {
       this.addQuickLink('WHO', 'who');
       this.addQuickLink('LOOK', 'look');
@@ -98,29 +131,9 @@ class Client {
     }
     
     // Prompt window
-    var prompt_el = document.getElementById(ids.prompt);
-    if (prompt_el !== null) {
-      this.prompt = new Emulator(prompt_el);
+    if (prompt !== null) {
+      this.prompt = new Emulator(prompt);
     }
-    
-    // Input window
-    var input_el = document.getElementById(ids.input);
-    if (input_el !== null) {
-      this.input = new UserInput(input_el);
-
-      // enter key passthrough from UserInput.pressKey
-      this.input.onEnter = (cmd) => { this.sendCommand(cmd); this.prompt && this.prompt.clear(); };
-
-      // escape key passthrough from UserInput.pressKey
-      this.input.onEscape = () => { this.input.clear(); };
-      
-      // pageup key passthrough from UserInput.pressKey
-      this.input.onPageUp = () => { this.output && this.output.scrollPageUp(); };
-
-      // pagedown key passthrough from UserInput.pressKey
-      this.input.onPageDown = () => { this.output && this.output.scrollPageDown(); };
-    }
-
   }
   
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -303,65 +316,16 @@ class Client {
       }
     };
 
-    // handle incoming JSON objects. requires server specific implementation
+    // handle incoming JSON objects
+    // use the Events handler collection
     this.conn.onObject = function (obj) {
+      var op = null;
       if (obj.hasOwnProperty('gmcp')) {
-        switch (obj.gmcp) {
-          case 'connect':
-            // open login dialog
-            client.react.login && client.react.login.openLogin(obj.msg);
-            client.react.statusbar && client.react.statusbar.setStatus("Connecting...");
-            break;
-          case 'changetitle':
-            client.react.header && client.react.header.setTitle(obj.title);
-            break;
-          case 'chargen':
-            if (!client.chargen) {
-              client.addWindow("Chargen", { component: "Chargen", props: { client: client } });
-            }
-            client.focusWindow("Chargen");
-            break;
-          case 'phaser':
-            if (!client.phaser) {
-              client.addWindow("Game", { component: 'Game', props: { client: client } });
-            }
-            if (obj.hasOwnProperty('state')) {
-              client.phaser.events.emit('state', obj.state);
-            }
-            client.focusWindow("Game");
-            break;
-          case 'mailstats':
-            client.react.header && client.react.header.setUnreadMail(obj.unread);
-            break;
-          case 'maillist':
-            if (client.react.mailbox) {
-              client.react.mailbox.updateMailList(obj.folder, obj.maillist);
-            } else {
-              client.addWindow("Mailbox", { component: 'Mailbox', props: { client: client, folder: obj.folder, maillist: obj.maillist } });
-            }
-            client.react.header.setUnreadMail(obj.unread);
-            if (obj.opentab) {
-              client.focusWindow("Mailbox");
-            }
-            
-            break;
-          case 'bbstats':
-            client.react.header && client.react.header.setUnreadBB(obj.unread);
-            break;
-          case 'login':
-            client.react.statusbar && client.react.statusbar.setTimer("Connected");
-            break;
-          case 'logout':
-            client.react.statusbar && client.react.statusbar.setStatus(null);
-            break;
-          case '':
-            break;
-          default:
-            console.log('Unknown opcode: ', obj);
-            break;
-        }
+        op = obj.gmcp;
+      } else if (obj.hasOwnProperty('op')) {
+        op = obj.op;
       }
-      console.log('JSON: ', obj);
+      op && client.events.emit(op, obj);
     };
   }
 
