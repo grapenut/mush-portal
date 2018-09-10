@@ -7,11 +7,10 @@ const styles = theme => ({
   },
 });
 
-class CharGen extends React.Component {
+class Chargen extends React.Component {
   constructor(props) {
     super(props);
     this.state = { };
-    this.client = props.client;
   }
   
   componentDidMount() {
@@ -25,10 +24,9 @@ class CharGen extends React.Component {
   }
 }
 
-CharGen.propTypes = {
+Chargen.propTypes = {
   classes: PropTypes.object.isRequired,
-  client: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles, { withTheme: true })(CharGen);
+export default withStyles(styles, { withTheme: true })(Chargen);
 

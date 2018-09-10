@@ -85,20 +85,21 @@ class Terminal extends React.Component {
     this.state = {
       lines: 0,
     };
-    this.client = props.client;
     this.output = React.createRef();
     this.quicklinks = React.createRef();
     this.prompt = React.createRef();
   }
   
   focusInput = () => {
-    this.client.focus();
+    window.client.focus();
   };
 
   componentDidMount() {
     document.addEventListener('resize', e => this.onChange() );
-    this.client.react.terminal = this;
-    this.client.initOutput(this.output.current, this.quicklinks.current, this.prompt.current);
+    window.client.react.terminal = this;
+    window.client.initOutput(this.output.current);
+    window.client.initQuicklinks(this.quicklinks.current);
+    window.client.initPrompt(this.prompt.current);
   }
   
   onChange = () => {
@@ -106,7 +107,7 @@ class Terminal extends React.Component {
   };
   
   linesOfScroll() {
-    return this.client.output.linesOfScroll();
+    return window.client.output.linesOfScroll();
   }
 
   render() {
@@ -135,7 +136,6 @@ class Terminal extends React.Component {
 Terminal.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
-  client: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles, { withTheme: true })(Terminal);

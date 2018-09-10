@@ -4,16 +4,9 @@ import { withStyles } from '@material-ui/core/styles';
 
 import Header from './Header';
 import Terminal from './Terminal';
-import Game from './Game/index';
-import MailBox from './Mail';
-import CharGen from './CharGen';
 import Input from './Input';
 import StatusBar from './StatusBar';
 import Login from './Login';
-
-import 'golden-layout/src/css/goldenlayout-base.css';
-import 'golden-layout/src/css/goldenlayout-dark-theme.css';
-import GoldenLayout from 'golden-layout';
 
 const styles = theme => ({
   frame: {
@@ -47,49 +40,27 @@ class Portal extends React.Component {
   constructor(props) {
     super(props);
     this.state = { };
-    this.client = props.client;
-    this.config = props.config;
-
-    this.middle = React.createRef();
   }
   
   componentDidMount() {
-    var layout = new GoldenLayout(this.config, this.middle.current);
-    layout.registerComponent('Terminal', Terminal);
-    layout.registerComponent('Game', Game);
-    layout.registerComponent('Mailbox', MailBox);
-    layout.registerComponent('Chargen', CharGen);
-    layout.init();
-    
-    this.client.react.portal = this;
-    this.client.layout = layout;
-    
-    layout.on('stateChanged', () => {
-      var config = JSON.stringify(layout.toConfig(), function(key, value) {
-        if (key === 'client') {
-          return null;
-        }
-        return value;
-      });
-      localStorage.setItem('savedConfig', config);
-    });
-
     window.scrollTo(0,1);
   }
   
   render() {
-    const { classes,  client } = this.props;
+    const { classes } = this.props;
     return (
       <div className={classes.frame}>
         <div className={classes.top}>
-          <Header title="MUSH Portal" client={client} />
+          <Header title="MUSH Portal" />
         </div>
-        <div className={classes.middle} ref={this.middle}></div>
+        <div className={classes.middle}>
+          <Terminal />
+        </div>
         <div className={classes.bottom}>
-          <Input client={client} />
-          <StatusBar client={client} />
+          <Input />
+          <StatusBar />
         </div>
-        <Login fullscreen client={client} />
+        <Login />
       </div>
     );
   }
@@ -98,8 +69,6 @@ class Portal extends React.Component {
 Portal.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
-  config: PropTypes.object.isRequired,
-  client: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles, { withTheme: true })(Portal);

@@ -1,9 +1,24 @@
 
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+import Chargen from '../modules/Chargen';
+import Mailbox from '../modules/Mailbox';
+
 import Connection from './connection';
 import Emulator from './emulator';
 import UserInput from './userinput';
 import Utils from './utils';
 import './ansi.css';
+
+import { jsPanel } from 'jspanel4/es6module/jspanel.js';
+import 'jspanel4/es6module/jspanel.css';
+//import 'jspanel4/es6module/extensions/hint/jspanel.hint.js';
+//import 'jspanel4/es6module/extensions/modal/jspanel.modal.js';
+//import 'jspanel4/es6module/extensions/contextmenu/jspanel.contextmenu.js';
+//import 'jspanel4/es6module/extensions/tooltip/jspanel.tooltip.js';
+//import 'jspanel4/es6module/extensions/layout/jspanel.layout.js';
+//import 'jspanel4/es6module/extensions/dock/jspanel.dock.js';
 
 const EventEmitter = require('events');
 
@@ -17,20 +32,17 @@ class Client {
     this.input = null;
     
     // App Components
-    this.phaser = null;
-    this.layout = null;
     this.events = new EventEmitter();
+    this.panels = jsPanel;
     
     // React Components
     this.react = {
-      portal: null,
       header: null,
-      menubar: null,
-      drawer: null,
       terminal: null,
       input: null,
       statusbar: null,
-      mailbox: null,
+      login: null,
+      mailbox: null
     };
     
     // Server connection info
@@ -50,8 +62,6 @@ class Client {
     this.reconnectTimer = 2000;
     this.reconnectCount = 0;
     this.reconnectMaxCount = 10;
-    
-    var client = this;
     
   }
   
@@ -86,6 +96,7 @@ class Client {
   
   /////////////////////////////////////////////////////////////////////////////////////////////////
 
+  // initialize terminal input window
   initInput(input) {
     // Input window
     if (input !== null) {
@@ -105,8 +116,8 @@ class Client {
     }
   }
 
-  // find and initialize terminal components
-  initOutput(output, quicklinks, prompt) {
+  // initialize terminal output window
+  initOutput(output) {
     // Output window
     if (output !== null) {
       this.output = new Emulator(output);
@@ -115,9 +126,13 @@ class Client {
       output.onunload = () => { this.sendText('QUIT'); this.close(); };
       output.onresize = () => { this.output && this.output.scrollDown(); };
     }
-    
+  }
+  
+  // initialize quicklink bar
+  initQuicklinks(quicklinks) {
     // Quicklinks bar
-    if (this.quicklinks !== null) {
+    if (quicklinks !== null) {
+      this.quicklinks = quicklinks;
       this.addQuickLink('WHO', 'who');
       this.addQuickLink('LOOK', 'look');
       this.addQuickLink('INVENTORY', 'inventory');
@@ -129,7 +144,10 @@ class Client {
         this.input && this.input.clear();
       });
     }
-    
+  }
+  
+  // initialize command prompt
+  initPrompt(prompt) {
     // Prompt window
     if (prompt !== null) {
       this.prompt = new Emulator(prompt);
@@ -222,26 +240,43 @@ class Client {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
   
-  addWindow(name, cfg) {
-    var config = cfg;
+  addReactPanel(name, cfg) {
+    var config = cfg || {};
+    var client = this;
     
-    if (!config.id) {
-      config.id = name;
+    var el = null;
+    switch (name) {
+      case 'Chargen':
+        el = Chargen;
+        break;
+      case 'Mailbox':
+        el = Mailbox;
+        break;
+      default:
+        break;
     }
     
-    if (!config.title) {
-      config.title = name;
-    }
+    config.callback = function(container) {
+      ReactDOM.render(React.createElement(el, { client }, null), container.content);
+    };
     
-    config.type = 'react-component';
-    
-    this.layout.root.contentItems[0].addChild(config);
+    this.addPanel(config);
   }
   
-  focusWindow(name) {
-    var window = this.layout.root.getItemsById(name);
-    if (window.length !== 0) {
-      window[0].element.focus()
+  addPanel(cfg) {
+    var config = cfg || {};
+    this.panels.create(config);
+  }
+  
+  focusPanel(name) {
+    var panels = this.panels.getPanels(function() {
+      return this.classList.contains(name);
+    });
+    
+    if (panels.length > 0) {
+      panels[0].normalize();
+      panels[0].unsmallify();
+      panels[0].front();
     }
   }
 

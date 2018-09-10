@@ -36,7 +36,6 @@ class Login extends React.Component {
       open: false,
       msg: null,
     };
-    this.client = props.client;
   }
 
   openLogin = (msg) => {
@@ -47,7 +46,7 @@ class Login extends React.Component {
 
   closeLogin = () => {
     this.setState({ open: false });
-    this.client.focus();
+    window.client.focus();
   };
   
   submitLogin = () => {
@@ -56,13 +55,13 @@ class Login extends React.Component {
     document.getElementById('password').value = '';
     
     var str = 'connect "' + username + '" ' + password
-    this.client.sendText(str);
+    window.client.sendText(str);
     
     this.closeLogin();
   };
   
   submitGuest = () => {
-    this.client.sendText('connect guest');
+    window.client.sendText('connect guest');
     this.closeLogin();
   };
   
@@ -72,7 +71,7 @@ class Login extends React.Component {
     document.getElementById('password').value = '';
     
     var str = 'create "' + username + '" ' + password
-    this.client.sendText(str);
+    window.client.sendText(str);
     
     this.closeLogin();
   };
@@ -89,11 +88,11 @@ class Login extends React.Component {
     var input = document.getElementById(id);
     input && input.focus();
   }
-  
-  componentDidMount() {
-    this.client.react.login = this;
-  }
 
+  componentDidMount() {
+    window.client.react.login = this;
+  }
+  
   render() {
     const { classes } = this.props;
     const { open, msg } = this.state;
@@ -104,6 +103,8 @@ class Login extends React.Component {
           open={open}
           onClose={this.closeLogin}
           aria-labelledby="responsive-dialog-title"
+          disableBackdropClick
+          disableEscapeKeyDown
         >
           <DialogTitle id="responsive-dialog-title">Character Login</DialogTitle>
           <DialogContent>
@@ -152,11 +153,8 @@ class Login extends React.Component {
 Login.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
-  client: PropTypes.object.isRequired,
-  fullScreen: PropTypes.bool.isRequired,
 };
 
-//export default withMobileDialog()(Login);
 export default withMobileDialog()(withStyles(styles, { withTheme: true })(Login));
 
 

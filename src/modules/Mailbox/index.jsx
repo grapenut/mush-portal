@@ -59,7 +59,7 @@ const styles = theme => ({
 //////////////////////////////////////////////////////////////////////
 
 
-class MailBox extends React.Component {
+class Mailbox extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -68,7 +68,6 @@ class MailBox extends React.Component {
       folderlist: [{ id: 0, name: "Inbox" }],
       maillist: props.maillist ? props.maillist : [ ],
     };
-    this.client = props.client;
   }
   
   openMail = (message) => {
@@ -80,19 +79,19 @@ class MailBox extends React.Component {
     if (mail.unread) {
       mail.unread = false;
       this.forceUpdate();
-      this.client.sendText("@mail/status "+mail.folder+":"+mail.id+"=read");
+      window.client.sendText("@mail/status "+mail.folder+":"+mail.id+"=read");
 
-      const { unreadMail } = this.client.react.header.state;
-      this.client.react.header.setUnreadMail(unreadMail-1);
+      const { unreadMail } = window.client.react.header.state;
+      window.client.react.header.setUnreadMail(unreadMail-1);
     }
   }
 
   componentDidMount() {
-    this.client.react.mailbox = this;
+    window.client.react.mailbox = this;
   }
   
   componentWillUnmount() {
-    this.client.react.mailbox = null;
+    window.client.react.mailbox = null;
   }
   
   updateMailList(folder, maillist) {
@@ -123,13 +122,13 @@ class MailBox extends React.Component {
   }
 }
 
-MailBox.propTypes = {
+Mailbox.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
-  client: PropTypes.object.isRequired,
   folder: PropTypes.number,
   maillist: PropTypes.array,
 };
 
-export default withStyles(styles, { withTheme: true })(MailBox);
+export default withStyles(styles, { withTheme: true })(Mailbox);
 
+	

@@ -31,10 +31,8 @@ class StatusBar extends React.Component {
       time: 0,
       status: null,
     };
-    
     this.timer = null;
     this.startTime = new Date();
-    this.client = props.client;
   }
   
   setTimer(s) {
@@ -83,7 +81,7 @@ class StatusBar extends React.Component {
   }
   
   componentDidMount() {
-    this.client.react.statusbar = this;
+    window.client.react.statusbar = this;
   }
   
   componentWillUnmount() {
@@ -121,7 +119,6 @@ class StatusBar extends React.Component {
 StatusBar.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
-  client: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles, { withTheme: true })(StatusBar);

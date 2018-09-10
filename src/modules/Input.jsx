@@ -38,14 +38,12 @@ class Input extends React.Component {
     super(props);
     this.state = {
     };
-    this.client = props.client;
     this.input = React.createRef();
   }
   
   componentDidMount() {
-    this.client.react.input = this;
-    
-    this.client.initInput(this.input.current);
+    window.client.react.input = this;
+    window.client.initInput(this.input.current);
   }
   
   render() {
@@ -62,7 +60,6 @@ class Input extends React.Component {
 Input.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
-  client: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles, { withTheme: true })(Input);

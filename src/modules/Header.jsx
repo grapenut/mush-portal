@@ -87,7 +87,6 @@ class Header extends React.Component {
       unreadBB: 0,
       unreadMail: 0,
     };
-    this.client = props.client;
   }
 
   
@@ -108,7 +107,7 @@ class Header extends React.Component {
   };
   
   openMail = () => {
-    this.client.sendText("jsonapi/maillist");
+    window.client.sendText("jsonapi/maillist");
   };
 
   setTitle = t => {
@@ -124,7 +123,7 @@ class Header extends React.Component {
   };
   
   componentDidMount() {
-    this.client.react.header = this;
+    window.client.react.header = this;
   }
   
   render() {
@@ -182,7 +181,6 @@ class Header extends React.Component {
 Header.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
-  client: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles, { withTheme: true })(Header);
