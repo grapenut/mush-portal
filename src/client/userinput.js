@@ -229,7 +229,7 @@ class UserInput {
   
   //////////////////////////////////////////////////////////////
   // refocus the input box
-  focus() {
+  focus(force = false) {
     var text = "";
     if (window.getSelection) {
       text = window.getSelection().toString();
@@ -237,7 +237,7 @@ class UserInput {
       text = document.selection.createRange().text;
     }
     
-    if (text === "") {
+    if (force || text === "") {
       this.root.focus();
     }
   } 

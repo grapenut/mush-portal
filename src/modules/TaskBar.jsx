@@ -35,6 +35,10 @@ const styles = theme => ({
   },
   taskbutton: {
   },
+  tasklabel: {
+    display: "flex",
+    "flex-direction": "column",
+  },
   flex: {
     flex: 1,
   },
@@ -135,12 +139,13 @@ class TaskBar extends React.Component {
     this.setState({ taskbar });
   };
   
-  popTask = (i) => {
+  popTask = (task) => {
     const { taskbar } = this.state;
-    taskbar[i].normalize();
-    taskbar[i].unsmallify();
-    taskbar[i].front();
+    const i = taskbar.indexOf(task);
     taskbar.splice(i, 1);
+    task.unsmallify();
+    task.front();
+    task.reposition();
     this.setState({ taskbar });
   };
   
@@ -162,8 +167,8 @@ class TaskBar extends React.Component {
               </Typography>
               <div className={classes.tasksep}></div>
               {taskbar.map((task,i) => (
-                <Button key={task.id} className={classes.taskbutton} color='inherit' aria-label="open-task" onClick={() => this.popTask(i)}>
-                  <TabIcon />
+                <Button key={task.id} classes={{ label: classes.tasklabel }} className={classes.taskbutton} color='inherit' aria-label="open-task" onClick={() => this.popTask(task)}>
+                  <TabIcon /><br />
                   {task.headertitle.innerText}
                 </Button>
               ))}

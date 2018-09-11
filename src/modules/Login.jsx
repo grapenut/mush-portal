@@ -131,11 +131,11 @@ class Login extends React.Component {
             />
           </DialogContent>
           <DialogActions>
-            <Button className={classes.left} classes={{ label: classes.block }} onClick={this.submitCreate} color="primary" variant="contained">
+            <Button className={classes.left} classes={{ label: classes.block }} onClick={this.submitCreate} color="primary" variant="extendedFab">
               <PersonAddIcon />
               Register
             </Button>
-            <Button classes={{ label: classes.block }} onClick={this.submitGuest} color="primary" variant="raised">
+            <Button classes={{ label: classes.block }} onClick={this.submitGuest} color="primary" variant="extendedFab">
               <PersonOutlineIcon />
               Guest
             </Button>

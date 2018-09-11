@@ -25,14 +25,11 @@ const styles = theme => ({
 class MailList extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      maillist: props.maillist ? props.maillist : [ ],
-    };
+    this.state = { };
   }
   
   render() {
-    const { classes, openMail } = this.props;
-    const { maillist } = this.state;
+    const { classes, openMail, maillist } = this.props;
 
     return (
       <div className={classes.frame}>
@@ -42,7 +39,7 @@ class MailList extends React.Component {
           subheader={<ListSubheader component="div">Messages</ListSubheader>}
         >
           {maillist.map((mail,i) => (
-            <MailListItem mail={mail} onOpen={() => openMail(i)} />
+            <MailListItem key={i} mail={mail} onOpen={() => openMail(i)} />
           ))}
         </List>
       </div>

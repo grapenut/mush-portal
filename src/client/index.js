@@ -217,8 +217,8 @@ class Client {
   }
   
   // input focus passthrough
-  focus() {
-    this.input && this.input.focus();
+  focus(force = false) {
+    this.input && this.input.focus(force);
   }
   
   // wrapper that scrolls the output if needed
@@ -255,6 +255,10 @@ class Client {
         break;
     }
     
+    if (!el) {
+      return;
+    }
+    
     if (!config.id) {
       config.id = name;
     }
@@ -271,18 +275,6 @@ class Client {
       ReactDOM.unmountComponentAtNode(container.content)
     };
     
-    this.addPanel(config);
-  }
-  
-  addPanel(cfg) {
-    var config = cfg || {};
-    var client = this;
-    
-    config.minimizeTo = false;
-    config.onminimized = function(container) {
-      client.react.taskbar.pushTask(this);
-    };
-    
     this.panels.create(config);
   }
   
@@ -292,9 +284,13 @@ class Client {
     });
     
     if (panels.length > 0) {
-      panels[0].normalize();
-      panels[0].unsmallify();
-      panels[0].front();
+      if (panels[0].status === 'minimized') {
+        this.react.taskbar.popTask(panels[0]);
+      } else {
+        panels[0].unsmallify();
+        panels[0].front();
+        panels[0].reposition();
+      }
     }
   }
 

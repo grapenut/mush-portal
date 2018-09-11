@@ -79,10 +79,10 @@ class Mailbox extends React.Component {
     if (mail.unread) {
       mail.unread = false;
       this.forceUpdate();
-      window.client.sendText("@mail/status "+mail.folder+":"+mail.id+"=read");
+      window.client.sendText("@mail/status "+mail.id+"=read");
 
-      const { unreadMail } = window.client.react.header.state;
-      window.client.react.header.setUnreadMail(unreadMail-1);
+      const { unreadMail } = window.client.react.taskbar.state;
+      window.client.react.taskbar.setUnreadMail(unreadMail-1);
     }
   }
 
@@ -102,20 +102,19 @@ class Mailbox extends React.Component {
     this.setState({ folderlist });
   }
   
-  updateMailItem(mailitem) {
+  openMailItem(mailitem) {
     this.setState({ mailitem });
   }
 
   render() {
     const { classes } = this.props;
     const { maillist, mailitem } = this.state;
-    const { openMail } = this.openMail;
 
     return (
       <div className={classes.frame}>
         <div className={classes.left}>
           { maillist && (
-            <MailList maillist={maillist} openMail={openMail} />
+            <MailList maillist={maillist} openMail={this.openMail} />
           )}
         </div>
         <div className={classes.right}>
