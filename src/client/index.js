@@ -37,7 +37,7 @@ class Client {
     
     // React Components
     this.react = {
-      header: null,
+      taskbar: null,
       terminal: null,
       input: null,
       statusbar: null,
@@ -242,7 +242,6 @@ class Client {
   
   addReactPanel(name, cfg) {
     var config = cfg || {};
-    var client = this;
     
     var el = null;
     switch (name) {
@@ -256,8 +255,20 @@ class Client {
         break;
     }
     
+    if (!config.id) {
+      config.id = name;
+    }
+    
+    if (!config.headerTitle) {
+      config.headerTitle = config.id;
+    }
+    
     config.callback = function(container) {
-      ReactDOM.render(React.createElement(el, { client }, null), container.content);
+      ReactDOM.render(React.createElement(el, null, null), container.content);
+    };
+    
+    config.onclosed = function(container) {
+      ReactDOM.unmountComponentAtNode(container.content)
     };
     
     this.addPanel(config);
@@ -265,12 +276,19 @@ class Client {
   
   addPanel(cfg) {
     var config = cfg || {};
+    var client = this;
+    
+    config.minimizeTo = false;
+    config.onminimized = function(container) {
+      client.react.taskbar.pushTask(this);
+    };
+    
     this.panels.create(config);
   }
   
   focusPanel(name) {
     var panels = this.panels.getPanels(function() {
-      return this.classList.contains(name);
+      return (this.id === name);
     });
     
     if (panels.length > 0) {

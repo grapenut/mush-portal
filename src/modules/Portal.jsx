@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
-import Header from './Header';
+import TaskBar from './TaskBar';
 import Terminal from './Terminal';
 import Input from './Input';
 import StatusBar from './StatusBar';
@@ -51,7 +51,7 @@ class Portal extends React.Component {
     return (
       <div className={classes.frame}>
         <div className={classes.top}>
-          <Header title="MUSH Portal" />
+          <TaskBar title="MUSH Portal" />
         </div>
         <div className={classes.middle}>
           <Terminal />

@@ -11,6 +11,7 @@ import Typography from '@material-ui/core/Typography';
 
 const styles = theme => ({
   frame: {
+    position: "relative",
     display: "flex",
     "flex-flow": "column nowrap",
     margin: 0,
@@ -88,6 +89,7 @@ class Terminal extends React.Component {
     this.output = React.createRef();
     this.quicklinks = React.createRef();
     this.prompt = React.createRef();
+    this.container = React.createRef();
   }
   
   focusInput = () => {
@@ -97,6 +99,7 @@ class Terminal extends React.Component {
   componentDidMount() {
     document.addEventListener('resize', e => this.onChange() );
     window.client.react.terminal = this;
+    window.client.react.container = this.container.current;
     window.client.initOutput(this.output.current);
     window.client.initQuicklinks(this.quicklinks.current);
     window.client.initPrompt(this.prompt.current);
@@ -115,7 +118,7 @@ class Terminal extends React.Component {
     const { lines } = this.state;
     
     return (
-      <div className={classes.frame} onClick={this.focusInput}>
+      <div id="terminal-container" className={classes.frame} ref={this.container} onClick={this.focusInput}>
         <div className={classNames(classes.terminal, "ansi-37 ansi-40")}>
           <div ref={this.output} className={classNames(classes.output, "ansi-37 ansi-40")} onScroll={this.onChange}></div>
         </div>

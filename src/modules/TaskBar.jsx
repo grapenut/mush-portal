@@ -12,6 +12,7 @@ import Badge from '@material-ui/core/Badge';
 import MenuIcon from '@material-ui/icons/Menu';
 import MailIcon from '@material-ui/icons/Mail';
 import ForumIcon from '@material-ui/icons/Forum';
+import TabIcon from '@material-ui/icons/Tab';
 
 //////////////////////////////////////////////////////////////////////
 
@@ -28,6 +29,11 @@ const styles = theme => ({
   },
   title: {
     margin: '0 20px',
+  },
+  tasksep: {
+    borderRight: '4em',
+  },
+  taskbutton: {
   },
   flex: {
     flex: 1,
@@ -78,12 +84,13 @@ function BadgeIcon(props) {
 //////////////////////////////////////////////////////////////////////
 
 
-class Header extends React.Component {
+class TaskBar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       open: false,
       title: props.title,
+      taskbar: [ ],
       unreadBB: 0,
       unreadMail: 0,
     };
@@ -122,13 +129,28 @@ class Header extends React.Component {
     this.setState({unreadBB: u});
   };
   
+  pushTask = (task) => {
+    const { taskbar } = this.state;
+    taskbar.push(task);
+    this.setState({ taskbar });
+  };
+  
+  popTask = (i) => {
+    const { taskbar } = this.state;
+    taskbar[i].normalize();
+    taskbar[i].unsmallify();
+    taskbar[i].front();
+    taskbar.splice(i, 1);
+    this.setState({ taskbar });
+  };
+  
   componentDidMount() {
-    window.client.react.header = this;
+    window.client.react.taskbar = this;
   }
   
   render() {
     const { classes } = this.props;
-    const { title, open, unreadBB, unreadMail } = this.state;
+    const { title, taskbar, open, unreadBB, unreadMail } = this.state;
     
     return (
       <div className={classes.root}>
@@ -138,6 +160,13 @@ class Header extends React.Component {
               <Typography variant="title" color="inherit" noWrap className={classes.title}>
                 {title}
               </Typography>
+              <div className={classes.tasksep}></div>
+              {taskbar.map((task,i) => (
+                <Button key={task.id} className={classes.taskbutton} color='inherit' aria-label="open-task" onClick={() => this.popTask(i)}>
+                  <TabIcon />
+                  {task.headertitle.innerText}
+                </Button>
+              ))}
               <div className={classes.flex}></div>
               <IconButton className={classes.BBButton} color='inherit' aria-label="open-bbs" onClick={this.openBBS}>
                 <BadgeIcon count={unreadBB}>
@@ -178,10 +207,10 @@ class Header extends React.Component {
   }
 }
 
-Header.propTypes = {
+TaskBar.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles, { withTheme: true })(Header);
+export default withStyles(styles, { withTheme: true })(TaskBar);
 

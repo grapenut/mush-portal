@@ -63,7 +63,7 @@ class Mailbox extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      message: null,
+      mailitem: null,
       folder: props.folder ? props.folder : 0,
       folderlist: [{ id: 0, name: "Inbox" }],
       maillist: props.maillist ? props.maillist : [ ],
@@ -71,11 +71,11 @@ class Mailbox extends React.Component {
   }
   
   openMail = (message) => {
-    this.setState({ message });
-    
     const { maillist } = this.state;
-    
     const mail = maillist[message];
+    
+    window.client.sendText("jsonapi/mailitem "+mail.id);
+    
     if (mail.unread) {
       mail.unread = false;
       this.forceUpdate();
@@ -102,19 +102,25 @@ class Mailbox extends React.Component {
     this.setState({ folderlist });
   }
   
+  updateMailItem(mailitem) {
+    this.setState({ mailitem });
+  }
+
   render() {
     const { classes } = this.props;
-    const { maillist, message } = this.state;
+    const { maillist, mailitem } = this.state;
     const { openMail } = this.openMail;
 
     return (
       <div className={classes.frame}>
         <div className={classes.left}>
-          <MailList maillist={maillist} openMail={openMail} />
+          { maillist && (
+            <MailList maillist={maillist} openMail={openMail} />
+          )}
         </div>
         <div className={classes.right}>
-          {message !== null && (
-            <MailItem mail={maillist[message]} />
+          { mailitem && (
+            <MailItem mail={mailitem} />
           )}
         </div>
       </div>
@@ -127,6 +133,7 @@ Mailbox.propTypes = {
   theme: PropTypes.object.isRequired,
   folder: PropTypes.number,
   maillist: PropTypes.array,
+  mailitem: PropTypes.object,
 };
 
 export default withStyles(styles, { withTheme: true })(Mailbox);

@@ -9,13 +9,22 @@
 // panel defaults
 /////////////////////////////////////////////////////////////////////
 
-client.panels.defaults.theme = "primary";
-client.panels.defaults.container = client.react.terminal;
+client.panels.defaults.theme = "default filled";
+client.panels.defaults.container = client.react.container;
 client.panels.defaults.contentOverflow = "auto";
 client.panels.defaults.minimizeTo = "parent";
 client.panels.defaults.maximizedMargin = 5;
 client.panels.defaults.syncMargins = true;
-client.panels.defaults.dragit = {
+client.panels.defaults.boxShadow = false;
+client.panels.defaults.borderRadius = 10;
+//client.panels.defaults.iconfont = 'material-icons';
+client.panels.defaults.position = "right center";
+//client.panels.defaults.resizeit = {
+//  containment: 5,
+//};
+//client.panels.defaults.dragit = {
+//  containment: 5,
+/*
   snap: {
     repositionOnSnap: true,
     resizeToPreSnap:  true,
@@ -42,7 +51,9 @@ client.panels.defaults.dragit = {
       });
     }
   }
-};
+*/
+//};
+
 
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
@@ -62,7 +73,7 @@ client.events.on('spawn', (obj) => {
 // open the chargen window
 client.events.on('chargen', (obj) => {
   if (client.chargen) {
-    client.focusWindow("Chargen");
+    client.focusPanel("Chargen");
   } else {
     client.addReactPanel("Chargen", obj);
   }
@@ -75,23 +86,23 @@ client.events.on('phaser', (obj) => {
 // open the mail reader window
 client.events.on('maillist', (obj) => {
   if (client.react.mailbox) {
-    client.focusWindow("Mailbox");
+    client.focusPanel("Mailbox");
   } else {
     client.addReactPanel("Mailbox", obj);
   }
-
-  client.react.header.setUnreadMail(obj.unread);
   client.react.mailbox.updateMailList(obj.folder, obj.maillist);
+
+  // just in case we are out of sync
+  client.react.taskbar.setUnreadMail(obj.unread);
 });
 
 // open a single mail item
 client.events.on('mailitem', (obj) => {
   if (client.react.mailbox) {
-    client.focusWindow("Mailbox");
+    client.focusPanel("Mailbox");
   } else {
     client.addReactPanel("Mailbox", obj);
-  }
-  
+  }  
   client.react.mailbox.openMailItem(obj);
 });
 
@@ -110,22 +121,22 @@ client.events.on('connect', (obj) => {
 
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
-// update header/footer furniture
+// update taskbar/statusbar furniture
 /////////////////////////////////////////////////////////////////////
 
-// change the appbar header title
+// change the taskbar title
 client.events.on('changetitle', (obj) => {
-  client.react.header && client.react.header.setTitle(obj.title);
+  client.react.taskbar && client.react.taskbar.setTitle(obj.title);
 });
 
-// update the unread mail count on the appbar header
+// update the unread mail count on the taskbar
 client.events.on('unreadmail', (obj) => {
-  client.react.header && client.react.header.setUnreadMail(obj.unread);
+  client.react.taskbar && client.react.taskbar.setUnreadMail(obj.unread);
 });
 
-// update the unread bb message count on the appbar header
+// update the unread bb message count on the taskbar
 client.events.on('unreadbb', (obj) => {
-  client.react.header && client.react.header.setUnreadBB(obj.unread);
+  client.react.taskbar && client.react.taskbar.setUnreadBB(obj.unread);
 });
 
 // update the status bar after logging in
