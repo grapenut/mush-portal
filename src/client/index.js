@@ -12,7 +12,7 @@ import UserInput from './userinput';
 import Utils from './utils';
 import './ansi.css';
 
-import { jsPanel } from 'jspanel4/es6module/jspanel.js';
+import { jsPanel } from 'jspanel4';
 import 'jspanel4/es6module/jspanel.css';
 //import 'jspanel4/es6module/extensions/hint/jspanel.hint.js';
 //import 'jspanel4/es6module/extensions/modal/jspanel.modal.js';
