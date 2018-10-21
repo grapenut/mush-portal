@@ -9,6 +9,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
 import Badge from '@material-ui/core/Badge';
+
 import MenuIcon from '@material-ui/icons/Menu';
 import MailIcon from '@material-ui/icons/Mail';
 import ForumIcon from '@material-ui/icons/Forum';
@@ -17,6 +18,7 @@ import PeopleIcon from '@material-ui/icons/People';
 import VideogameAssetIcon from '@material-ui/icons/VideogameAsset';
 import LandscapeIcon from '@material-ui/icons/Landscape';
 import BusinessCenterIcon from '@material-ui/icons/BusinessCenter';
+import BackspaceIcon from '@material-ui/icons/Backspace';
 
 import Settings from './Settings';
 
@@ -129,6 +131,12 @@ class TaskBar extends React.Component {
     this.setState({title: t});
   };
 
+  clearScreen = () => {
+    if (window.confirm('Do you want to clear the screen?')) {
+      window.client.clear();
+    }
+  };
+
   sendCommand = (cmd) => {
     window.client.sendCommand(cmd);
     window.client.focus();
@@ -222,6 +230,11 @@ class TaskBar extends React.Component {
                   <BadgeIcon count={unreadMail}>
                     <MailIcon />
                   </BadgeIcon>
+                </Button>
+              </Tooltip>
+              <Tooltip title="Clear screen.">
+                <Button aria-label="clear-screen" onClick={() => this.clearScreen()}>
+                  <BackspaceIcon />
                 </Button>
               </Tooltip>
               <Tooltip title="Settings">
