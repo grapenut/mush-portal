@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import { withStyles, MuiThemeProvider } from '@material-ui/core/styles';
+import Theme from './Theme';
 
 import TaskBar from './TaskBar';
 import Terminal from './Terminal';
@@ -49,19 +50,21 @@ class Portal extends React.Component {
   render() {
     const { classes } = this.props;
     return (
-      <div className={classes.frame}>
-        <div className={classes.top}>
-          <TaskBar title="MUSH Portal" />
+      <MuiThemeProvider theme={Theme}>
+        <div className={classes.frame}>
+          <div className={classes.top}>
+            <TaskBar title="MUSH Portal" />
+          </div>
+          <div className={classes.middle}>
+            <Terminal />
+          </div>
+          <div className={classes.bottom}>
+            <Input />
+            <StatusBar />
+          </div>
+          <Login />
         </div>
-        <div className={classes.middle}>
-          <Terminal />
-        </div>
-        <div className={classes.bottom}>
-          <Input />
-          <StatusBar />
-        </div>
-        <Login />
-      </div>
+      </MuiThemeProvider>
     );
   }
 }

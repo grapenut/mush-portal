@@ -6,13 +6,20 @@ import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
 import Button from '@material-ui/core/Button';
+import Tooltip from '@material-ui/core/Tooltip';
 import Badge from '@material-ui/core/Badge';
 import MenuIcon from '@material-ui/icons/Menu';
 import MailIcon from '@material-ui/icons/Mail';
 import ForumIcon from '@material-ui/icons/Forum';
 import TabIcon from '@material-ui/icons/Tab';
+import PeopleIcon from '@material-ui/icons/People';
+import VideogameAssetIcon from '@material-ui/icons/VideogameAsset';
+import LandscapeIcon from '@material-ui/icons/Landscape';
+import BusinessCenterIcon from '@material-ui/icons/BusinessCenter';
+
+import Settings from './Settings';
+
 
 //////////////////////////////////////////////////////////////////////
 
@@ -31,19 +38,32 @@ const styles = theme => ({
     margin: '0 20px',
   },
   tasksep: {
-    borderRight: '4em',
+    marginRight: theme.spacing.unit,
   },
   taskbutton: {
+    margin: theme.spacing.unit,
+  },
+  taskicon: {
+    marginRight: theme.spacing.unit,
   },
   tasklabel: {
+//    display: "flex",
+//    "flex-direction": "column",
+  },
+  cmdbutton: {
+  },
+  cmdlabel: {
     display: "flex",
     "flex-direction": "column",
   },
   flex: {
     flex: 1,
   },
+  drawerFrame: {
+    width: '100%',
+  },
   drawerButton: {
-    margin: theme.spacing.unit * 2,
+    margin: theme.spacing.unit,
   },
   hide: {
     display: 'none',
@@ -52,24 +72,11 @@ const styles = theme => ({
     position: 'relative',
     height: drawerHeight,
   },
-  drawerFrame: {
-    width: '100%',
-  },
-  drawerContent: {
-    flex: 1,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: '0 8px',
-    ...theme.mixins.toolbar,
-  },
-  drawerClose: {
-  },
   mailButton: {
-    margin: theme.spacing.unit * 2,
+    margin: theme.spacing.unit,
   },
   BBButton: {
-    margin: theme.spacing.unit * 2,
+    margin: theme.spacing.unit,
   },
 });
 
@@ -84,6 +91,7 @@ function BadgeIcon(props) {
   }
   return props.children;
 };
+
 
 //////////////////////////////////////////////////////////////////////
 
@@ -117,14 +125,20 @@ class TaskBar extends React.Component {
     this.setState({open: false});
   };
   
-  openMail = () => {
-    window.client.sendText("jsonapi/maillist");
-  };
-
   setTitle = t => {
     this.setState({title: t});
   };
-  
+
+  sendCommand = (cmd) => {
+    window.client.sendCommand(cmd);
+    window.client.focus();
+  };
+
+  sendText = (txt) => {
+    window.client.sendText(txt);
+    window.client.focus();
+  };
+
   setUnreadMail = u => {
     this.setState({unreadMail: u});
   };
@@ -145,8 +159,9 @@ class TaskBar extends React.Component {
     taskbar.splice(i, 1);
     task.unsmallify();
     task.front();
-    task.reposition();
+    //task.reposition();
     this.setState({ taskbar });
+    window.client.focus();
   };
   
   componentDidMount() {
@@ -165,27 +180,56 @@ class TaskBar extends React.Component {
               <Typography variant="title" color="inherit" noWrap className={classes.title}>
                 {title}
               </Typography>
-              <div className={classes.tasksep}></div>
-              {taskbar.map((task,i) => (
-                <Button key={task.id} classes={{ label: classes.tasklabel }} className={classes.taskbutton} color='inherit' aria-label="open-task" onClick={() => this.popTask(task)}>
-                  <TabIcon /><br />
-                  {task.headertitle.innerText}
-                </Button>
-              ))}
               <div className={classes.flex}></div>
-              <IconButton className={classes.BBButton} color='inherit' aria-label="open-bbs" onClick={this.openBBS}>
-                <BadgeIcon count={unreadBB}>
-                  <ForumIcon />
-                </BadgeIcon>
-              </IconButton>
-              <IconButton className={classes.mailButton} color='inherit' aria-label="open-mail" onClick={this.openMail}>
-                <BadgeIcon count={unreadMail}>
-                  <MailIcon />
-                </BadgeIcon>
-              </IconButton>
-              <IconButton className={classes.drawerButton} color='inherit' aria-label="open-drawer" onClick={this.toggleDrawer}>
-                <MenuIcon />
-              </IconButton>
+              {taskbar.map((task,i) => (
+                <Tooltip title={task.headertitle.innerText}>
+                  <Button key={task.id} classes={{ label: classes.tasklabel }} className={classes.taskbutton} aria-label="open-task" onClick={() => this.popTask(task)}>
+                    <TabIcon className={classes.taskicon} />
+                    {task.headertitle.innerText}
+                  </Button>
+                </Tooltip>
+              ))}
+              <div className={classes.tasksep}></div>
+              <Tooltip title="Look around.">
+                <Button aria-label="send-look" onClick={() => this.sendCommand("look")}>
+                  <LandscapeIcon />
+                </Button>
+              </Tooltip>
+              <Tooltip title="Who's online?">
+                <Button aria-label="send-who" onClick={() => this.sendCommand("who")}>
+                  <PeopleIcon />
+                </Button>
+              </Tooltip>
+              <Tooltip title="What am I carrying?">
+                <Button aria-label="send-inventory" onClick={() => this.sendCommand("inventory")}>
+                  <BusinessCenterIcon />
+                </Button>
+              </Tooltip>
+              <Tooltip title="2D Graphical UI">
+                <Button aria-label="open-phaser" onClick={() => this.sendText("jsonapi/phaser")}>
+                  <VideogameAssetIcon />
+                </Button>
+              </Tooltip>
+              <Tooltip title="Bulletin Boards">
+                <Button aria-label="open-bbs" onClick={() => this.sendText("jsonapi/bblist")}>
+                  <BadgeIcon count={unreadBB}>
+                    <ForumIcon />
+                  </BadgeIcon>
+                </Button>
+              </Tooltip>
+              <Tooltip title="@mail Inbox">
+                <Button aria-label="open-mail" onClick={() => this.sendText("jsonapi/maillist")}>
+                  <BadgeIcon count={unreadMail}>
+                    <MailIcon />
+                  </BadgeIcon>
+                </Button>
+              </Tooltip>
+              <Tooltip title="Settings">
+                <Button aria-label="open-drawer" onClick={this.toggleDrawer}>
+                  <MenuIcon />
+                </Button>
+              </Tooltip>
+              <div className={classes.tasksep}></div>
             </Toolbar>
           </AppBar>
         </div>
@@ -198,13 +242,7 @@ class TaskBar extends React.Component {
             onClose={this.closeDrawer}
             onOpen={this.openDrawer}
           >
-            <div className={classes.drawerContent} tabIndex={0} role="button" onClick={this.closeDrawer} onKeyDown={this.closeDrawer}>
-              This is where we will have the local client settings, host address, and username/password.
-            </div>
-            <div className={classes.flex}></div>
-            <Button className={classes.drawerClose} onClick={this.closeDrawer}>
-              Close
-            </Button>
+            <Settings closeDrawer={this.closeDrawer} />
           </SwipeableDrawer>
         </div>
       </div>

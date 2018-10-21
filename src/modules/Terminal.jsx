@@ -53,14 +53,6 @@ const styles = theme => ({
     position: "relative",
     overflow: "hidden",
   },
-  links: {
-    "overflow-y": "hidden",
-    "overflow-x": "auto",
-    "vertical-align": "middle",
-    "text-align": "center",
-    height: "1em",
-    padding: "0.25em",
-  },
   prompt: {
     overflow: "hidden",
     "white-space": "pre-wrap",
@@ -87,7 +79,6 @@ class Terminal extends React.Component {
       lines: 0,
     };
     this.output = React.createRef();
-    this.quicklinks = React.createRef();
     this.prompt = React.createRef();
     this.container = React.createRef();
   }
@@ -101,7 +92,6 @@ class Terminal extends React.Component {
     window.client.react.terminal = this;
     window.client.react.container = this.container.current;
     window.client.initOutput(this.output.current);
-    window.client.initQuicklinks(this.quicklinks.current);
     window.client.initPrompt(this.prompt.current);
   }
   
@@ -123,7 +113,6 @@ class Terminal extends React.Component {
           <div ref={this.output} className={classNames(classes.output, "ansi-37 ansi-40")} onScroll={this.onChange}></div>
         </div>
         <div className={classes.taskbar}>
-          <div ref={this.quicklinks} className={classNames(classes.links, "ansi-1-34 ansi-40")}></div>
           <div ref={this.prompt} className={classNames(classes.prompt, "ansi-37 ansi-40")}></div>
           <div className={classes.scrollcount}>
             <Typography variant="button" color="error" align="right">

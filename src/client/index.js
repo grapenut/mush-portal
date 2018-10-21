@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 
 import Chargen from '../modules/Chargen';
 import Mailbox from '../modules/Mailbox';
+import Game from '../phaser';
 
 import Connection from './connection';
 import Emulator from './emulator';
@@ -27,7 +28,6 @@ class Client {
   constructor() {
     // Terminal UI elements
     this.output = null;
-    this.quicklinks = null;
     this.prompt = null;
     this.input = null;
     
@@ -42,7 +42,8 @@ class Client {
       input: null,
       statusbar: null,
       login: null,
-      mailbox: null
+      mailbox: null,
+      phaser: null,
     };
     
     // Server connection info
@@ -63,6 +64,12 @@ class Client {
     this.reconnectCount = 0;
     this.reconnectMaxCount = 10;
     
+    // handle panel close events, refocus the input window
+    window.client = this;
+    document.addEventListener('jspanelonclosed', (e) => {
+      window.client.focus();
+      return true;
+    });
   }
   
   // load additional scripts for custom events
@@ -95,6 +102,13 @@ class Client {
   }
   
   /////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  // clear terminal
+  clear() {
+    this.output && this.output.clear();
+    this.prompt && this.prompt.clear();
+    this.input && this.input.clear();
+  }
 
   // initialize terminal input window
   initInput(input) {
@@ -128,24 +142,6 @@ class Client {
     }
   }
   
-  // initialize quicklink bar
-  initQuicklinks(quicklinks) {
-    // Quicklinks bar
-    if (quicklinks !== null) {
-      this.quicklinks = quicklinks;
-      this.addQuickLink('WHO', 'who');
-      this.addQuickLink('LOOK', 'look');
-      this.addQuickLink('INVENTORY', 'inventory');
-      this.addQuickLink('@MAIL', '@mail');
-      this.addQuickLink('+BB', '+bb');
-      this.addQuickLink('CLEAR', () => {
-        this.output && this.output.clear();
-        this.prompt && this.prompt.clear();
-        this.input && this.input.clear();
-      });
-    }
-  }
-  
   // initialize command prompt
   initPrompt(prompt) {
     // Prompt window
@@ -156,35 +152,6 @@ class Client {
   
   /////////////////////////////////////////////////////////////////////////////////////////////////
   
-  // add a command link to the quicklinks bar
-  // cmd can be a string to send, or a function to run
-  addQuickLink(label, cmd) {
-    var client = this;
-    var link = document.createElement('a');
-    var text = document.createTextNode(label);
-    
-    if (client.quicklinks === null) {
-      return null;
-    }
-    
-    link.appendChild(text);
-    
-    if (typeof(cmd) === "function") {
-      link.title = "Command: " + label;
-      link.onclick = function () { cmd && cmd(); };
-    } else {
-      link.title = "Command: " + cmd;
-      link.onclick = function () { client.onCommand && client.onCommand(cmd); };
-    }
-    
-    if (client.quicklinks.childElementCount > 0) {
-      client.quicklinks.appendChild(document.createTextNode(' | '));
-    }
-    
-    client.quicklinks.appendChild(link);
-    return link;
-  }
-
   //////////////////////////////////////////////////////
   // animate scrolling the terminal window to the bottom
   scrollDown(root) {
@@ -217,8 +184,8 @@ class Client {
   }
   
   // input focus passthrough
-  focus(force = false) {
-    this.input && this.input.focus(force);
+  focus() {
+    this.input && this.input.focus();
   }
   
   // wrapper that scrolls the output if needed
@@ -250,6 +217,14 @@ class Client {
         break;
       case 'Mailbox':
         el = Mailbox;
+        break;
+      case 'Phaser':
+        el = Game;
+        config.contentSize = {
+          width: "640px",
+          height: "480px",
+        };
+        config.panelSize = null;
         break;
       default:
         break;

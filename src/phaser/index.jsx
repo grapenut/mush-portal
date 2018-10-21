@@ -3,11 +3,15 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
 import Phaser from 'phaser';
-import BootScene from './BootScene';
-import CharEditScene from './CharEditScene';
+//import BootScene from './BootScene';
+//import CharEditScene from './CharEditScene';
+import RoomScene from './RoomScene';
 
 const styles = theme => ({
   frame: {
+    position: 'absolute',
+    height: '100%',
+    width: '100%',
   },
 });
 
@@ -15,14 +19,24 @@ class Game extends React.Component {
   constructor(props) {
     super(props);
     this.state = { };
-    this.client = props.client;
     this.parent = React.createRef();
     this.config = {
       type: Phaser.AUTO,
       parent: 'phaser-frame',
       width: 640,
       height: 480,
-      scene: [ BootScene, CharEditScene ]
+      scene: [ RoomScene ],
+      backgroundColor: "#000",
+      pixelArt: true,
+      keyboard: {
+        target: 'phaser-frame',
+      },
+      physics: {
+        default: "arcade",
+        arcade: {
+          gravity: { y: 0 }
+        }
+      }
     };
   }
   
@@ -30,16 +44,13 @@ class Game extends React.Component {
     var parent = this.parent.current;
     this.config.parent = parent;
     
-    var game = new Phaser.Game(this.config);
-    var client = this.client;
-    client.phaser = game;
-    
-    //this.props.glContainer.setSize(this.config.width, this.config.height);
-    
-    this.props.glContainer.on('destroy', function() {
-      game.destroy();
-      client.phaser = null;
-    });
+    this.game = new Phaser.Game(this.config);
+    window.client.react.phaser = this;
+  }
+  
+  componentWillUnmount() {
+    this.game.destroy();
+    window.client.react.phaser = null;
   }
   
   render() {
@@ -52,7 +63,6 @@ class Game extends React.Component {
 
 Game.propTypes = {
   classes: PropTypes.object.isRequired,
-  client: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles, { withTheme: true })(Game);

@@ -8,10 +8,9 @@
 /////////////////////////////////////////////////////////////////////
 // panel defaults
 /////////////////////////////////////////////////////////////////////
-
 var config = client.panels.defaults;
 
-config.theme = "default filled";
+config.theme = "#3f51b5 filledlight";
 config.container = client.react.container;
 config.contentOverflow = "auto";
 config.minimizeTo = "parent";
@@ -20,21 +19,22 @@ config.syncMargins = true;
 config.boxShadow = false;
 config.border = "2px ridge darkgrey";
 config.borderRadius = 10;
+config.panelSize = {
+  width: 'calc(50% - ' + 1.5*config.maximizedMargin + 'px)',
+  height: 'calc(50% - ' + 1.5*config.maximizedMargin + 'px)',
+};
 config.position = {
   my: "right-top",
   at: "right-top",
-  offsetX: -5,
-  offsetY: 5,
-  autoposition: "down",
+  offsetX: -config.maximizedMargin,
+  offsetY: config.maximizedMargin,
+//  autoposition: "down",
 };
 config.minimizeTo = false;
 config.onminimized = function(container) {
   client.react.taskbar.pushTask(this);
   client.focus();
 };
-config.onclosed = function(container) {
-  client.focus();
-}
 config.dragit.snap = {
   repositionOnSnap: true,
   resizeToPreSnap:  true,
@@ -89,6 +89,12 @@ client.events.on('chargen', (obj) => {
 
 // open the phaser window
 client.events.on('phaser', (obj) => {
+  console.log(obj);
+  if (client.react.phaser) {
+    client.focusPanel("Phaser");
+  } else {
+    client.addReactPanel("Phaser", obj);
+  }
 });
 
 // open the mail reader window
@@ -98,10 +104,7 @@ client.events.on('maillist', (obj) => {
   } else {
     client.addReactPanel("Mailbox", obj);
   }
-  client.react.mailbox.updateMailList(obj.folder, obj.maillist);
-
-  // just in case we are out of sync
-  obj.unread && client.react.taskbar.setUnreadMail(obj.unread);
+  client.react.mailbox.updateMailList(obj.folder, obj.maillist, obj.unread);
 });
 
 // open a single mail item

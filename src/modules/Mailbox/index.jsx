@@ -11,47 +11,21 @@ import MailItem from './MailItem';
 
 const styles = theme => ({
   frame: {
+    position: "absolute",
     height: "100%",
+    width: "100%",
     display: "flex",
     "flex-flow": "row nowrap",
   },
   left: {
     position: "relative",
-    height: "100%",
+    maxHeight: "100%",
     flex: 1,
   },
   right: {
     flex: 1,
-    height: "100%",
+    maxHeight: "100%",
     position: "relative",
-  },
-  mail: {
-    position: "absolute",
-    overflowY: "auto",
-    maxHeight: "100%",
-  },
-  list: {
-    position: "absolute",
-    overflowY: "auto",
-    maxHeight: "100%",
-  },
-  listitem: {
-  },
-  listicon: {
-    fontSize: 14,
-    margin: 0,
-  },
-  listsub: {
-    display: "flex",
-  },
-  listfrom: {
-    flex: 1,
-  },
-  listtime: {
-    marginLeft: "3em",
-  },
-  read: {
-    opacity: 0.5,
   },
 });
 
@@ -64,6 +38,7 @@ class Mailbox extends React.Component {
     super(props);
     this.state = {
       mailitem: null,
+      unreadMail: props.unread ? props.unread : 0,
       folder: props.folder ? props.folder : 0,
       folderlist: [{ id: 0, name: "Inbox" }],
       maillist: props.maillist ? props.maillist : [ ],
@@ -81,9 +56,14 @@ class Mailbox extends React.Component {
       this.forceUpdate();
       window.client.sendText("@mail/status "+mail.id+"=read");
 
-      const { unreadMail } = window.client.react.taskbar.state;
-      window.client.react.taskbar.setUnreadMail(unreadMail-1);
+      const { unreadMail } = this.state;
+      this.setUnreadMail(unreadMail-1);
     }
+  }
+  
+  setUnreadMail(unreadMail) {
+    this.setState({ unreadMail })
+    window.client.react.taskbar.setUnreadMail(unreadMail);
   }
 
   componentDidMount() {
@@ -94,8 +74,8 @@ class Mailbox extends React.Component {
     window.client.react.mailbox = null;
   }
   
-  updateMailList(folder, maillist) {
-    this.setState({ folder, maillist });
+  updateMailList(folder, maillist, unreadMail) {
+    this.setState({ folder, maillist, unreadMail });
   }
   
   updateFolderList(folderlist) {
@@ -108,13 +88,13 @@ class Mailbox extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { maillist, mailitem } = this.state;
+    const { maillist, mailitem, unreadMail } = this.state;
 
     return (
       <div className={classes.frame}>
         <div className={classes.left}>
           { maillist && (
-            <MailList maillist={maillist} openMail={this.openMail} />
+            <MailList maillist={maillist} unread={unreadMail} openMail={this.openMail} />
           )}
         </div>
         <div className={classes.right}>
@@ -133,6 +113,7 @@ Mailbox.propTypes = {
   folder: PropTypes.number,
   maillist: PropTypes.array,
   mailitem: PropTypes.object,
+  unread: PropTypes.number,
 };
 
 export default withStyles(styles, { withTheme: true })(Mailbox);

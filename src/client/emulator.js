@@ -351,7 +351,7 @@ class Emulator {
       // check for xch_cmd and replace with click handler
       var cmd = child.getAttribute('xch_cmd');
       if (cmd !== null && cmd !== '') {
-        child.setAttribute('onClick', 'this.onCommand("' + cmd + '");');
+        child.setAttribute('onclick', 'this.onCommand("' + cmd + '");');
         child.onCommand = this.onCommand;
         child.removeAttribute('xch_cmd');
       }
@@ -462,7 +462,7 @@ class Emulator {
 
       div.innerHTML = html.replace(
         /xch_cmd="([^"]*)"/i,
-        "onClick='this.onCommand(&quot;$1&quot;)'"
+        "onclick='this.onCommand(&quot;$1&quot;)'"
       );
       
       div.firstChild.onCommand = this.onCommand;

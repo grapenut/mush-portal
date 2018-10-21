@@ -20,17 +20,7 @@ const styles = theme => ({
   frame: {
   },
   listicon: {
-    fontSize: 14,
     margin: 0,
-  },
-  listsub: {
-    display: "flex",
-  },
-  listfrom: {
-    flex: 1,
-  },
-  listtime: {
-    marginLeft: "3em",
   },
   read: {
     opacity: 0.5,
@@ -73,11 +63,11 @@ class MailListItem extends React.Component {
           <ListItemText
             primary={mail.subject}
             secondary={
-              <span className={classes.listsub}>
-                <span className={classes.listfrom}>
+              <span>
+                <span>
                   {mail.from}
-                </span>
-                <span className={classes.listtime}>
+                </span><br />
+                <span>
                   {mail.time}
                 </span>
               </span>

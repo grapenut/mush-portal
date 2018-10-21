@@ -6,6 +6,7 @@
     "@material-ui/core": "^1.4.2",
     "@material-ui/icons": "^1.1.0",
     "@material-ui/lab": "^3.0.0-alpha.15",
+    "@mikewesthad/dungeon": "^1.2.1",
     "jspanel4": "^4.1.2",
     "phaser": "^3.12.0",
     "react": "^16.4.2",

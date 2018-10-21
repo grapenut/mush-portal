@@ -8,7 +8,6 @@ import './style.css';
 
 // create the MUSH client
 var client = new Client();
-window.client = client;
 
 // render the react Portal app
 ReactDOM.render(React.createElement(Portal, null, null), document.getElementById('root'));
