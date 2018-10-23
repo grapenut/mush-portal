@@ -13,7 +13,6 @@ var config = client.panels.defaults;
 config.theme = "#3f51b5 filledlight";
 config.container = client.react.container;
 config.contentOverflow = "auto";
-config.minimizeTo = "parent";
 config.maximizedMargin = 5;
 config.syncMargins = true;
 config.boxShadow = false;
@@ -28,12 +27,7 @@ config.position = {
   at: "right-top",
   offsetX: -config.maximizedMargin,
   offsetY: config.maximizedMargin,
-//  autoposition: "down",
-};
-config.minimizeTo = false;
-config.onminimized = function(container) {
-  client.react.taskbar.pushTask(this);
-  client.focus();
+  autoposition: "down",
 };
 config.dragit.snap = {
   repositionOnSnap: true,
@@ -89,7 +83,6 @@ client.events.on('chargen', (obj) => {
 
 // open the phaser window
 client.events.on('phaser', (obj) => {
-  console.log(obj);
   if (client.react.phaser) {
     client.focusPanel("Phaser");
   } else {
@@ -104,6 +97,7 @@ client.events.on('maillist', (obj) => {
   } else {
     client.addReactPanel("Mailbox", obj);
   }
+  obj.maillist.reverse();
   client.react.mailbox.updateMailList(obj.folder, obj.maillist, obj.unread);
 });
 
@@ -115,6 +109,30 @@ client.events.on('mailitem', (obj) => {
     client.addReactPanel("Mailbox", obj);
   }  
   client.react.mailbox.openMailItem(obj);
+});
+
+// send a mail
+client.events.on('sendmail', (obj) => {
+  if (client.react.sendmail) {
+    client.focusPanel("Sendmail");
+    if (confirm("Replace current draft with new mail?")) {
+      client.react.sendmail.setTarget(obj.to);
+      client.react.sendmail.setSubject(obj.subject);
+      client.react.sendmail.setBody(obj.body);
+    }
+  } else {
+    client.addReactPanel("Sendmail", obj);
+    client.react.sendmail.setTarget(obj.to);
+    client.react.sendmail.setSubject(obj.subject);
+    client.react.sendmail.setBody(obj.body);
+  }  
+});
+
+// update movement
+client.events.on('move', (obj) => {
+  if (client.react.phaser) {
+    // tell phaser to redraw the current screen
+  }
 });
 
 
@@ -152,7 +170,7 @@ client.events.on('unreadbb', (obj) => {
 
 // update the status bar after logging in
 client.events.on('login', (obj) => {
-  client.react.statusbar && client.react.statusbar.setTimer("Connected");
+  client.react.statusbar && client.react.statusbar.setStatus("Connected to "+obj.login+".");
 });
 
 // clear the status bar after logging out

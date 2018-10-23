@@ -119,6 +119,9 @@ class UserInput {
     
     this.root = root;
     
+    this.selectionStart = 0;
+    this.selectionStop = 0;
+    
     // user-defined handlers for main actions
     this.onEnter = null;
     this.onEscape = null;
@@ -215,6 +218,18 @@ class UserInput {
     }
   }
   
+  // save the cursor position
+  saveCursor() {
+    this.selectionStart = this.root.selectionStart;
+    this.selectionStop = this.root.selectionStop;
+  }
+  
+  // reset cursor position
+  resetCursor() {
+    this.root.selectionStart = this.selectionStart;
+    this.root.selectionStop = this.selectionStop;
+  }
+  
   //////////////////////////////////////////////////////////////
   // clear the current input text
   clear() {
@@ -230,6 +245,8 @@ class UserInput {
   //////////////////////////////////////////////////////////////
   // refocus the input box
   focus() {
+  
+    // see if we are selecting some text
     var text = "";
     if (window.getSelection) {
       text = window.getSelection().toString();
@@ -237,6 +254,21 @@ class UserInput {
       text = document.selection.createRange().text;
     }
     
+    // or if we are in an input element
+    var element = document.activeElement;
+    var tagName = element.tagName.toLowerCase();
+    if (tagName === 'textarea') return;
+    
+    if (tagName === 'input') {
+      var type = element.getAttribute('type').toLowerCase();
+      // if any of these input types is not supported by a browser, it will behave as input type text.
+      var inputTypes = ['text', 'password', 'number', 'email', 'tel', 'url', 'search', 'date', 'datetime', 'datetime-local', 'time', 'month', 'week'];
+      if (inputTypes.indexOf(type) >= 0) {
+        return;
+      }
+    }
+    
+    // if we are selecting or inputting, don't focus
     if (text === "") {
       this.root.focus();
     }

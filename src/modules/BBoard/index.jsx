@@ -105,8 +105,8 @@ class Mailbox extends React.Component {
   purgeMail() {
     if (window.confirm("Do you want to purge deleted mail?")) {
       const { maillist, mailitem } = this.state;
-
-      if (mailitem && maillist[mailitem.key].deleted) {
+      const mail = maillist[mailitem.key];
+      if (mail.deleted) {
         // we are purging the current mailitem, so clear it
         this.setState({ mailitem: null });
       }
@@ -115,16 +115,8 @@ class Mailbox extends React.Component {
     }
   }
   
-  sendMail(to, subject, body) {
-    if (window.client.react.sendmail) {
-      window.client.focusPanel("Sendmail");
-      if (window.confirm("Replace current draft with new mail?")) {
-        window.client.react.sendmail.setFields(to, subject, body);
-      }
-    } else {
-      window.client.addReactPanel("Sendmail");
-      window.client.react.sendmail.setFields(to, subject, body);
-    }  
+  sendMail(to, subj, body) {
+    window.client.sendText("jsonapi/sendmail "+to+"="+subj+"/"+body);
   }
 
   componentDidMount() {

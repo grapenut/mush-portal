@@ -41,6 +41,10 @@ class Settings extends React.Component {
   componentDidMount() {
   }
   
+  componentWillUnmount() {
+    window.client.saveSettings();
+  }
+
   render() {
     const { classes, closeDrawer } = this.props;
     

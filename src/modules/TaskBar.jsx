@@ -139,12 +139,10 @@ class TaskBar extends React.Component {
 
   sendCommand = (cmd) => {
     window.client.sendCommand(cmd);
-    window.client.focus();
   };
 
   sendText = (txt) => {
     window.client.sendText(txt);
-    window.client.focus();
   };
 
   setUnreadMail = u => {
@@ -167,9 +165,7 @@ class TaskBar extends React.Component {
     taskbar.splice(i, 1);
     task.unsmallify();
     task.front();
-    //task.reposition();
     this.setState({ taskbar });
-    window.client.focus();
   };
   
   componentDidMount() {
@@ -183,14 +179,14 @@ class TaskBar extends React.Component {
     return (
       <div className={classes.root}>
         <div className={classes.headerFrame}>
-          <AppBar className={classes.header} position="static">
+          <AppBar className={classes.header} position="static" onClick={() => window.client.focus()}>
             <Toolbar disableGutters={!this.state.open}>
               <Typography variant="title" color="inherit" noWrap className={classes.title}>
                 {title}
               </Typography>
               <div className={classes.flex}></div>
               {taskbar.map((task,i) => (
-                <Tooltip title={task.headertitle.innerText}>
+                <Tooltip key={i} title={task.headertitle.innerText}>
                   <Button key={task.id} classes={{ label: classes.tasklabel }} className={classes.taskbutton} aria-label="open-task" onClick={() => this.popTask(task)}>
                     <TabIcon className={classes.taskicon} />
                     {task.headertitle.innerText}

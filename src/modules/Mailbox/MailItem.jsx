@@ -11,6 +11,8 @@ import Typography from '@material-ui/core/Typography';
 import Icon from '@material-ui/core/Icon';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ReplyIcon from '@material-ui/icons/Reply';
@@ -59,11 +61,47 @@ const styles = theme => ({
 class MailItem extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { };
+    this.state = {
+      anchorEl: null,
+    };
   }
+  
+  showMenu = event => {
+    this.setState({ anchorEl: event.currentTarget });
+  };
+  
+  closeMenu = () => {
+    this.setState({ anchorEl: null });
+  };
+  
+  markUnread = () => {
+    window.client.react.mailbox.markUnread();
+    this.closeMenu();
+  };
+  
+  markDeleted = () => {
+    window.client.react.mailbox.markDeleted();
+    this.closeMenu();
+  };
+  
+  markUndeleted = () => {
+    window.client.react.mailbox.markUndeleted();
+    this.closeMenu();
+  };
+  
+  replyMail = () => {
+    const { mail } = this.props;
+    window.client.react.mailbox.sendMail(mail.from, "Re: "+mail.subject, "");
+  };
+  
+  forwardMail = () => {
+    const { mail } = this.props;
+    window.client.react.mailbox.sendMail("", "Fwd: "+mail.subject, mail.body);
+  };
   
   render() {
     const { classes, mail } = this.props;
+    const { anchorEl } = this.state;
     
     return (
       <Card className={classes.card}>
@@ -86,21 +124,29 @@ class MailItem extends React.Component {
           </Typography>
         </CardContent>
         <CardActions className={classes.actions}>
-          <Button className={classes.button}>
+          <Button className={classes.button} onClick={this.replyMail}>
             <Icon>
               <ReplyIcon />
             </Icon>
             Reply
           </Button>
-          <Button className={classes.button}>
+          <Button className={classes.button} onClick={this.forwardMail}>
             <Icon>
               <ForwardIcon />
             </Icon>
             Forward
           </Button>
-          <IconButton>
-              <MoreVertIcon />
+          <IconButton aria-owns={anchorEl ? 'mailitem.menu' : null} aria-haspopup="true" onClick={this.showMenu}>
+            <MoreVertIcon />
           </IconButton>
+          <Menu id="mailitem.menu" anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={this.closeMenu}>
+            <MenuItem onClick={this.markUnread}>Mark as Unread</MenuItem>
+            {mail.deleted ? (
+              <MenuItem onClick={this.markUndeleted}>Restore Message</MenuItem>
+            ) : (
+              <MenuItem onClick={this.markDeleted}>Move to Trash</MenuItem>
+            )}
+          </Menu>
         </CardActions>
       </Card>
     );

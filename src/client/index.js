@@ -4,16 +4,19 @@ import ReactDOM from 'react-dom';
 
 import Chargen from '../modules/Chargen';
 import Mailbox from '../modules/Mailbox';
+import Sendmail from '../modules/Mailbox/Sendmail';
 import Game from '../phaser';
 
 import Connection from './connection';
 import Emulator from './emulator';
 import UserInput from './userinput';
 import Utils from './utils';
+
 import './ansi.css';
+import 'jspanel4/dist/jspanel.min.css';
 
 import { jsPanel } from 'jspanel4';
-import 'jspanel4/es6module/jspanel.css';
+
 //import 'jspanel4/es6module/extensions/hint/jspanel.hint.js';
 //import 'jspanel4/es6module/extensions/modal/jspanel.modal.js';
 //import 'jspanel4/es6module/extensions/contextmenu/jspanel.contextmenu.js';
@@ -26,6 +29,12 @@ const EventEmitter = require('events');
 class Client {
 
   constructor() {
+    // client settings
+    this.settings = {
+      debugEvents: "true",
+    };
+    this.loadSettings();
+    
     // Terminal UI elements
     this.output = null;
     this.prompt = null;
@@ -43,6 +52,7 @@ class Client {
       statusbar: null,
       login: null,
       mailbox: null,
+      sendmail: null,
       phaser: null,
     };
     
@@ -66,10 +76,35 @@ class Client {
     
     // handle panel close events, refocus the input window
     window.client = this;
-    document.addEventListener('jspanelonclosed', (e) => {
+    this.panels.defaults.minimizeTo = false;
+    this.panels.defaults.onminimized = function(container) {
+      window.client.react.taskbar.pushTask(this);
       window.client.focus();
-      return true;
-    });
+    };
+    
+    this.panels.defaults.onclosed = function(container) {
+      ReactDOM.unmountComponentAtNode(container.content)
+      window.client.focus();
+    };
+    
+    this.panels.defaults.dragit.start = function() {
+      window.client.input.saveCursor();
+    };
+    
+    this.panels.defaults.resizeit.start = function() {
+      window.client.input.saveCursor();
+    };
+    
+    this.panels.defaults.dragit.stop = function() {
+      window.client.focus();
+      window.client.input.resetCursor();
+    };
+    
+    this.panels.defaults.resizeit.stop = function() {
+      window.client.focus();
+      window.client.input.resetCursor();
+    };
+    
   }
   
   // load additional scripts for custom events
@@ -78,6 +113,44 @@ class Client {
     tag.async = false;
     tag.src = src;
     document.getElementsByTagName('body')[0].appendChild(tag);
+  }
+  
+  // load settings from localstorage
+  loadSettings() {
+    const store = window.localStorage;
+    Object.keys(this.settings).forEach((key) => {
+      if (store["settings_"+key]) {
+        this.changeSetting(key, store["settings_"+key]);
+      }
+    });
+  }
+  
+  // save settings to localstorage
+  saveSettings() {
+    const store = window.localStorage;
+    Object.keys(this.settings).forEach((key) => {
+      store["settings_"+key] = String(this.settings[key]);
+    });
+  }
+  
+  // change a setting, casting the string argument to the correct type
+  changeSetting(key, value) {
+    var type = typeof this.settings[key];
+    
+    switch (type) {
+      case "string":
+        this.settings[key] = String.bind(null, value)();
+        break;
+      case "number":
+        this.settings[key] = Number.bind(null, value)();
+        break;
+      case "boolean":
+        this.settings[key] = (value === "true" ? true : false);
+        break;
+      default:
+        this.settings[key] = value;
+        break;
+    }
   }
   
   // pueblo command links, prompt for user input and replace ?? token if present
@@ -218,13 +291,24 @@ class Client {
       case 'Mailbox':
         el = Mailbox;
         break;
+      case 'Sendmail':
+        el = Sendmail;
+        break;
       case 'Phaser':
         el = Game;
         config.contentSize = {
           width: "640px",
           height: "480px",
         };
+        config.resizeit = false;
+        config.dragit = { snap: { callback: null } };
         config.panelSize = null;
+        config.position = {
+          my: "right-top",
+          at: "right-top",
+          offsetX: -this.panels.defaults.maximizedMargin,
+          offsetY: this.panels.defaults.maximizedMargin
+        };
         break;
       default:
         break;
@@ -246,11 +330,20 @@ class Client {
       ReactDOM.render(React.createElement(el, null, null), container.content);
     };
     
-    config.onclosed = function(container) {
-      ReactDOM.unmountComponentAtNode(container.content)
-    };
-    
     this.panels.create(config);
+  }
+  
+  closePanel(name) {
+    var panels = this.panels.getPanels(function() {
+      return (this.id === name);
+    });
+    
+    if (panels.length > 0) {
+      if (panels[0].status === 'minimized') {
+        this.react.taskbar.popTask(panels[0]);
+      }
+      panels[0].close();
+    }
   }
   
   focusPanel(name) {
@@ -264,7 +357,6 @@ class Client {
       } else {
         panels[0].unsmallify();
         panels[0].front();
-        panels[0].reposition();
       }
     }
   }
@@ -343,12 +435,13 @@ class Client {
     // handle incoming JSON objects
     // use the Events handler collection
     this.conn.onObject = function (obj) {
-      var op = null;
+      var op = "";
       if (obj.hasOwnProperty('gmcp')) {
         op = obj.gmcp;
       } else if (obj.hasOwnProperty('op')) {
         op = obj.op;
       }
+      client.settings.debugEvents && console.log("EVENT "+op+":", obj);
       op && client.events.emit(op, obj);
     };
   }

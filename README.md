@@ -3,15 +3,19 @@ An interactive web portal for PennMUSH, including a web terminal client and grap
 
 See <https://node.grapenut.org> for a live demo.
 
-Made using ```create-react-app```. Can use any of the standard React tutorials to help get started.
+Made using ```create-react-app```. Refer to your favorite React tutorial for more details.
 
-After cloning the repository enter the directory and ```npm install``` to load dependencies.
+After cloning the repository enter the directory and ```npm install``` to load javascript dependencies.
 
-You can run ```npm run build``` to compile the code into a website that you can drop into your existing web server.
+You can run ```npm run build``` to compile the code into a static website that you can drop into your existing web server.
 
 You can run ```npm start``` to run a development webserver on port 3000 that hot-loads your code changes automatically.
+Start an HTTPS dev server with ```HTTPS=true npm start```.
 
-```public/``` contains the HTML and static resources.
+Edit ```config-overrides.js``` to set your SSL certificate and key files for the development server.
+Delete ```config-overrides.js``` to get rid of the SSL config, if you are not using it.
+
+```public/``` contains the local configs and static resources.
 
 ```src/``` contains the javascript source code for the client and UI.
 
