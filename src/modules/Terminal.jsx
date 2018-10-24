@@ -115,7 +115,7 @@ class Terminal extends React.Component {
         <div className={classes.taskbar}>
           <div ref={this.prompt} className={classNames(classes.prompt, "ansi-37 ansi-40")}></div>
           <div className={classes.scrollcount}>
-            <Typography variant="button" color="error" align="right">
+            <Typography color="error" align="right">
               {lines > 0 && "...and "+lines+" more lines..."}
             </Typography>
           </div>

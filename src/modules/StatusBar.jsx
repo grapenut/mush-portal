@@ -52,7 +52,6 @@ class StatusBar extends React.Component {
       <div className={classes.frame} onClick={() => window.client.focus()}>
         <Typography
           align="right"
-          variant="button"
           color="inherit"
           noWrap
         >

@@ -1,15 +1,16 @@
 import { createMuiTheme } from '@material-ui/core/styles';
-import blue from '@material-ui/core/colors/blue';
+import blueGrey from '@material-ui/core/colors/blueGrey';
 import indigo from '@material-ui/core/colors/indigo';
 
 const Theme = createMuiTheme({
-  palette: {
-    primary: indigo,
-    secondary: blue,
-    type: 'dark',
-  },
   typography: {
     useNextVariants: true,
+//    suppressDeprecationWarnings: true,
+  },
+  palette: {
+    primary: indigo,
+    secondary: blueGrey,
+    type: 'dark',
   },
 });
 

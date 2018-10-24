@@ -38,6 +38,9 @@ const styles = theme => ({
   pad: {
     margin: "1em",
   },
+  padded: {
+    margin: theme.spacing.unit,
+  },
 });
 
 
@@ -150,7 +153,7 @@ class Upload extends React.Component {
         <div className={classes.flex}>
           <div className={classes.stretchflex}>
             <div className={classes.pad}></div>
-            <TextField label="Command delay (in ms)" value={delay} type="number" variant="outlined" onChange={this.changeDelay} fullWidth />
+            <TextField className={classes.padded} label="Command delay (in ms)" value={delay} type="number" variant="outlined" onChange={this.changeDelay} fullWidth />
           </div>
           { !uploading ? (
             <div className={classes.stretchflex}>

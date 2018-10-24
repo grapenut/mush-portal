@@ -93,6 +93,11 @@ const styles = theme => ({
   fileinput: {
     display: 'none',
   },
+  padded: {
+    width: "calc(100%-"+2*theme.spacing.unit+")",
+    padding: -theme.spacing.unit,
+    margin: theme.spacing.unit,
+  },
 });
 
 
@@ -126,10 +131,10 @@ class TaskBar extends React.Component {
       logAnchor: null,
     };
     
-    this.help = null;
-    this.url = null;
-    this.file = null;
-    this.logname = null;
+    this.help = "";
+    this.url = "";
+    this.file = "";
+    this.logname = "";
     this.frame = React.createRef();
   }
 
@@ -217,11 +222,8 @@ class TaskBar extends React.Component {
   
   showUpload = event => {
     this.file = null;
-    console.log('before close', event.currentTarget);
     this.closeMenu();
-    console.log('after close');
     this.setState({ uploadAnchor: event.currentTarget });
-    console.log('after anchor');
   };
   
   closeUpload = () => {
@@ -375,95 +377,93 @@ class TaskBar extends React.Component {
                 </Button>
               </Tooltip>
               
-              <Tooltip title="Change settings.">
-                <Button aria-label="open-settings" aria-haspopup="true" onClick={this.openDrawer}>
-                  <SettingsIcon />
-                </Button>
-              </Tooltip>
-              
               <Tooltip title="More tasks...">
                 <Button aria-owns={menuAnchor ? 'taskbar.menu' : null} aria-label="open-menu" aria-haspopup="true" onClick={this.showMenu}>
                   <MenuIcon />
                 </Button>
               </Tooltip>
               
-                <Button onClick={this.closeMenu}>
+              <Popover id="taskbar.help" anchorEl={helpAnchor} open={Boolean(helpAnchor)} onClose={this.closeHelp}>
+                <form onSubmit={this.searchHelp}>
+                  <TextField label="Help topic" className={classes.padded} autoComplete="false" autoFocus variant="outlined" onChange={this.typeHelp} />
+                </form>
+                <Button fullWidth onClick={this.searchHelp}>
+                  Get Help
+                </Button>
+              </Popover>
+              
+              <Popover id="taskbar.log" anchorEl={logAnchor} open={Boolean(logAnchor)} onClose={this.closeLog}>
+                <form onSubmit={this.saveLog}>
+                  <TextField label="File Name" variant="outlined" className={classes.padded}
+                    onChange={this.typeLog} autoFocus
+                    InputProps={{ inputProps: { style: { textAlign: 'right' }}, endAdornment: <InputAdornment position="end">.txt</InputAdornment> }}
+                  />
+                </form>
+                <Button fullWidth onClick={this.saveLog}>
+                  Save Log
+                </Button>
+              </Popover>
+              
+              <Popover id="taskbar.upload" anchorEl={uploadAnchor} open={Boolean(uploadAnchor)} onClose={this.closeUpload}>
+                <form onSubmit={this.handleURL} className={classes.padded}>
+                  <TextField type="url" fullWidth label="Insert URL" variant="outlined" onChange={this.typeURL} autoFocus />
+                </form>
+                <Button onClick={this.handleURL}>
+                  Upload URL
+                </Button>
+                <input
+                  accept="text/plain"
+                  className={classes.fileinput}
+                  id="file.upload"
+                  type="file"
+                  onChange={this.handleFile}
+                />
+                <label htmlFor="file.upload">
+                  <Button component="span">
+                    Choose File
+                  </Button>
+                </label>
+                <Button onClick={this.previewUpload}>
+                  Paste Text
+                </Button>
+              </Popover>
+              
+              <Menu id="taskbar.menu" anchorEl={menuAnchor} open={Boolean(menuAnchor)} onClick={this.closeMenu} onClose={this.closeMenu}>
+                <MenuItem onClick={this.closeMenu}>
                   <Tooltip title="Close menu.">
                     <MenuIcon />
                   </Tooltip>
-                </Button>
-                <Button onClick={this.openDrawer}>
+                </MenuItem>
+                <MenuItem onClick={this.openDrawer}>
                   <Tooltip title="Change settings.">
                     <SettingsIcon />
                   </Tooltip>
-                </Button>
-                <Button aria-owns={uploadAnchor ? 'taskbar.upload' : null} aria-label="open-upload" aria-haspopup="true" onClick={this.showUpload}>
+                </MenuItem>
+                <MenuItem aria-owns={uploadAnchor ? 'taskbar.upload' : null} aria-label="open-upload" aria-haspopup="true" onClick={this.showUpload}>
                   <Tooltip title="Upload file/URL.">
                     <CloudUploadIcon />
                   </Tooltip>
-                </Button>
-                <Button aria-owns={logAnchor ? 'taskbar.log' : null} aria-label="open-log" aria-haspopup="true" onClick={this.showLog}>
+                </MenuItem>
+                <MenuItem aria-owns={logAnchor ? 'taskbar.log' : null} aria-label="open-log" aria-haspopup="true" onClick={this.showLog}>
                   <Tooltip title="Save display log.">
                     <SaveIcon />
                   </Tooltip>
-                </Button>
-                <Button onClick={this.clearScreen}>
+                </MenuItem>
+                <MenuItem onClick={this.clearScreen}>
                   <Tooltip title="Clear screen.">
                     <BackspaceIcon />
                   </Tooltip>
-                </Button>
+                </MenuItem>
                 {jsonapi && (
-                  <Button onClick={() => this.sendText("jsonapi/phaser")}>
+                  <MenuItem onClick={() => this.sendText("jsonapi/phaser")}>
                     <Tooltip title="2D Graphical UI">
                       <VideogameAssetIcon />
                     </Tooltip>
-                  </Button>
+                  </MenuItem>
                 )}
 
-                <Popover id="taskbar.help" anchorEl={helpAnchor} open={Boolean(helpAnchor)} onClose={this.closeHelp}>
-                  <form onSubmit={this.searchHelp}>
-                    <TextField label="Search help" autoComplete="false" autoFocus variant="outlined" onChange={this.typeHelp} />
-                  </form>
-                  <Button fullWidth onClick={this.searchHelp}>
-                    Get Help
-                  </Button>
-                </Popover>
-                
-                <Popover id="taskbar.log" anchorEl={logAnchor} open={Boolean(logAnchor)} onClose={this.closeLog}>
-                  <form onSubmit={this.saveLog}>
-                    <TextField label="File name" variant="outlined" onChange={this.typeLog} fullWidth autoFocus 
-                      InputProps={{ endAdornment: <InputAdornment position="end">.txt</InputAdornment> }}
-                    />
-                  </form>
-                  <Button fullWidth onClick={this.saveLog}>
-                    Save Log
-                  </Button>
-                </Popover>
-                
-                <Popover id="taskbar.upload" anchorEl={uploadAnchor} open={Boolean(uploadAnchor)} onClose={this.closeUpload}>
-                  <form onSubmit={this.handleURL}>
-                    <TextField type="url" label="Paste URL" variant="outlined" onChange={this.typeURL} fullWidth autoFocus />
-                  </form>
-                  <Button onClick={this.handleURL}>
-                    Upload URL
-                  </Button>
-                  <input
-                    accept="text/plain"
-                    className={classes.fileinput}
-                    id="file.upload"
-                    type="file"
-                    onChange={this.handleFile}
-                  />
-                  <label htmlFor="file.upload">
-                    <Button component="span">
-                      Choose File
-                    </Button>
-                  </label>
-                  <Button onClick={this.previewUpload}>
-                    Paste Text
-                  </Button>
-                </Popover>
-                
+              </Menu>
+
               <div className={classes.tasksep}></div>
             </Toolbar>
           </AppBar>

@@ -10,7 +10,7 @@
 /////////////////////////////////////////////////////////////////////
 var config = client.panels.defaults;
 
-config.theme = "#3f51b5 filledlight";
+config.theme = "#3f51b5";
 config.container = client.react.container;
 config.contentOverflow = "auto";
 config.maximizedMargin = 5;

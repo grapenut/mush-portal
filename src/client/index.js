@@ -2,8 +2,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import { MuiThemeProvider } from '@material-ui/core/styles';
+
 import saveAs from 'file-saver';
 
+import Theme from '../modules/Theme';
 import Chargen from '../modules/Chargen';
 import Mailbox from '../modules/Mailbox';
 import Sendmail from '../modules/Mailbox/Sendmail';
@@ -46,6 +49,7 @@ class Client {
     // App Components
     this.events = new EventEmitter();
     this.panels = jsPanel;
+    this.theme = Theme;
     
     // React Components
     this.react = {
@@ -328,6 +332,8 @@ class Client {
       return;
     }
     
+    el = React.createElement(el, null, null)
+    
     if (!config.id) {
       config.id = name;
     }
@@ -337,7 +343,8 @@ class Client {
     }
     
     config.callback = function(container) {
-      ReactDOM.render(React.createElement(el, null, null), container.content);
+      this.content.style.backgroundColor = Theme.palette.background.paper;
+      ReactDOM.render(React.createElement(MuiThemeProvider, { theme: Theme }, el), container.content);
     };
     
     this.panels.create(config);
