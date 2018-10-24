@@ -505,7 +505,7 @@ class Client {
     if (this.jsonapi) {
       var str;
       
-      if (args.length > 0) {
+      if (args && args.length > 0) {
         str = cmd+" "+args;
       } else {
         str = cmd;
@@ -514,7 +514,7 @@ class Client {
       this.sendText("jsonapi/"+str);
     } else {
       if (JSONAPI.hasOwnProperty(cmd)) {
-        this.sendText(JSONAPI[cmd]);
+        JSONAPI[cmd](this, args);
       }
     }
   }

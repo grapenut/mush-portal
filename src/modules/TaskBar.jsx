@@ -165,6 +165,10 @@ class TaskBar extends React.Component {
     window.client.sendText(txt);
   };
 
+  sendAPI = (cmd, args) => {
+    window.client.sendAPI(cmd, args);
+  };
+
   setUnreadMail = u => {
     this.setState({unreadMail: u});
   };
@@ -356,7 +360,7 @@ class TaskBar extends React.Component {
               </Tooltip>
               
               <Tooltip title="Bulletin Boards">
-                <Button aria-label="open-bbs" onClick={() => this.sendText(jsonapi ? "jsonapi/bblist" : "+bbscan")}>
+                <Button aria-label="open-bbs" onClick={() => this.sendAPI("bblist")}>
                   <BadgeIcon count={unreadBB}>
                     <ForumIcon />
                   </BadgeIcon>
@@ -364,7 +368,7 @@ class TaskBar extends React.Component {
               </Tooltip>
               
               <Tooltip title="@mail Inbox">
-                <Button aria-label="open-mail" onClick={() => this.sendText(jsonapi ? "jsonapi/maillist" : "@mail")}>
+                <Button aria-label="open-mail" onClick={() => this.sendAPI("maillist")}>
                   <BadgeIcon count={unreadMail}>
                     <MailIcon />
                   </BadgeIcon>
@@ -454,13 +458,22 @@ class TaskBar extends React.Component {
                     <BackspaceIcon />
                   </Tooltip>
                 </MenuItem>
-                {jsonapi && (
-                  <MenuItem onClick={() => this.sendText("jsonapi/phaser")}>
-                    <Tooltip title="2D Graphical UI">
-                      <VideogameAssetIcon />
-                    </Tooltip>
-                  </MenuItem>
-                )}
+                <MenuItem onClick={() => {
+                  if (jsonapi) {
+                    this.sendAPI("phaser")
+                  } else {
+                    window.client.addReactpanel("Phaser", {
+                      contentSize: { width: "640px", height: "480px" },
+                      resizeit: false,
+                      dragit: { snap: { callback: null } },
+                      panelSize: null,
+                    });
+                  }
+                }}>
+                  <Tooltip title="2D Graphical UI">
+                    <VideogameAssetIcon />
+                  </Tooltip>
+                </MenuItem>
 
               </Menu>
 
