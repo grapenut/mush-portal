@@ -45,12 +45,13 @@ const styles = theme => ({
   },
   body: {
     flex: 1,
+    display: "flex",
     "overflow-y": "auto",
     "overflow-x": "hidden",
   },
   bodytext: {
     width: "100%",
-    height: "100%",
+    flex: 1,
   },
   actions: {
     "justify-content": "space-evenly",

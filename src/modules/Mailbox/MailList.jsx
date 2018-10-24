@@ -64,7 +64,7 @@ class MailList extends React.Component {
     return (
       <div className={classes.frame}>
         <div className={classes.header}>
-          <Typography variant="subheading" className={classes.title}>
+          <Typography variant="subtitle1" className={classes.title}>
             <span className={classes.container}>
               {maillist.length} Messages ({unread} unread)
               <span className={classes.flex} />

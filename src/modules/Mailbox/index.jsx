@@ -46,15 +46,15 @@ class Mailbox extends React.Component {
   }
   
   openMail = (message) => {
-    const { maillist } = this.state;
+    const { maillist, unreadMail } = this.state;
     const mail = maillist[message];
     
     if (mail.unread) {
       mail.unread = false;
-      this.forceUpdate();
+      this.setState({ maillist, unreadMail: unreadMail-1 });
       window.client.sendText("@mail/status "+mail.id+"=read");
     }
-
+    
     window.client.sendText("jsonapi/mailitem "+mail.id);
   }
   
@@ -90,7 +90,7 @@ class Mailbox extends React.Component {
   }
 
   markUnread() {
-    const { maillist, mailitem } = this.state;
+    const { maillist, mailitem, unreadMail } = this.state;
     
     if (mailitem.unread) {
       return;
@@ -99,7 +99,7 @@ class Mailbox extends React.Component {
     mailitem.unread = true;
     maillist[mailitem.key].unread = true;
     window.client.sendText("@mail/status "+mailitem.id+"=unread");
-    this.setState({ maillist, mailitem });
+    this.setState({ maillist, mailitem, unreadMail: unreadMail+1 });
   }
 
   purgeMail() {

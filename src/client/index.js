@@ -2,9 +2,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import saveAs from 'file-saver';
+
 import Chargen from '../modules/Chargen';
 import Mailbox from '../modules/Mailbox';
 import Sendmail from '../modules/Mailbox/Sendmail';
+import Upload from '../modules/Upload';
 import Game from '../phaser';
 
 import Connection from './connection';
@@ -31,7 +34,7 @@ class Client {
   constructor() {
     // client settings
     this.settings = {
-      debugEvents: "true",
+      debugEvents: true,
     };
     this.loadSettings();
     
@@ -53,6 +56,7 @@ class Client {
       login: null,
       mailbox: null,
       sendmail: null,
+      upload: null,
       phaser: null,
     };
     
@@ -62,9 +66,10 @@ class Client {
     this.serverSSL = null;
     this.serverProto = null;
     this.serverUrl = null;
-    this.conn = null;
     
+    this.conn = null;
     this.lastCommand = null;
+    this.jsonapi = false;
     
     // number of lines of scroll within which the output scroll down when new items are received
     this.scrollThreshold = 5;
@@ -135,6 +140,8 @@ class Client {
   
   // change a setting, casting the string argument to the correct type
   changeSetting(key, value) {
+    if (!this.settings.hasOwnProperty(key)) return;
+    
     var type = typeof this.settings[key];
     
     switch (type) {
@@ -291,6 +298,9 @@ class Client {
       case 'Mailbox':
         el = Mailbox;
         break;
+      case 'Upload':
+        el = Upload;
+        break;
       case 'Sendmail':
         el = Sendmail;
         break;
@@ -441,8 +451,13 @@ class Client {
       } else if (obj.hasOwnProperty('op')) {
         op = obj.op;
       }
-      client.settings.debugEvents && console.log("EVENT "+op+":", obj);
-      op && client.events.emit(op, obj);
+      
+      if (op && op !== "") {
+        client.settings.debugEvents && console.log("JSON "+op+":", obj);
+        client.events.emit(op, obj);
+      } else {
+        client.settings.debugEvents && console.log("JSON (unknown):", obj);
+      }
     };
   }
 
@@ -487,6 +502,21 @@ class Client {
     }
   }
 
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  // save the current display to a log file
+  saveLog(filename) {
+    if (!this.output) return;
+    
+    var text = this.output.root.innerHTML;
+    if (text.length > 0) {
+      var blob = new Blob([text], {type: "text/html;charset=utf-8"});
+      saveAs(blob, filename);
+    } else {
+      alert("File not saved! The current output is empty.");
+    }
+  }
+  
 }
 
 export default Client;

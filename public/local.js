@@ -178,6 +178,11 @@ client.events.on('logout', (obj) => {
   client.react.statusbar && client.react.statusbar.setStatus(null);
 });
 
+// enable jsonapi commands
+client.events.on('jsonapi', (obj) => {
+  client.jsonapi = true;
+  client.react.taskbar.forceUpdate();
+});
 
 
 
