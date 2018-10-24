@@ -6,12 +6,14 @@ import { withStyles } from '@material-ui/core/styles';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-//import IconButton from '@material-ui/core/IconButton';
+import IconButton from '@material-ui/core/IconButton';
 
 import MailIcon from '@material-ui/icons/Mail';
 import DraftsIcon from '@material-ui/icons/Drafts';
 import PriorityHighIcon from '@material-ui/icons/PriorityHigh';
 import DeleteIcon from '@material-ui/icons/Delete';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import CancelIcon from '@material-ui/icons/Cancel';
 
 //////////////////////////////////////////////////////////////////////
 
@@ -38,7 +40,20 @@ class MailListItem extends React.Component {
   }
   
   render() {
-    const { classes, mail, onOpen } = this.props;
+    const { classes, mail, onOpen, quickDelete, handleMark } = this.props;
+    
+    var icon;
+    if (mail.deleted) {
+      icon = (<DeleteIcon className={mail.unread ? null : classes.read} />);
+    } else if (mail.unread) {
+      if (mail.urgent) {
+        icon = (<PriorityHighIcon />);
+      } else {
+        icon = (<MailIcon />);
+      }
+    } else {
+      icon = (<DraftsIcon className={classes.read} />);
+    }
 
     return (
       <div className={classes.frame}>
@@ -47,22 +62,10 @@ class MailListItem extends React.Component {
           button
           dense
           divider
-          onClick={onOpen}
+          onClick={quickDelete ? () => {} : onOpen}
         >
           <ListItemIcon className={classes.listicon}>
-            {mail.deleted ? (
-              <DeleteIcon className={mail.unread ? null : classes.read} />
-            ) : (
-              mail.unread ? (
-                mail.urgent ? (
-                  <PriorityHighIcon />
-                ) : (
-                  <MailIcon />
-                )
-              ) : (
-                <DraftsIcon className={classes.read} />
-              )
-            )}
+            {icon}
           </ListItemIcon>
           <ListItemText
             primary={mail.subject}
@@ -77,6 +80,15 @@ class MailListItem extends React.Component {
               </span>
             }
           />
+          {quickDelete && (
+            <IconButton onClick={handleMark}>
+              {mail.deleted ? (
+                <CheckCircleIcon />
+              ) : (
+                <CancelIcon />
+              )}
+            </IconButton>
+          )}
         </ListItem>
       </div>
     );
@@ -87,7 +99,9 @@ MailListItem.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
   mail: PropTypes.object.isRequired,
+  quickDelete: PropTypes.bool,
   onOpen: PropTypes.func,
+  handleMark: PropTypes.func,
 };
 
 export default withStyles(styles, { withTheme: true })(MailListItem);

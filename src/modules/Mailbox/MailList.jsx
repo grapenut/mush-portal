@@ -9,6 +9,7 @@ import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import DeleteSweepIcon from '@material-ui/icons/DeleteSweep';
 import CreateIcon from '@material-ui/icons/Create';
 
 import MailListItem from './MailListItem';
@@ -47,7 +48,9 @@ const styles = theme => ({
 class MailList extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { };
+    this.state = {
+      quickDelete: false
+    };
   }
 
   purgeMail = () => {
@@ -58,8 +61,13 @@ class MailList extends React.Component {
     window.client.react.mailbox.sendMail("", "", "");
   };
   
+  toggleDelete = () => {
+    this.setState({ quickDelete: !this.state.quickDelete });
+  };
+  
   render() {
-    const { classes, openMail, maillist, unread } = this.props;
+    const { classes, openMail, maillist, unread, handleMark } = this.props;
+    const { quickDelete } = this.state;
     
     return (
       <div className={classes.frame}>
@@ -68,13 +76,18 @@ class MailList extends React.Component {
             <span className={classes.container}>
               {maillist.length} Messages ({unread} unread)
               <span className={classes.flex} />
+              <Tooltip title="Move multiple files to trash.">
+                <IconButton onClick={this.toggleDelete}>
+                  <DeleteSweepIcon />
+                </IconButton>
+              </Tooltip>
               <Tooltip title="Purge deleted mail.">
-                <IconButton onClick={this.purgeMail}>
+                <IconButton onClick={this.purgeMail} disabled={quickDelete}>
                   <DeleteForeverIcon />
                 </IconButton>
               </Tooltip>
               <Tooltip title="Send a new message.">
-                <IconButton onClick={this.sendMail}>
+                <IconButton onClick={this.sendMail} disabled={quickDelete}>
                   <CreateIcon />
                 </IconButton>
               </Tooltip>
@@ -87,7 +100,9 @@ class MailList extends React.Component {
             disablePadding
           >
             {maillist.map((mail,i) => (
-              <MailListItem key={i} mail={mail} onOpen={() => openMail(i)} />
+              <MailListItem key={i} quickDelete={quickDelete} mail={mail} onOpen={() => openMail(i)}
+                handleMark={() => handleMark(i)}
+              />
             ))}
           </List>
         </div>
@@ -100,6 +115,7 @@ MailList.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
   openMail: PropTypes.func,
+  handleMark: PropTypes.func,
   maillist: PropTypes.array,
   unread: PropTypes.number.isRequired,
 };

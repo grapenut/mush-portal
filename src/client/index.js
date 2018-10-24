@@ -17,6 +17,7 @@ import Connection from './connection';
 import Emulator from './emulator';
 import UserInput from './userinput';
 import Utils from './utils';
+import JSONAPI from './jsonapi';
 
 import './ansi.css';
 import 'jspanel4/dist/jspanel.min.css';
@@ -147,6 +148,11 @@ class Client {
     if (!this.settings.hasOwnProperty(key)) return;
     
     var type = typeof this.settings[key];
+    
+    if (typeof value === type) {
+      this.settings[key] = value;
+      return;
+    }
     
     switch (type) {
       case "string":
@@ -310,19 +316,6 @@ class Client {
         break;
       case 'Phaser':
         el = Game;
-        config.contentSize = {
-          width: "640px",
-          height: "480px",
-        };
-        config.resizeit = false;
-        config.dragit = { snap: { callback: null } };
-        config.panelSize = null;
-        config.position = {
-          my: "right-top",
-          at: "right-top",
-          offsetX: -this.panels.defaults.maximizedMargin,
-          offsetY: this.panels.defaults.maximizedMargin
-        };
         break;
       default:
         break;
@@ -334,12 +327,8 @@ class Client {
     
     el = React.createElement(el, null, null)
     
-    if (!config.id) {
-      config.id = name;
-    }
-    
     if (!config.headerTitle) {
-      config.headerTitle = config.id;
+      config.headerTitle = name;
     }
     
     config.callback = function(container) {
@@ -352,7 +341,7 @@ class Client {
   
   closePanel(name) {
     var panels = this.panels.getPanels(function() {
-      return (this.id === name);
+      return (this.id === name || this.headertitle.innerText === name);
     });
     
     if (panels.length > 0) {
@@ -365,7 +354,7 @@ class Client {
   
   focusPanel(name) {
     var panels = this.panels.getPanels(function() {
-      return (this.id === name);
+      return (this.id === name || this.headertitle.innerText === name);
     });
     
     if (panels.length > 0) {
@@ -511,11 +500,32 @@ class Client {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
   
+  // send an API command, falling back to the raw softcode if the server doesn't support it
+  sendAPI(cmd, args) {
+    if (this.jsonapi) {
+      var str;
+      
+      if (args.length > 0) {
+        str = cmd+" "+args;
+      } else {
+        str = cmd;
+      }
+      
+      this.sendText("jsonapi/"+str);
+    } else {
+      if (JSONAPI.hasOwnProperty(cmd)) {
+        this.sendText(JSONAPI[cmd]);
+      }
+    }
+  }
+  
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  
   // save the current display to a log file
   saveLog(filename) {
     if (!this.output) return;
-    
-    var text = this.output.root.innerHTML;
+    var node = this.output.root;
+    var text = (node.innerText || node.textContent);
     if (text.length > 0) {
       var blob = new Blob([text], {type: "text/html;charset=utf-8"});
       saveAs(blob, filename);

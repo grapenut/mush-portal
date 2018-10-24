@@ -55,7 +55,22 @@ class Mailbox extends React.Component {
       window.client.sendText("@mail/status "+mail.id+"=read");
     }
     
-    window.client.sendText("jsonapi/mailitem "+mail.id);
+    window.client.sendAPI("mailitem", mail.id);
+  }
+  
+  handleMark = (message) => {
+    const { maillist } = this.state;
+    const mail = maillist[message];
+    
+    mail.deleted = !mail.deleted;
+    
+    if (mail.deleted) {
+      window.client.sendText("@mail/clear "+mail.id);
+    } else {
+      window.client.sendText("@mail/unclear "+mail.id);
+    }
+    
+    this.setState({ maillist });
   }
   
   setUnreadMail(unreadMail) {
@@ -111,7 +126,7 @@ class Mailbox extends React.Component {
         this.setState({ mailitem: null });
       }
       window.client.sendText("@mail/purge");
-      window.client.sendText("jsonapi/maillist");
+      window.client.sendAPI("maillist");
     }
   }
   
@@ -122,7 +137,7 @@ class Mailbox extends React.Component {
         window.client.react.sendmail.setFields(to, subject, body);
       }
     } else {
-      window.client.addReactPanel("Sendmail");
+      window.client.addReactPanel("Sendmail", { panelSize: "30em 30em" });
       window.client.react.sendmail.setFields(to, subject, body);
     }  
   }
@@ -161,7 +176,7 @@ class Mailbox extends React.Component {
       <div className={classes.frame}>
         <div className={classes.left}>
           { maillist && (
-            <MailList maillist={maillist} unread={unreadMail} openMail={this.openMail} />
+            <MailList maillist={maillist} unread={unreadMail} openMail={this.openMail} handleMark={this.handleMark} />
           )}
         </div>
         <div className={classes.right}>

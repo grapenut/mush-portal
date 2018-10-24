@@ -18,16 +18,15 @@ config.syncMargins = true;
 config.boxShadow = false;
 config.border = "2px ridge darkgrey";
 config.borderRadius = 10;
-config.panelSize = {
-  width: 'calc(50% - ' + 1.5*config.maximizedMargin + 'px)',
-  height: 'calc(50% - ' + 1.5*config.maximizedMargin + 'px)',
-};
+//config.panelSize = {
+//  width: 'calc(50% - ' + 1.5*config.maximizedMargin + 'px)',
+//  height: 'calc(50% - ' + 1.5*config.maximizedMargin + 'px)',
+//};
 config.position = {
   my: "right-top",
   at: "right-top",
   offsetX: -config.maximizedMargin,
   offsetY: config.maximizedMargin,
-  autoposition: "down",
 };
 config.dragit.snap = {
   repositionOnSnap: true,
@@ -86,6 +85,13 @@ client.events.on('phaser', (obj) => {
   if (client.react.phaser) {
     client.focusPanel("Phaser");
   } else {
+    obj.contentSize = {
+      width: "640px",
+      height: "480px",
+    };
+    obj.resizeit = false;
+    obj.dragit = { snap: { callback: null } };
+    obj.panelSize = null;
     client.addReactPanel("Phaser", obj);
   }
 });
@@ -95,6 +101,10 @@ client.events.on('maillist', (obj) => {
   if (client.react.mailbox) {
     client.focusPanel("Mailbox");
   } else {
+    obj.panelSize = {
+      width: 'calc(50% - ' + 1.5*config.maximizedMargin + 'px)',
+      height: 'calc(100% - ' + 2*config.maximizedMargin + 'px)',
+    };
     client.addReactPanel("Mailbox", obj);
   }
   obj.maillist.reverse();
@@ -106,6 +116,10 @@ client.events.on('mailitem', (obj) => {
   if (client.react.mailbox) {
     client.focusPanel("Mailbox");
   } else {
+    obj.panelSize = {
+      width: 'calc(50% - ' + 1.5*config.maximizedMargin + 'px)',
+      height: 'calc(100% - ' + 2*config.maximizedMargin + 'px)',
+    };
     client.addReactPanel("Mailbox", obj);
   }  
   client.react.mailbox.openMailItem(obj);
@@ -121,6 +135,10 @@ client.events.on('sendmail', (obj) => {
       client.react.sendmail.setBody(obj.body);
     }
   } else {
+    obj.panelSize = {
+      width: "40em",
+      height: "10em",
+    };
     client.addReactPanel("Sendmail", obj);
     client.react.sendmail.setTarget(obj.to);
     client.react.sendmail.setSubject(obj.subject);

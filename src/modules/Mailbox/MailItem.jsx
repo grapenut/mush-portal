@@ -119,8 +119,8 @@ class MailItem extends React.Component {
           }
         />
         <CardContent className={classes.body}>
-          <Typography>
-            {mail.body}
+          <Typography component="span">
+            <pre>{mail.body}</pre>
           </Typography>
         </CardContent>
         <CardActions className={classes.actions}>
