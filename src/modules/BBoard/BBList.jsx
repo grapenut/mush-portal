@@ -5,13 +5,15 @@ import { withStyles } from '@material-ui/core/styles';
 
 import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import Tooltip from '@material-ui/core/Tooltip';
 
-import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
-import CreateIcon from '@material-ui/icons/Create';
+//import IconButton from '@material-ui/core/IconButton';
+//import Tooltip from '@material-ui/core/Tooltip';
 
-import MailListItem from './MailListItem';
+//import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+//import DeleteSweepIcon from '@material-ui/icons/DeleteSweep';
+//import CreateIcon from '@material-ui/icons/Create';
+
+import BBListItem from './BBListItem';
 
 
 //////////////////////////////////////////////////////////////////////
@@ -44,40 +46,22 @@ const styles = theme => ({
 //////////////////////////////////////////////////////////////////////
 
 
-class MailList extends React.Component {
+class BBList extends React.Component {
   constructor(props) {
     super(props);
     this.state = { };
   }
 
-  purgeMail = () => {
-    window.client.react.mailbox.purgeMail();
-  };
-
-  sendMail = () => {
-    window.client.react.mailbox.sendMail("", "", "");
-  };
-  
   render() {
-    const { classes, openMail, maillist, unread } = this.props;
+    const { classes, openBoard, boardlist } = this.props;
     
     return (
       <div className={classes.frame}>
         <div className={classes.header}>
           <Typography variant="subtitle1" className={classes.title}>
             <span className={classes.container}>
-              {maillist.length} Messages ({unread} unread)
+              {boardlist.length} Bulletin Boards
               <span className={classes.flex} />
-              <Tooltip title="Purge deleted mail.">
-                <IconButton onClick={this.purgeMail}>
-                  <DeleteForeverIcon />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Send a new message.">
-                <IconButton onClick={this.sendMail}>
-                  <CreateIcon />
-                </IconButton>
-              </Tooltip>
             </span>
           </Typography>
         </div>
@@ -86,8 +70,8 @@ class MailList extends React.Component {
             dense
             disablePadding
           >
-            {maillist.map((mail,i) => (
-              <MailListItem key={i} mail={mail} onOpen={() => openMail(i)} />
+            {boardlist.map((board,i) => (
+              <BBListItem key={i} board={board} onOpen={() => openBoard(i)} />
             ))}
           </List>
         </div>
@@ -96,13 +80,12 @@ class MailList extends React.Component {
   }
 }
 
-MailList.propTypes = {
+BBList.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
-  openMail: PropTypes.func,
-  maillist: PropTypes.array,
-  unread: PropTypes.number.isRequired,
+  openBoard: PropTypes.func.isRequired,
+  boardlist: PropTypes.array.isRequired,
 };
 
-export default withStyles(styles, { withTheme: true })(MailList);
+export default withStyles(styles, { withTheme: true })(BBList);
 

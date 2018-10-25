@@ -111,6 +111,48 @@ client.events.on('maillist', (obj) => {
   client.react.mailbox.updateMailList(obj.folder, obj.maillist, obj.unread);
 });
 
+// open the bboard reader window
+client.events.on('boardlist', (obj) => {
+  if (client.react.bboard) {
+    client.focusPanel("BBoard");
+  } else {
+    obj.panelSize = {
+      width: 'calc(50% - ' + 1.5*config.maximizedMargin + 'px)',
+      height: 'calc(100% - ' + 2*config.maximizedMargin + 'px)',
+    };
+    client.addReactPanel("BBoard", obj);
+  }
+  client.react.bboard.updateBoardList(obj.boardlist);
+});
+
+// open the bboard reader window
+client.events.on('bbmsglist', (obj) => {
+  if (client.react.bboard) {
+    client.focusPanel("BBoard");
+  } else {
+    obj.panelSize = {
+      width: 'calc(50% - ' + 1.5*config.maximizedMargin + 'px)',
+      height: 'calc(100% - ' + 2*config.maximizedMargin + 'px)',
+    };
+    client.addReactPanel("BBoard", obj);
+  }
+  client.react.bboard.updateBoard(obj);
+});
+
+// open the bboard reader window
+client.events.on('bbmsg', (obj) => {
+  if (client.react.bboard) {
+    client.focusPanel("BBoard");
+  } else {
+    obj.panelSize = {
+      width: 'calc(50% - ' + 1.5*config.maximizedMargin + 'px)',
+      height: 'calc(100% - ' + 2*config.maximizedMargin + 'px)',
+    };
+    client.addReactPanel("BBoard", obj);
+  }
+  client.react.bboard.openMessage(obj);
+});
+
 // open a single mail item
 client.events.on('mailitem', (obj) => {
   if (client.react.mailbox) {

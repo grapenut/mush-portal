@@ -6,11 +6,14 @@ const JSONAPI = {
   mailitem: function(self, args) {
     self.sendText("th null(oob(%#,mailitem,json(object,id,json(string,"+args+"),deleted,switch(setr(0,mailstatus(%#,"+args+")),*C*,true,false),unread,switch(%q0,N*,true,false),urgent,switch(%q0,*U*,true,false),time,json(string,mailtime(%#,"+args+")),subject,json(string,mailsubject(%#,"+args+")),from,json(string,if(setr(0,mailfrom(%#,"+args+")),name(%q0),!PURGED!)),body,json(string,mail(%#,"+args+")))))");
   },
-  bblist: function(self, args) {
-    self.sendText("");
+  boardlist: function(self, args) {
+    self.sendText("+bbread");
   },
-  bbitem: function(self, args) {
-    self.sendText("");
+  bbmsglist: function(self, args) {
+    self.sendText("+bbread "+args);
+  },
+  bbmsg: function(self, args) {
+    self.sendText("+bbread "+args);
   },
 };
 

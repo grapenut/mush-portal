@@ -360,7 +360,7 @@ class TaskBar extends React.Component {
               </Tooltip>
               
               <Tooltip title="Bulletin Boards">
-                <Button aria-label="open-bbs" onClick={() => this.sendAPI("bblist")}>
+                <Button aria-label="open-bbs" onClick={() => this.sendAPI("boardlist")}>
                   <BadgeIcon count={unreadBB}>
                     <ForumIcon />
                   </BadgeIcon>

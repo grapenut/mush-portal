@@ -4,14 +4,17 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
 import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
+//import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+
 //import IconButton from '@material-ui/core/IconButton';
 
-import MailIcon from '@material-ui/icons/Mail';
-import DraftsIcon from '@material-ui/icons/Drafts';
-import PriorityHighIcon from '@material-ui/icons/PriorityHigh';
-import DeleteIcon from '@material-ui/icons/Delete';
+//import MailIcon from '@material-ui/icons/Mail';
+//import DraftsIcon from '@material-ui/icons/Drafts';
+//import PriorityHighIcon from '@material-ui/icons/PriorityHigh';
+//import DeleteIcon from '@material-ui/icons/Delete';
+//import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+//import CancelIcon from '@material-ui/icons/Cancel';
 
 //////////////////////////////////////////////////////////////////////
 
@@ -31,48 +34,33 @@ const styles = theme => ({
 //////////////////////////////////////////////////////////////////////
 
 
-class MailListItem extends React.Component {
+class BBMessageListItem extends React.Component {
   constructor(props) {
     super(props);
     this.state = { };
   }
   
   render() {
-    const { classes, mail, onOpen } = this.props;
-
+    const { classes, message, onOpen } = this.props;
+    
     return (
       <div className={classes.frame}>
         <ListItem
-          key={mail.id}
+          key={message.id}
           button
           dense
           divider
           onClick={onOpen}
         >
-          <ListItemIcon className={classes.listicon}>
-            {mail.deleted ? (
-              <DeleteIcon className={mail.unread ? null : classes.read} />
-            ) : (
-              mail.unread ? (
-                mail.urgent ? (
-                  <PriorityHighIcon />
-                ) : (
-                  <MailIcon />
-                )
-              ) : (
-                <DraftsIcon className={classes.read} />
-              )
-            )}
-          </ListItemIcon>
           <ListItemText
-            primary={mail.subject}
+            primary={message.subject}
             secondary={
               <span>
                 <span>
-                  {mail.from}
+                  {message.author}
                 </span><br />
                 <span>
-                  {mail.time}
+                  {message.date}
                 </span>
               </span>
             }
@@ -83,12 +71,12 @@ class MailListItem extends React.Component {
   }
 }
 
-MailListItem.propTypes = {
+BBMessageListItem.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
-  mail: PropTypes.object.isRequired,
-  onOpen: PropTypes.func,
+  message: PropTypes.object.isRequired,
+  onOpen: PropTypes.func.isRequired,
 };
 
-export default withStyles(styles, { withTheme: true })(MailListItem);
+export default withStyles(styles, { withTheme: true })(BBMessageListItem);
 

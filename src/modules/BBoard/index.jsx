@@ -3,8 +3,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
-import MailList from './MailList';
-import MailItem from './MailItem';
+import BBList from './BBList';
+import BBMessageList from './BBMessageList';
+import BBMessage from './BBMessage';
+
 
 //////////////////////////////////////////////////////////////////////
 
@@ -27,146 +29,98 @@ const styles = theme => ({
     maxHeight: "100%",
     position: "relative",
   },
+  full: {
+    flex: 1,
+    position: "relative",
+    display: "flex",
+  },
 });
 
 
 //////////////////////////////////////////////////////////////////////
 
 
-class Mailbox extends React.Component {
+class BBoard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      mailitem: null,
-      unreadMail: props.unread ? props.unread : 0,
-      folder: props.folder ? props.folder : 0,
-      folderlist: [{ id: 0, name: "Inbox" }],
-      maillist: props.maillist ? props.maillist : [ ],
+      bbmsg: null,
+      board: null,
+      boardlist: props.boardlist ? props.boardlist : [ ],
     };
   }
   
-  openMail = (message) => {
-    const { maillist } = this.state;
-    const mail = maillist[message];
-    
-    if (mail.unread) {
-      mail.unread = false;
-      this.forceUpdate();
-      window.client.sendText("@mail/status "+mail.id+"=read");
-    }
+  openBB = (key) => {
+    const { boardlist } = this.state;
+    const board = boardlist[key];
 
-    window.client.sendText("jsonapi/mailitem "+mail.id);
-  }
+    window.client.sendAPI("bbmsglist", board.id);
+  };
   
-  setUnreadMail(unreadMail) {
-    this.setState({ unreadMail })
-    window.client.react.taskbar.setUnreadMail(unreadMail);
-  }
+  openBBMsg = (key) => {
+    const { board } = this.state;
+    const msg = board.messages[key];
 
-  markDeleted() {
-    const { maillist, mailitem } = this.state;
-    
-    if (mailitem.deleted) {
-      return;
-    }
-    
-    mailitem.deleted = true;
-    maillist[mailitem.key].deleted = true;
-    window.client.sendText("@mail/clear "+mailitem.id);
-    this.setState({ maillist, mailitem });
-  }
-
-  markUndeleted() {
-    const { maillist, mailitem } = this.state;
-    
-    if (!mailitem.deleted) {
-      return;
-    }
-    
-    mailitem.deleted = false;
-    maillist[mailitem.key].deleted = false;
-    window.client.sendText("@mail/unclear "+mailitem.id);
-    this.setState({ maillist, mailitem });
-  }
-
-  markUnread() {
-    const { maillist, mailitem } = this.state;
-    
-    if (mailitem.unread) {
-      return;
-    }
-    
-    mailitem.unread = true;
-    maillist[mailitem.key].unread = true;
-    window.client.sendText("@mail/status "+mailitem.id+"=unread");
-    this.setState({ maillist, mailitem });
-  }
-
-  purgeMail() {
-    if (window.confirm("Do you want to purge deleted mail?")) {
-      const { maillist, mailitem } = this.state;
-      const mail = maillist[mailitem.key];
-      if (mail.deleted) {
-        // we are purging the current mailitem, so clear it
-        this.setState({ mailitem: null });
-      }
-      window.client.sendText("@mail/purge");
-      window.client.sendText("jsonapi/maillist");
-    }
-  }
+    window.client.sendAPI("bbmsg", board.id+"="+msg.id);
+  };
   
-  sendMail(to, subj, body) {
-    window.client.sendText("jsonapi/sendmail "+to+"="+subj+"/"+body);
-  }
-
   componentDidMount() {
-    window.client.react.mailbox = this;
+    window.client.react.bboard = this;
   }
   
   componentWillUnmount() {
-    window.client.react.mailbox = null;
+    window.client.react.bboard = null;
   }
   
-  updateMailList(folder, maillist, unreadMail) {
-    this.setState({ folder, maillist, unreadMail });
+  updateBoardList(boardlist) {
+    this.setState({ boardlist, board: null, bbmsg: null });
   }
   
-  updateFolderList(folderlist) {
-    this.setState({ folderlist });
+  updateBoard(board) {
+    this.setState({ board, bbmsg: null });
   }
   
-  openMailItem(mailitem) {
-    const { maillist } = this.state;
-    maillist.forEach((mail,i) => {
-      if (mail.id === mailitem.id) {
-        mailitem.key = i;
+  openMessage(bbmsg) {
+    const { board } = this.state;
+    board.messages.forEach((bb,i) => {
+      if (bbmsg.id === bb.id) {
+        bbmsg.key = i;
       }
     });
-    this.setState({ mailitem });
+    this.setState({ bbmsg });
   }
 
   render() {
     const { classes } = this.props;
-    const { maillist, mailitem, unreadMail } = this.state;
+    const { boardlist, board, bbmsg } = this.state;
 
     return (
       <div className={classes.frame}>
-        <div className={classes.left}>
-          { maillist && (
-            <MailList maillist={maillist} unread={unreadMail} openMail={this.openMail} />
-          )}
-        </div>
-        <div className={classes.right}>
-          { mailitem && (
-            <MailItem mail={mailitem} />
-          )}
-        </div>
+        { board ? (
+          <div className={classes.full}>
+            <div className={classes.left}>
+              <BBMessageList board={board} openMessage={this.openBBMsg} />
+            </div>
+            <div className={classes.right}>
+              { bbmsg && (
+                <BBMessage message={bbmsg} />
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className={classes.full}>
+            <div className={classes.left}>
+              <BBList boardlist={boardlist} openBoard={this.openBB} />
+            </div>
+            <div className={classes.right}></div>
+          </div>
+        )}
       </div>
     );
   }
 }
 
-Mailbox.propTypes = {
+BBoard.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
   folder: PropTypes.number,
@@ -175,6 +129,6 @@ Mailbox.propTypes = {
   unread: PropTypes.number,
 };
 
-export default withStyles(styles, { withTheme: true })(Mailbox);
+export default withStyles(styles, { withTheme: true })(BBoard);
 
 	

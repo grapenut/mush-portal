@@ -9,7 +9,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import Icon from '@material-ui/core/Icon';
 import Button from '@material-ui/core/Button';
-
+import Tooltip from '@material-ui/core/Tooltip';
 import TextField from '@material-ui/core/TextField';
 
 import SendIcon from '@material-ui/icons/Send';
@@ -45,12 +45,13 @@ const styles = theme => ({
   },
   body: {
     flex: 1,
+    display: "flex",
     "overflow-y": "auto",
     "overflow-x": "hidden",
   },
   bodytext: {
     width: "100%",
-    height: "100%",
+    flex: 1,
   },
   actions: {
     "justify-content": "space-evenly",
@@ -84,6 +85,10 @@ class Sendmail extends React.Component {
   
   setBody(body) {
     this.setState({ body });
+  }
+
+  setFields(to, subject, body) {
+    this.setState({ to, subject, body });
   }
   
   sendMail = () => {
@@ -148,18 +153,20 @@ class Sendmail extends React.Component {
           <textarea id="sendmail-body" className={classes.bodytext} value={body} onChange={this.handleChange("body")} />
         </CardContent>
         <CardActions className={classes.actions}>
-          <Button className={classes.button} onClick={this.sendMail}>
-            <Icon>
-              <SendIcon />
-            </Icon>
-            Send
-          </Button>
-          <Button className={classes.button} onClick={this.closePanel}>
-            <Icon>
-              <CancelIcon />
-            </Icon>
-            Cancel
-          </Button>
+          <Tooltip title="Send draft.">
+            <Button fullWidth className={classes.button} onClick={this.sendMail}>
+              <Icon>
+                <SendIcon />
+              </Icon>
+            </Button>
+          </Tooltip>
+          <Tooltip title="Discard draft.">
+            <Button fullWidth className={classes.button} onClick={this.closePanel}>
+              <Icon>
+                <CancelIcon />
+              </Icon>
+            </Button>
+          </Tooltip>
         </CardActions>
       </Card>
     );

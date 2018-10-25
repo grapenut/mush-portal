@@ -10,6 +10,7 @@ import Theme from '../modules/Theme';
 import Chargen from '../modules/Chargen';
 import Mailbox from '../modules/Mailbox';
 import Sendmail from '../modules/Mailbox/Sendmail';
+import BBoard from '../modules/BBoard';
 import Upload from '../modules/Upload';
 import Game from '../phaser';
 
@@ -61,6 +62,7 @@ class Client {
       login: null,
       mailbox: null,
       sendmail: null,
+      bboard: null,
       upload: null,
       phaser: null,
     };
@@ -314,6 +316,9 @@ class Client {
       case 'Sendmail':
         el = Sendmail;
         break;
+      case 'BBoard':
+        el = BBoard;
+        break;
       case 'Phaser':
         el = Game;
         break;
@@ -503,12 +508,13 @@ class Client {
   // send an API command, falling back to the raw softcode if the server doesn't support it
   sendAPI(cmd, args) {
     if (this.jsonapi) {
-      var str;
+      var str = String(cmd);
       
-      if (args && args.length > 0) {
-        str = cmd+" "+args;
-      } else {
-        str = cmd;
+      if (args) {
+        var astr = String(args);
+        if (astr.length > 0) {
+          str += " "+astr;
+        }
       }
       
       this.sendText("jsonapi/"+str);
