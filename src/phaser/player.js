@@ -1,3 +1,6 @@
+
+import Phaser from 'phaser';
+
 export default class Player {
   constructor(scene, x, y) {
     this.scene = scene;
@@ -22,8 +25,15 @@ export default class Player {
       .setOffset(23, 27);
 
     this.sprite.anims.play("player-walk-back");
-
-    this.keys = scene.input.keyboard.createCursorKeys();
+    
+    var codes = Phaser.Input.Keyboard.KeyCodes;
+    
+    this.keys = scene.input.keyboard.addKeys({
+            up: codes.UP,
+            down: codes.DOWN,
+            left: codes.LEFT,
+            right: codes.RIGHT
+    });
   }
 
   freeze() {
