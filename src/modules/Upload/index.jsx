@@ -67,7 +67,6 @@ class Upload extends React.Component {
     window.client.react.upload = this;
     
     const { panel } = this.props;
-    
     panel.options.resizeit.resize = this.onResize;
     window.client.panels.resizeit(panel, panel.options.resizeit);
   }
@@ -153,7 +152,6 @@ class Upload extends React.Component {
   };
   
   onResize = () => {
-    console.log("RESIZE!");
     this.editor.current.editor.resize();
   };
   
@@ -172,7 +170,7 @@ class Upload extends React.Component {
           value={text}
           onChange={this.changeText}
           readOnly={uploading}
-          wrapEnabled={false}
+          wrapEnabled={true}
           highlightActiveLine={false}
           editorProps={{ $blockScrolling: Infinity }}
         />
