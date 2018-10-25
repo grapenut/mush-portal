@@ -113,7 +113,7 @@ class Sendmail extends React.Component {
       }
     }
     
-    window.client.sendCommand("@mail "+to+"="+realsub+"/"+body);
+    window.client.sendCommand("@mail "+to+"="+realsub+"/"+body.split('\n').join('%r'));
     this.closePanel();
   };
   

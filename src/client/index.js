@@ -33,6 +33,7 @@ import { jsPanel } from 'jspanel4';
 //import 'jspanel4/es6module/extensions/dock/jspanel.dock.js';
 
 const EventEmitter = require('events');
+const TinyCon = require('tinycon');
 
 class Client {
 
@@ -52,6 +53,7 @@ class Client {
     this.events = new EventEmitter();
     this.panels = jsPanel;
     this.theme = Theme;
+    this.tinycon = TinyCon;
     
     // React Components
     this.react = {
@@ -75,8 +77,10 @@ class Client {
     this.serverUrl = null;
     
     this.conn = null;
-    this.lastCommand = null;
+
+    // app instance options
     this.jsonapi = false;
+    this.hidden = false;
     
     // number of lines of scroll within which the output scroll down when new items are received
     this.scrollThreshold = 5;
@@ -86,37 +90,10 @@ class Client {
     this.reconnectCount = 0;
     this.reconnectMaxCount = 10;
     
-    // handle panel close events, refocus the input window
+    // init other libraries
     window.client = this;
-    this.panels.defaults.minimizeTo = false;
-    this.panels.defaults.onminimized = function(container) {
-      window.client.react.taskbar.pushTask(this);
-      window.client.focus();
-    };
-    
-    this.panels.defaults.onclosed = function(container) {
-      ReactDOM.unmountComponentAtNode(container.content)
-      window.client.focus();
-    };
-    
-    this.panels.defaults.dragit.start = function() {
-      window.client.input.saveCursor();
-    };
-    
-    this.panels.defaults.resizeit.start = function() {
-      window.client.input.saveCursor();
-    };
-    
-    this.panels.defaults.dragit.stop = function() {
-      window.client.focus();
-      window.client.input.resetCursor();
-    };
-    
-    this.panels.defaults.resizeit.stop = function() {
-      window.client.focus();
-      window.client.input.resetCursor();
-    };
-    
+    this.initPanels();
+    this.initNotifications();
   }
   
   // load additional scripts for custom events
@@ -404,6 +381,23 @@ class Client {
       client.appendMessage('logMessage', '%% Connection closed.');
       setTimeout(() => { client.reconnect() }, (client.serverSSL ? 2.0 : 1.0) * client.reconnectTimer);
     };
+    
+    // onMessage callback before data handler
+    this.conn.onUpdate = function(channel, data) {
+      if (this.hidden) {
+        this.updateCounter++;
+        
+        console.log("DEBUG: ", this.updateCounter);
+        
+        var handleUpdate = () => {
+          this.tinycon.setBubble(this.updateCounter);
+        };
+        
+        /* use a timer to prevent update spamming */
+        clearTimeout(handleUpdate);
+        setTimeout(handleUpdate, 1000);
+      }
+    }
 
     // handle incoming text
     this.conn.onText = function (text) {
@@ -540,7 +534,77 @@ class Client {
     }
   }
   
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  initNotifications() {
+    // Set the name of the hidden property and the change event for visibility
+    var hidden, visibilityChange; 
+    if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support 
+      hidden = "hidden";
+      visibilityChange = "visibilitychange";
+    } else if (typeof document.msHidden !== "undefined") {
+      hidden = "msHidden";
+      visibilityChange = "msvisibilitychange";
+    } else if (typeof document.webkitHidden !== "undefined") {
+      hidden = "webkitHidden";
+      visibilityChange = "webkitvisibilitychange";
+    }
+     
+    // Warn if the browser doesn't support addEventListener or the Page Visibility API
+    if (typeof document.addEventListener === "undefined" || hidden === undefined) {
+      console.log("This browser does not support background notifications.");
+    } else {
+      // Handle page visibility change   
+      document.addEventListener(visibilityChange, () => {
+        if (document[hidden]) {
+          this.hidden = true;
+        } else {
+          this.hidden = false;
+        }
+      }, false);
+    }
+    
+    // set tinycon options
+    this.tinycon.setOptions({
+      fallback: 'force',
+      abbreviate: true,
+    });
+  }
+
+  // set panel default parameters and event handlers
+  initPanels() {
+    this.panels.defaults.minimizeTo = false;
+    this.panels.defaults.onminimized = function(container) {
+      window.client.react.taskbar.pushTask(this);
+      window.client.focus();
+    };
+    
+    this.panels.defaults.onclosed = function(container) {
+      ReactDOM.unmountComponentAtNode(container.content)
+      window.client.focus();
+    };
+    
+    this.panels.defaults.dragit.start = function() {
+      window.client.input.saveCursor();
+    };
+    
+    this.panels.defaults.resizeit.start = function() {
+      window.client.input.saveCursor();
+    };
+    
+    this.panels.defaults.dragit.stop = function() {
+      window.client.focus();
+      window.client.input.resetCursor();
+    };
+    
+    this.panels.defaults.resizeit.stop = function() {
+      window.client.focus();
+      window.client.input.resetCursor();
+    };
+  }
 }
+
+
 
 export default Client;
 export { Connection, Emulator, UserInput, Utils };

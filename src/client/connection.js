@@ -18,6 +18,7 @@ class Connection {
     this.onError = null;
     this.onClose = null;
 
+    this.onUpdate = null;
     this.onText = null;
     this.onObject = null;
     this.onHTML = null;
@@ -97,6 +98,8 @@ class Connection {
   }
 
   onMessage(channel, data) {
+    this.onUpdate && this.onUpdate(channel, data);
+    
     switch (channel) {
     case Connection.CHANNEL_TEXT:
       this.onText && this.onText(data);
