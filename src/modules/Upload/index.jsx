@@ -11,6 +11,10 @@ import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import PauseIcon from '@material-ui/icons/Pause';
 import RedoIcon from '@material-ui/icons/Redo';
 
+import AceEditor from 'react-ace';
+import 'brace/mode/mushcode';
+import 'brace/theme/tomorrow_night_bright';
+
 //////////////////////////////////////////////////////////////////////
 
 
@@ -22,7 +26,7 @@ const styles = theme => ({
     width: "100%",
     "flex-flow": "column nowrap",
   },
-  text: {
+  editor: {
     flex: 1,
   },
   flex: {
@@ -56,10 +60,16 @@ class Upload extends React.Component {
       delay: 1000,
     };
     this.text = "";
+    this.editor = React.createRef();
   }
   
   componentDidMount() {
     window.client.react.upload = this;
+    
+    const { panel } = this.props;
+    
+    panel.options.resizeit.resize = this.onResize;
+    window.client.panels.resizeit(panel, panel.options.resizeit);
   }
   
   componentWillUnmount() {
@@ -135,12 +145,16 @@ class Upload extends React.Component {
     this.setState({ delay });
   };
   
-  changeText = event => {
+  changeText = text => {
     const { uploading } = this.state;
     if (uploading) return;
     
-    var text = event.target.value;
     this.setText(text);
+  };
+  
+  onResize = () => {
+    console.log("RESIZE!");
+    this.editor.current.editor.resize();
   };
   
   render() {
@@ -149,7 +163,19 @@ class Upload extends React.Component {
 
     return (
       <div className={classes.frame}>
-        <textarea className={classes.text} value={text} onChange={this.changeText} readOnly={uploading} />
+        <AceEditor
+          className={classes.editor}
+          ref={this.editor}
+          mode="mushcode"
+          width="100%"
+          theme="tomorrow_night_bright"
+          value={text}
+          onChange={this.changeText}
+          readOnly={uploading}
+          wrapEnabled={false}
+          highlightActiveLine={false}
+          editorProps={{ $blockScrolling: Infinity }}
+        />
         <div className={classes.flex}>
           <div className={classes.stretchflex}>
             <div className={classes.pad}></div>
@@ -186,6 +212,7 @@ class Upload extends React.Component {
 Upload.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
+  panel: PropTypes.object,
 };
 
 export default withStyles(styles, { withTheme: true })(Upload);

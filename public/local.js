@@ -16,8 +16,8 @@ config.contentOverflow = "auto";
 config.maximizedMargin = 5;
 config.syncMargins = true;
 config.boxShadow = false;
-config.border = "2px ridge darkgrey";
-config.borderRadius = 10;
+config.border = "1px solid black";
+//config.borderRadius = 10;
 //config.panelSize = {
 //  width: 'calc(50% - ' + 1.5*config.maximizedMargin + 'px)',
 //  height: 'calc(50% - ' + 1.5*config.maximizedMargin + 'px)',
@@ -28,32 +28,7 @@ config.position = {
   offsetX: -config.maximizedMargin,
   offsetY: config.maximizedMargin,
 };
-config.dragit.snap = {
-  repositionOnSnap: true,
-  resizeToPreSnap:  true,
-  callback: function() {
-    // callback resizes panel depending on position it snapped to
-    var pos = this.snappableTo,
-      margins = client.panels.pOcontainment(this.options.dragit.containment),
-      width, height;
-    // calculate desired dimensions ...
-    if (pos.startsWith('center')) { // half height for panels snapped to center-top or center-bottom
-      width  = `calc(100% - ${margins[3]}px - ${margins[1]}px)`;
-      height = `calc(50% - 0.75*${margins[0]}px - 0.75*${margins[2]}px)`;
-    } else if (pos.endsWith('center')) { // half width for panels snapped to left-center or right-center
-      width  = `calc(50% - 0.75*${margins[1]}px - 0.75*${margins[3]}px)`;
-      height = `calc(100% - ${margins[0]}px - ${margins[2]}px)`;
-    } else { // quartersize for panels snapped to a corner
-      width  = `calc(50% - 1.5*${margins[3]}px)`;
-      height = `calc(50% - 1.5*${margins[0]}px)`;
-    }
-    // resize panel
-    this.resize({
-      width: width,
-      height: height
-    });
-  }
-};
+config.dragit.snap = { repositionOnSnap: true };
 
 
 /////////////////////////////////////////////////////////////////////
@@ -65,6 +40,13 @@ config.dragit.snap = {
 /////////////////////////////////////////////////////////////////////
 // spawn windows
 /////////////////////////////////////////////////////////////////////
+function openFullHeight(which, obj) {
+  obj.panelSize = {
+    width: 'calc(50% - ' + 1.5*config.maximizedMargin + 'px)',
+    height: 'calc(100% - ' + 2*config.maximizedMargin + 'px)',
+  };
+  client.addReactPanel(which, obj);
+}
 
 // open generic spawn window
 client.events.on('spawn', (obj) => {
@@ -73,119 +55,56 @@ client.events.on('spawn', (obj) => {
 
 // open the chargen window
 client.events.on('chargen', (obj) => {
-  if (client.chargen) {
-    client.focusPanel("Chargen");
-  } else {
-    client.addReactPanel("Chargen", obj);
-  }
+  client.addReactPanel("Chargen", obj);
 });
 
 // open the phaser window
 client.events.on('phaser', (obj) => {
-  if (client.react.phaser) {
-    client.focusPanel("Phaser");
-  } else {
-    obj.contentSize = {
-      width: "640px",
-      height: "480px",
-    };
-    obj.resizeit = false;
-    obj.dragit = { snap: { callback: null } };
-    obj.panelSize = null;
-    client.addReactPanel("Phaser", obj);
-  }
-});
-
-// open the mail reader window
-client.events.on('maillist', (obj) => {
-  if (client.react.mailbox) {
-    client.focusPanel("Mailbox");
-  } else {
-    obj.panelSize = {
-      width: 'calc(50% - ' + 1.5*config.maximizedMargin + 'px)',
-      height: 'calc(100% - ' + 2*config.maximizedMargin + 'px)',
-    };
-    client.addReactPanel("Mailbox", obj);
-  }
-  obj.maillist.reverse();
-  client.react.mailbox.updateMailList(obj.folder, obj.maillist, obj.unread);
+  obj.contentSize = {
+    width: "640px",
+    height: "480px",
+  };
+  obj.resizeit = false;
+  obj.panelSize = null;
+  client.addReactPanel("Phaser", obj);
 });
 
 // open the bboard reader window
 client.events.on('boardlist', (obj) => {
-  if (client.react.bboard) {
-    client.focusPanel("BBoard");
-  } else {
-    obj.panelSize = {
-      width: 'calc(50% - ' + 1.5*config.maximizedMargin + 'px)',
-      height: 'calc(100% - ' + 2*config.maximizedMargin + 'px)',
-    };
-    client.addReactPanel("BBoard", obj);
-  }
+  openFullHeight("BBoard", obj);
   client.react.bboard.updateBoardList(obj.boardlist);
 });
 
 // open the bboard reader window
 client.events.on('bbmsglist', (obj) => {
-  if (client.react.bboard) {
-    client.focusPanel("BBoard");
-  } else {
-    obj.panelSize = {
-      width: 'calc(50% - ' + 1.5*config.maximizedMargin + 'px)',
-      height: 'calc(100% - ' + 2*config.maximizedMargin + 'px)',
-    };
-    client.addReactPanel("BBoard", obj);
-  }
+  openFullHeight("BBoard", obj);
+  obj.messages.reverse();
   client.react.bboard.updateBoard(obj);
 });
 
 // open the bboard reader window
 client.events.on('bbmsg', (obj) => {
-  if (client.react.bboard) {
-    client.focusPanel("BBoard");
-  } else {
-    obj.panelSize = {
-      width: 'calc(50% - ' + 1.5*config.maximizedMargin + 'px)',
-      height: 'calc(100% - ' + 2*config.maximizedMargin + 'px)',
-    };
-    client.addReactPanel("BBoard", obj);
-  }
+  openFullHeight("BBoard", obj);
   client.react.bboard.openMessage(obj);
+});
+
+// open the mail reader window
+client.events.on('maillist', (obj) => {
+  openFullHeight("Mailbox", obj);
+  obj.maillist.reverse();
+  client.react.mailbox.updateMailList(obj.folder, obj.maillist, obj.unread);
 });
 
 // open a single mail item
 client.events.on('mailitem', (obj) => {
-  if (client.react.mailbox) {
-    client.focusPanel("Mailbox");
-  } else {
-    obj.panelSize = {
-      width: 'calc(50% - ' + 1.5*config.maximizedMargin + 'px)',
-      height: 'calc(100% - ' + 2*config.maximizedMargin + 'px)',
-    };
-    client.addReactPanel("Mailbox", obj);
-  }  
+  openFullHeight("Mailbox", obj);
   client.react.mailbox.openMailItem(obj);
 });
 
 // send a mail
 client.events.on('sendmail', (obj) => {
-  if (client.react.sendmail) {
-    client.focusPanel("Sendmail");
-    if (confirm("Replace current draft with new mail?")) {
-      client.react.sendmail.setTarget(obj.to);
-      client.react.sendmail.setSubject(obj.subject);
-      client.react.sendmail.setBody(obj.body);
-    }
-  } else {
-    obj.panelSize = {
-      width: "40em",
-      height: "10em",
-    };
-    client.addReactPanel("Sendmail", obj);
-    client.react.sendmail.setTarget(obj.to);
-    client.react.sendmail.setSubject(obj.subject);
-    client.react.sendmail.setBody(obj.body);
-  }  
+  client.addReactPanel("Sendmail", obj);
+  client.react.sendmail.setFields(obj.to, obj.subject, obj.body);
 });
 
 // update movement

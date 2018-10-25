@@ -81,6 +81,8 @@ class Client {
     // app instance options
     this.jsonapi = false;
     this.hidden = false;
+    this.updateCounter = 0;
+    this.updateLines = 0;
     
     // number of lines of scroll within which the output scroll down when new items are received
     this.scrollThreshold = 5;
@@ -277,27 +279,31 @@ class Client {
   /////////////////////////////////////////////////////////////////////////////////////////////////
   
   addReactPanel(name, cfg) {
-    var config = cfg || {};
-    
     var el = null;
+    var obj = null;
     switch (name) {
       case 'Chargen':
         el = Chargen;
         break;
       case 'Mailbox':
         el = Mailbox;
+        obj = this.react.mailbox;
         break;
       case 'Upload':
         el = Upload;
+        obj = this.react.upload;
         break;
       case 'Sendmail':
         el = Sendmail;
+        obj = this.react.sendmail;
         break;
       case 'BBoard':
         el = BBoard;
+        obj = this.react.bboard;
         break;
       case 'Phaser':
         el = Game;
+        obj = this.react.phaser;
         break;
       default:
         break;
@@ -307,15 +313,22 @@ class Client {
       return;
     }
     
-    el = React.createElement(el, null, null)
+    if (obj) {
+      this.focusPanel(name);
+      return;
+    }
+    
+    
+    var config = cfg || {};
     
     if (!config.headerTitle) {
       config.headerTitle = name;
     }
     
     config.callback = function(container) {
-      this.content.style.backgroundColor = Theme.palette.background.paper;
-      ReactDOM.render(React.createElement(MuiThemeProvider, { theme: Theme }, el), container.content);
+      container.content.style.backgroundColor = Theme.palette.background.paper;
+      var child = React.createElement(el, { panel: container }, null);
+      ReactDOM.render(React.createElement(MuiThemeProvider, { theme: Theme }, child), container.content);
     };
     
     this.panels.create(config);
@@ -384,18 +397,14 @@ class Client {
     
     // onMessage callback before data handler
     this.conn.onUpdate = function(channel, data) {
-      if (this.hidden) {
-        this.updateCounter++;
-        
-        console.log("DEBUG: ", this.updateCounter);
-        
-        var handleUpdate = () => {
-          this.tinycon.setBubble(this.updateCounter);
-        };
-        
+      if (client.hidden && data.endsWith('\n')) {
+        client.updateCounter++;
+        // eventually set client.updateLines to the number of new lines
+        // and show that instead
+
         /* use a timer to prevent update spamming */
-        clearTimeout(handleUpdate);
-        setTimeout(handleUpdate, 1000);
+        clearTimeout(client.setBubble);
+        setTimeout(client.setBubble, 1000);
       }
     }
 
@@ -534,7 +543,17 @@ class Client {
     }
   }
   
+  
   /////////////////////////////////////////////////////////////////////////////////////////////////
+  
+  
+  setBubble = () => {
+    if (this.hidden) {
+      this.tinycon.setBubble(this.updateCounter);
+    } else {
+      this.tinycon.setBubble(0);
+    }
+  };
   
   initNotifications() {
     // Set the name of the hidden property and the change event for visibility
@@ -549,24 +568,28 @@ class Client {
       hidden = "webkitHidden";
       visibilityChange = "webkitvisibilitychange";
     }
-     
+    
+    
     // Warn if the browser doesn't support addEventListener or the Page Visibility API
     if (typeof document.addEventListener === "undefined" || hidden === undefined) {
       console.log("This browser does not support background notifications.");
     } else {
       // Handle page visibility change   
       document.addEventListener(visibilityChange, () => {
+        this.updateCounter = 0;
+        this.updateLines = 0;
         if (document[hidden]) {
           this.hidden = true;
         } else {
           this.hidden = false;
         }
+        this.setBubble();
       }, false);
     }
     
     // set tinycon options
     this.tinycon.setOptions({
-      fallback: 'force',
+      fallback: true,
       abbreviate: true,
     });
   }
