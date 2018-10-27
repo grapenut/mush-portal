@@ -1,6 +1,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 
 import Card from '@material-ui/core/Card';
@@ -17,6 +18,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ReplyIcon from '@material-ui/icons/Reply';
 import ForwardIcon from '@material-ui/icons/Forward';
+
+import Emulator from '../../client/emulator';
 
 
 //////////////////////////////////////////////////////////////////////
@@ -52,6 +55,17 @@ const styles = theme => ({
   button: {
     display: "block",
   },
+  wrap: {
+    "font-family": "'Courier New', monospace",
+    "font-weight": "normal",
+    "font-size": "10pt",
+    width: "100%",
+    height: "100%",
+    "overflow-y": "scroll",
+    "overflow-x": "hidden",
+    "white-space": "pre-wrap",
+    "word-wrap": "break-word",
+  },
 });
 
 
@@ -64,6 +78,15 @@ class MailItem extends React.Component {
     this.state = {
       anchorEl: null,
     };
+
+    this.body = React.createRef();
+    this.emulator = null;
+  }
+  
+  componentDidMount() {
+    const { mail } = this.props;
+    this.emulator = new Emulator(this.body.current);
+    this.emulator.appendText(mail.body);
   }
   
   showMenu = event => {
@@ -103,6 +126,9 @@ class MailItem extends React.Component {
     const { classes, mail } = this.props;
     const { anchorEl } = this.state;
     
+    this.emulator && this.emulator.clear();
+    this.emulator && this.emulator.appendText(mail.body);
+    
     return (
       <Card className={classes.card}>
         <CardHeader className={classes.header}
@@ -119,9 +145,7 @@ class MailItem extends React.Component {
           }
         />
         <CardContent className={classes.body}>
-          <Typography component="span">
-            <pre>{mail.body}</pre>
-          </Typography>
+          <div ref={this.body} className={classNames(classes.wrap, window.client.ansi_default)}></div>
         </CardContent>
         <CardActions className={classes.actions}>
           <Button className={classes.button} onClick={this.replyMail}>

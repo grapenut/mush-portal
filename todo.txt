@@ -1,0 +1,65 @@
+Command History
+  Show command history popover.
+  Click to roll the input buffer back to that line.
+  Fix input focus after click.
+
+JSONAPI
+  EXEC Execute arbitrary softcode as the player. Use a unique key to set an
+       event for the return value.
+  PMATCH Validate player name matching (for mail sending).
+
+Activity Notification
+  Fix activity bubble to hide/unhide properly.
+
+Command Macros
+  Macros execute a block of commands at once, with some string insertion tokens.
+
+Events & Timers
+  Match incoming lines against wildcard/regexp and execute code/macros.
+  Setup automatic timers to execute code/macros.
+  Bind control keys to execute code/macros.
+
+Google Speech API
+  Voice dictated input
+  Text2speech for emails/channels/etc.
+
+Ace Editor
+  Design custom light/dark themes.
+  Fix up the mushcode syntax mode.
+  Add a toolbar?
+  Auto-completion
+
+Chat
+  Optional windows for channels and pages.
+  All-in-one or per-player/per-channel (with activity badges).
+
+BBoard
+  Navigation icons (back, reload)
+  +bbpost front-end
+
+Mailbox
+  Use a terminal emulator instead of <pre> tags for the message body.
+  Use an ace editor in the @mail composer.
+
+Taskbar
+  Reorganize how windows are spawned and kept track of.
+  Reorganize commands, icons and popovers for customization later.
+
+Terminal
+  Split the terminal and contain panels in their own area.
+
+Sidebar
+  Show basic information about the room (contents, players).
+  Show online player list.
+
+Phaser
+  Generate generic 2d tilemap for rooms.
+  Auto-place exits.
+  Start with generic player/object avatars.
+  Eventually load custom graphics for room tilemaps and players/objects.
+  Click navigation and interaction.
+
+
+
+
+

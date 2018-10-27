@@ -10,6 +10,7 @@ import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Switch from '@material-ui/core/Switch';
+import TextField from '@material-ui/core/TextField';
 
 
 //////////////////////////////////////////////////////////////////////
@@ -54,16 +55,21 @@ class Settings extends React.Component {
     window.client.saveSettings();
   };
   
+  handleValue = name => event => {
+    window.client.changeSetting(name, event.target.value);
+    this.setState({ [name]: window.client.settings[name] });
+    window.client.saveSettings();
+  };
+  
   componentDidMount() {
   }
   
   componentWillUnmount() {
-    window.client.saveSettings();
   }
 
   render() {
     const { classes, closeDrawer } = this.props;
-    const { debugEvents } = this.state;
+    const { debugEvents, decompileEditor, decompileKey } = this.state;
     
     return (
       <div className={classes.frame}>
@@ -72,17 +78,26 @@ class Settings extends React.Component {
             <FormLabel component="legend">Debugging</FormLabel>
             <FormGroup>
               <FormControlLabel
-                control={
-                  <Switch
-                    checked={debugEvents}
-                    onChange={this.handleSwitch('debugEvents')}
-                    value="debugEvents"
-                  />
-                }
+                control={<Switch checked={debugEvents} value="debugEvents" onChange={this.handleSwitch('debugEvents')} />}
                 label="Debug Events"
               />
             </FormGroup>
             <FormHelperText>See the developer console for more.</FormHelperText>
+          </FormControl>
+
+          <FormControl component="fieldset">
+            <FormLabel component="legend">Command Upload Editor</FormLabel>
+            <FormGroup>
+              <FormControlLabel
+                control={<Switch checked={decompileEditor} value="decompileEditor" onChange={this.handleSwitch('decompileEditor')} />}
+                label="Send @dec/tf output to editor."
+              />
+              <FormControlLabel
+                control={<TextField label="TFPREFIX" value={decompileKey} onChange={this.handleValue('decompileKey')} />}
+                label="The TFPREFIX used by @dec/tf."
+              />
+            </FormGroup>
+            <FormHelperText>Controls the command upload editor.</FormHelperText>
           </FormControl>
 
         </div>

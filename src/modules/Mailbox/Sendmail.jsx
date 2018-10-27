@@ -15,6 +15,10 @@ import TextField from '@material-ui/core/TextField';
 import SendIcon from '@material-ui/icons/Send';
 import CancelIcon from '@material-ui/icons/Cancel';
 
+import AceEditor from 'react-ace';
+import 'brace/mode/mushcode';
+import 'brace/theme/tomorrow_night_bright';
+
 
 //////////////////////////////////////////////////////////////////////
 
@@ -73,6 +77,8 @@ class Sendmail extends React.Component {
       subject: props.subject ? props.subject : "",
       body: props.body ? props.body : "",
     };
+    
+    this.editor = React.createRef();
   }
 
   setTarget(to) {
@@ -134,6 +140,22 @@ class Sendmail extends React.Component {
       [name]: event.target.value,
     });
   };
+
+  changeText = body => {
+    this.setState({ body });
+  };
+  
+  validatePlayer = () => {
+    const { to } = this.state;
+    var code = "iter("+to+",pmatch(%i0),,)";
+    window.client.execString(code, (result) => {
+      if (result === "1") {
+        this.setState({ valid: true });
+      } else {
+        this.setState({ valid: false });
+      }
+    });
+  };
   
   render() {
     const { classes } = this.props;
@@ -143,14 +165,25 @@ class Sendmail extends React.Component {
       <Card className={classes.card}>
         <CardHeader className={classes.header}
           title={(
-            <TextField id="sendmail-to" label="Recipient" value={to} onChange={this.handleChange("to")} className={classes.stretch} />
+            <TextField label="Recipient" value={to} onChange={this.handleChange("to")} className={classes.stretch} />
           )}
           subheader={(
-            <TextField id="sendmail-subject" label="Subject" value={subject} onChange={this.handleChange("subject")} className={classes.stretch} />
+            <TextField label="Subject" value={subject} onChange={this.handleChange("subject")} className={classes.stretch} />
           )}
         />
         <CardContent className={classes.body}>
-          <textarea id="sendmail-body" className={classes.bodytext} value={body} onChange={this.handleChange("body")} />
+          <AceEditor
+            className={classes.bodytext}
+            ref={this.editor}
+            mode="mushcode"
+            width="100%"
+            theme="tomorrow_night_bright"
+            value={body}
+            onChange={this.changeText}
+            wrapEnabled={true}
+            highlightActiveLine={false}
+            editorProps={{ $blockScrolling: Infinity }}
+          />
         </CardContent>
         <CardActions className={classes.actions}>
           <Tooltip title="Send draft.">

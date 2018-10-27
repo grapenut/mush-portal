@@ -226,8 +226,14 @@ class UserInput {
   
   // reset cursor position
   resetCursor() {
-    this.root.selectionStart = this.selectionStart;
-    this.root.selectionStop = this.selectionStop;
+    if (this.selectionStart && this.selectionStop) {
+      this.root.selectionStart = this.selectionStart;
+      this.root.selectionStop = this.selectionStop;
+      this.selectionStart = null;
+      this.selectionStop = null;
+    } else {
+      this.root.selectionStart = this.root.selectionStop = this.root.value.length;
+    }
   }
   
   //////////////////////////////////////////////////////////////
@@ -244,32 +250,36 @@ class UserInput {
   
   //////////////////////////////////////////////////////////////
   // refocus the input box
-  focus() {
+  focus(force) {
   
     // see if we are selecting some text
     var text = "";
-    if (window.getSelection) {
-      text = window.getSelection().toString();
-    } else if (document.selection && document.selection.type !== "Control") {
-      text = document.selection.createRange().text;
-    }
     
-    // or if we are in an input element
-    var element = document.activeElement;
-    var tagName = element.tagName.toLowerCase();
-    if (tagName === 'textarea') return;
-    
-    if (tagName === 'input') {
-      var type = element.getAttribute('type').toLowerCase();
-      // if any of these input types is not supported by a browser, it will behave as input type text.
-      var inputTypes = ['text', 'password', 'number', 'email', 'tel', 'url', 'search', 'date', 'datetime', 'datetime-local', 'time', 'month', 'week'];
-      if (inputTypes.indexOf(type) >= 0) {
-        return;
+    if (!force) {
+      if (window.getSelection) {
+        text = window.getSelection().toString();
+      } else if (document.selection && document.selection.type !== "Control") {
+        text = document.selection.createRange().text;
+      }
+      
+      // or if we are in an input element
+      var element = document.activeElement;
+      var tagName = element.tagName.toLowerCase();
+      if (tagName === 'textarea') return;
+      
+      if (tagName === 'input') {
+        var type = element.getAttribute('type').toLowerCase();
+        // if any of these input types is not supported by a browser, it will behave as input type text.
+        var inputTypes = ['text', 'password', 'number', 'email', 'tel', 'url', 'search', 'date', 'datetime', 'datetime-local', 'time', 'month', 'week'];
+        if (inputTypes.indexOf(type) >= 0) {
+          return;
+        }
       }
     }
     
+    var re_blank = /^\w*$/;
     // if we are selecting or inputting, don't focus
-    if (text === "") {
+    if (text.match(re_blank)) {
       this.root.focus();
     }
   } 

@@ -54,6 +54,17 @@ const styles = theme => ({
   button: {
     display: "block",
   },
+  output: {
+    "font-family": "'Courier New', monospace",
+    "font-weight": "normal",
+    "font-size": "10pt",
+    width: "100%",
+    height: "100%",
+    "overflow-y": "scroll",
+    "overflow-x": "hidden",
+    "white-space": "pre-wrap",
+    "word-wrap": "break-word",
+  },
 });
 
 
@@ -64,10 +75,21 @@ class BBMessage extends React.Component {
   constructor(props) {
     super(props);
     this.state = { };
+    this.body = React.createRef();
+    this.emulator = null;
+  }
+  
+  componentDidMount() {
+    const { message } = this.props;
+    this.emulator = new Emulator(this.body.current);
+    this.emulator.appendText(message.body);
   }
   
   render() {
     const { classes, message } = this.props;
+    
+    this.emulator && this.emulator.clear();
+    this.emulator && this.emulator.appendText(message.body);
     
     return (
       <Card className={classes.card}>
@@ -85,9 +107,7 @@ class BBMessage extends React.Component {
           }
         />
         <CardContent className={classes.body}>
-          <Typography component="span">
-            <pre>{message.body}</pre>
-          </Typography>
+          <div ref={this.body} className={classNames(classes.output, window.client.ansi_default)}></div>
         </CardContent>
         <CardActions className={classes.actions}>
         </CardActions>

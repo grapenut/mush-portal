@@ -25,6 +25,8 @@ import 'jspanel4/dist/jspanel.min.css';
 
 import { jsPanel } from 'jspanel4';
 
+import shortid from 'shortid';
+
 //import 'jspanel4/es6module/extensions/hint/jspanel.hint.js';
 //import 'jspanel4/es6module/extensions/modal/jspanel.modal.js';
 //import 'jspanel4/es6module/extensions/contextmenu/jspanel.contextmenu.js';
@@ -40,7 +42,11 @@ class Client {
   constructor() {
     // client settings
     this.settings = {
+      // debugging
       debugEvents: true,
+      // upload editor
+      decompileEditor: true,
+      decompileKey: 'FugueEdit > ',
     };
     this.loadSettings();
     
@@ -83,6 +89,7 @@ class Client {
     this.hidden = false;
     this.updateCounter = 0;
     this.updateLines = 0;
+    this.eatNewline = false;
     
     // number of lines of scroll within which the output scroll down when new items are received
     this.scrollThreshold = 5;
@@ -255,8 +262,8 @@ class Client {
   }
   
   // input focus passthrough
-  focus() {
-    this.input && this.input.focus();
+  focus(force) {
+    this.input && this.input.focus(force);
   }
   
   // wrapper that scrolls the output if needed
@@ -410,18 +417,26 @@ class Client {
 
     // handle incoming text
     this.conn.onText = function (text) {
-      var re_fugueedit = /^FugueEdit > /;
-      if (client.output) {
-        if (client.input) {
-          if (text.match(re_fugueedit)) {
-            var str = text.replace(re_fugueedit, "");
-            client.input.root.value = str;
-            return;
-          }
+//      var re_fugueedit = /^FugueEdit > /;
+      var re_fugueedit = new RegExp('^'+client.settings.decompileKey);
+      if (text.match(re_fugueedit)) {
+        var str = text.replace(re_fugueedit, "");
+        client.eatNewline = true;
+        
+        if (client.settings.decompileEditor) {
+          client.addReactPanel("Upload");
+          client.react.upload.editor.current.editor.insert(str+"\n");
+        } else {
+          client.input.root.value = str;
         }
-
-        client.scrollIfNeeded(() => client.output.appendText(text));
+        return;
+      } else if (client.eatNewline && (text === "\n" || text === "\r\n")) {
+        client.eatNewline = false;
+        return;
       }
+      
+      client.eatNewline = false;
+      client.scrollIfNeeded(() => client.output.appendText(text));
     };
     
     // handle incoming html
@@ -528,6 +543,30 @@ class Client {
     }
   }
   
+  execString(code, callback) {
+    var id = "exec_"+shortid.generate();
+    var cmd = "th oob(%#,"+id+",json(object,result,json(string,"+code+")))";
+    
+    this.events.on(id, (obj) => {
+      callback(obj.result);
+      this.events.removeAllListeners([id]);
+    });
+    
+    this.sendText(cmd);
+  }
+
+  execJSON(code, callback) {
+    var id = "exec_"+shortid.generate();
+    var cmd = "th oob(%#,"+id+","+code+")";
+    
+    this.events.on(id, (obj) => {
+      callback(obj);
+      this.events.removeAllListeners([id]);
+    });
+    
+    this.sendText(cmd);
+  }
+  
   /////////////////////////////////////////////////////////////////////////////////////////////////
   
   // save the current display to a log file
@@ -568,7 +607,6 @@ class Client {
       hidden = "webkitHidden";
       visibilityChange = "webkitvisibilitychange";
     }
-    
     
     // Warn if the browser doesn't support addEventListener or the Page Visibility API
     if (typeof document.addEventListener === "undefined" || hidden === undefined) {

@@ -20,7 +20,6 @@ const styles = theme => ({
   left: {
     position: "relative",
     maxHeight: "100%",
-    flex: 1,
   },
   right: {
     flex: 1,

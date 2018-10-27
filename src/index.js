@@ -24,4 +24,3 @@ var serverPort = window.location.search.substring(1) ? window.location.search.su
 client.connect(serverAddress, serverPort, serverSSL);
 
 
-
