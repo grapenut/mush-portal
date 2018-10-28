@@ -28,6 +28,11 @@ const styles = theme => ({
   read: {
     opacity: 0.5,
   },
+  odd: {
+    background: 'rgba(1, 0, 0, 0.1)',
+  },
+  even: {
+  },
 });
 
 
@@ -41,7 +46,7 @@ class MailListItem extends React.Component {
   }
   
   render() {
-    const { classes, mail, onOpen, quickDelete, handleMark, selected } = this.props;
+    const { classes, mail, onOpen, quickDelete, handleMark, selected, key } = this.props;
     
     var icon;
     if (mail.deleted) {
@@ -55,6 +60,8 @@ class MailListItem extends React.Component {
     } else {
       icon = (<DraftsIcon className={classes.read} />);
     }
+    
+    var even = (key % 2 === 0);
 
     return (
       <div className={classes.frame}>
@@ -65,6 +72,7 @@ class MailListItem extends React.Component {
           divider
           selected={selected}
           onClick={quickDelete ? () => {} : onOpen}
+          className={even ? classes.even : classes.odd}
         >
           <ListItemIcon className={classes.listicon}>
             {icon}

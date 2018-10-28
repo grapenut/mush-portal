@@ -14,3 +14,30 @@
   background: gray;
   border-radius: 10px;
 }
+
+::-moz-scrollbar {
+  width: 15px;
+  background: transparent;
+}
+
+::-moz-scrollbar-track {
+  background: transparent;
+  border-radius: 10px;
+  
+}
+
+::-moz-scrollbar-thumb {
+  background: gray;
+  border-radius: 10px;
+}
+
+body {
+  scrollbar-base-color: gray;
+  scrollbar-face-color: gray;
+  scrollbar-3dlight-color: transparent;
+  scrollbar-highlight-color: gray;
+  scrollbar-track-color: transparent;
+  scrollbar-arrow-color: black;
+  scrollbar-shadow-color: transparent;
+  scrollbar-dark-shadow-color: transparent;
+}

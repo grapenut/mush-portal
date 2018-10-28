@@ -98,13 +98,13 @@ class Terminal extends React.Component {
   }
 
   render() {
-    const { classes, ansiFG, ansiBG, containerRef } = this.props;
+    const { classes, width, ansiFG, ansiBG, containerRef } = this.props;
     const { lines } = this.state;
     
     return (
       <div id="terminal-container" className={classes.frame} onClick={this.focusInput} ref={containerRef}>
         <div ref={this.terminal} className={classNames(classes.terminal, ansiFG, ansiBG)} onScroll={this.onChange}>
-          <div ref={this.output} className={classNames(classes.output, ansiFG, ansiBG)}></div>
+          <div ref={this.output} className={classNames(classes.output, ansiFG, ansiBG)} style={{ width: width }}></div>
         </div>
         <div className={classes.taskbar}>
           <div ref={this.prompt} className={classNames(classes.prompt, ansiFG, ansiBG)}></div>

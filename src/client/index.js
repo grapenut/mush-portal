@@ -46,6 +46,7 @@ class Client {
       // default emulator fg/bg
       ansiFG: 'ansi-37',
       ansiBG: 'ansi-40',
+      wrapWidth: '100%',
       // upload editor
       decompileEditor: true,
       decompileKey: 'FugueEdit > ',

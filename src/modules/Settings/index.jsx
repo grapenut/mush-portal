@@ -18,7 +18,8 @@ import Popover from '@material-ui/core/Popover';
 //import ListItemText from '@material-ui/core/ListItemText';
 
 import BugReportIcon from '@material-ui/icons/BugReport';
-import ColorLensIcon from '@material-ui/icons/ColorLens';
+import PaletteIcon from '@material-ui/icons/Palette';
+import WrapTextIcon from '@material-ui/icons/WrapText';
 import EditIcon from '@material-ui/icons/Edit';
 import CodeIcon from '@material-ui/icons/Code';
 import BorderLeftIcon from '@material-ui/icons/BorderLeft';
@@ -109,7 +110,7 @@ class Settings extends React.Component {
 
   render() {
     const { classes, closeDrawer } = this.props;
-    const { debugEvents, decompileEditor, decompileKey, ansiFG, ansiBG, 
+    const { debugEvents, decompileEditor, decompileKey, ansiFG, ansiBG, wrapWidth,
       sidebarOpen, sidebarAnchor, sidebarAlwaysShow, colorAnchor } = this.state;
     
     return (
@@ -137,21 +138,24 @@ class Settings extends React.Component {
 
           <List disablePadding dense subheader={<ListSubheader>Display Settings</ListSubheader>}>
             <ListItem dense>
-              <ListItemText primary="Default ANSI CSS tags." />
+              <ListItemIcon>
+                <WrapTextIcon />
+              </ListItemIcon>
+              <TextField label="Terminal Width" value={wrapWidth} onChange={this.handleValue('wrapWidth')} />
+            </ListItem>
+            
+            <ListItem dense>
+              <ListItemIcon>
+                <PaletteIcon />
+              </ListItemIcon>
+              <TextField label="Background Color" value={ansiBG} onChange={this.handleValue('ansiBG')} />
             </ListItem>
 
             <ListItem dense>
               <ListItemIcon>
-                <ColorLensIcon />
+                <PaletteIcon />
               </ListItemIcon>
-              <TextField label="Background" value={ansiBG} onChange={this.handleValue('ansiBG')} onFocus={this.showColor("ansiBG")} />
-            </ListItem>
-
-            <ListItem dense>
-              <ListItemIcon>
-                <ColorLensIcon />
-              </ListItemIcon>
-              <TextField label="Foreground" value={ansiFG} onChange={this.handleValue('ansiFG')} onFocus={this.showColor("ansiFG")} />
+              <TextField label="Foreground Color" value={ansiFG} onChange={this.handleValue('ansiFG')} />
             </ListItem>
           </List>
           

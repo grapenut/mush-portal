@@ -81,7 +81,7 @@ class Portal extends React.Component {
   render() {
     const { classes } = this.props;
     const { sidebarOpen, sidebarAnchor, ansiFG, ansiBG,
-      sidebarAlwaysShow } = window.client.settings;
+      wrapWidth, sidebarAlwaysShow } = window.client.settings;
     
     var left = sidebarOpen && sidebarAnchor === "left";
     var right = sidebarOpen && sidebarAnchor === "right";
@@ -100,7 +100,7 @@ class Portal extends React.Component {
           </div>
           <div className={classes.middle} ref={this.middle}>
             {left && (<Sidebar />)}
-            <Terminal ansiFG={ansiFG} ansiBG={ansiBG} containerRef={this.terminal} />
+            <Terminal width={wrapWidth} ansiFG={ansiFG} ansiBG={ansiBG} containerRef={this.terminal} />
             {right && (<Sidebar />)}
           </div>
           <div className={classes.bottom}>
