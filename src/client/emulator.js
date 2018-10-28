@@ -22,6 +22,7 @@ class Emulator {
 
   constructor(root) {
     this.root = root;
+    this.container = null;
     
     this.lineHeight = this.calcLineHeight();
     
@@ -541,7 +542,7 @@ class Emulator {
   
   // return the number of lines of text below the current viewport
   linesOfScroll() {
-    var root = this.root;
+    var root = this.container || this.root;
     if (!root) {
       return 0.0;
     }
@@ -556,21 +557,21 @@ class Emulator {
   //////////////////////////////////////////////////////
   // scroll one page up
   scrollPageUp() {
-    var root = this.root;
+    var root = this.container || this.root;
     root.scrollTop -= root.clientHeight - this.lineHeight*5;
   }
 
   //////////////////////////////////////////////////////
   // scroll one page down
   scrollPageDown() {
-    var root = this.root;
+    var root = this.container || this.root;
     root.scrollTop += root.clientHeight - this.lineHeight*4;
   }  
 
   //////////////////////////////////////////////////////
   // animate scrolling the terminal window to the bottom
   scrollDown() {
-    var root = this.root;
+    var root = this.container || this.root;
 
     if (!root) {
       return;

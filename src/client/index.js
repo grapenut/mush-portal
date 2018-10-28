@@ -21,6 +21,7 @@ import Utils from './utils';
 import JSONAPI from './jsonapi';
 
 import './ansi.css';
+import './scrollbar.css';
 import 'jspanel4/dist/jspanel.min.css';
 
 import { jsPanel } from 'jspanel4';
@@ -51,6 +52,7 @@ class Client {
       // sidebar navigation
       sidebarOpen: true,
       sidebarAnchor: "right",
+      sidebarAlwaysShow: false,
       // debugging
       debugEvents: true,
     };
@@ -69,6 +71,7 @@ class Client {
     
     // React Components
     this.react = {
+      portal: null,
       taskbar: null,
       terminal: null,
       input: null,
@@ -88,9 +91,11 @@ class Client {
     this.serverProto = null;
     this.serverUrl = null;
     
+    // client variables
     this.conn = null;
+    this.container = null;
 
-    // app instance options
+    // app instance toggles
     this.jsonapi = false;
     this.hidden = false;
     this.updateCounter = 0;
@@ -215,10 +220,11 @@ class Client {
   }
 
   // initialize terminal output window
-  initOutput(output) {
+  initOutput(output, container=null) {
     // Output window
     if (output !== null) {
       this.output = new Emulator(output);
+      this.output.container = container;
       this.output.onCommand = (cmd) => { this.onCommand(cmd); };
 
       output.onunload = () => { this.sendText('QUIT'); this.close(); };
@@ -342,6 +348,8 @@ class Client {
       var child = React.createElement(el, { panel: container }, null);
       ReactDOM.render(React.createElement(MuiThemeProvider, { theme: Theme }, child), container.content);
     };
+    
+    config.container = this.container;
     
     this.panels.create(config);
   }

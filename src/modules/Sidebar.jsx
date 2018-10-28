@@ -2,14 +2,18 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
-import Drawer from '@material-ui/core/Drawer';
+//import Paper from '@material-ui/core/Paper';
+
 
 const styles = theme => ({
   frame: {
     display: "flex",
+    height: "100%",
+    backgroundColor: theme.palette.background.paper,
     "flex-flow": "column nowrap",
   },
-  drawer: {
+  paper: {
+    flex: 1,
   },
 });
 
@@ -20,16 +24,19 @@ class Sidebar extends React.Component {
   }
   
   componentDidMount() {
+    window.client.react.sidebar = this;
+  }
+  
+  componentWillUnMount() {
+    window.client.react.sidebar = null;
   }
   
   render() {
     const { classes } = this.props;
-    const { sidebarOpen, sidebarAnchor } = window.client.settings;
+
     return (
       <div className={classes.frame}>
-        <Drawer variant="persistent" anchor={sidebarAnchor} open={sidebarOpen} className={classes.drawer}>
-          Some sidebar content.
-        </Drawer>
+        Some sidebar content.
       </div>
     );
   }

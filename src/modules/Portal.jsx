@@ -3,12 +3,12 @@ import PropTypes from 'prop-types';
 import { withStyles, MuiThemeProvider } from '@material-ui/core/styles';
 import Theme from './Theme';
 
-import TaskBar from './TaskBar';
+import Taskbar from './Taskbar';
 import Terminal from './Terminal';
 import Input from './Input';
-import StatusBar from './StatusBar';
+import Statusbar from './Statusbar';
 import Login from './Login';
-import SideBar from './SideBar';
+import Sidebar from './Sidebar';
 
 const styles = theme => ({
   frame: {
@@ -27,7 +27,9 @@ const styles = theme => ({
     width: "100%",
   },
   middle: {
-    displayer: "flex",
+    position: "relative",
+    display: "flex",
+    "flex-flow": "row nowrap",
     flex: 1,
     left: 0,
     width: "100%",
@@ -40,34 +42,66 @@ const styles = theme => ({
     left: 0,
     width: "100%",
   },
+  dock: {
+    position: "relative",
+    height: "100%",
+    backgroundColor: theme.palette.background.paper,
+  }
 });
 
 class Portal extends React.Component {
   constructor(props) {
     super(props);
     this.state = { };
+    
+    this.middle = React.createRef();
+    this.terminal = React.createRef();
+    this.dock = React.createRef();
   }
   
   componentDidMount() {
+    const { sidebarAlwaysShow } = window.client.settings;
+    
+    window.client.react.portal = this;
     window.scrollTo(0,1);
+    window.client.container = this.middle.current;
+
+    if (sidebarAlwaysShow) {
+      window.client.container = this.terminal.current;
+    } else {
+      window.client.container = this.middle.current;
+    }
+
+  }
+
+  componentWillUnmount() {
+    window.client.react.portal = null;
   }
   
   render() {
     const { classes } = this.props;
-    const { openSidebar } = window.client.settings;
+    const { sidebarOpen, sidebarAnchor, ansiFG, ansiBG,
+      sidebarAlwaysShow } = window.client.settings;
+    
+    var left = sidebarOpen && sidebarAnchor === "left";
+    var right = sidebarOpen && sidebarAnchor === "right";
+    
+    if (sidebarAlwaysShow) {
+      window.client.container = this.terminal.current;
+    } else {
+      window.client.container = this.middle.current;
+    }
+
     return (
       <MuiThemeProvider theme={Theme}>
         <div className={classes.frame}>
           <div className={classes.top}>
             <Taskbar title="MUSH Portal" />
           </div>
-          <div className={classes.middle}>
-            <div className={classes.flex}>
-              <Terminal />
-            </div>
-            <div>
-              <Sidebar />
-            </div>
+          <div className={classes.middle} ref={this.middle}>
+            {left && (<Sidebar />)}
+            <Terminal ansiFG={ansiFG} ansiBG={ansiBG} containerRef={this.terminal} />
+            {right && (<Sidebar />)}
           </div>
           <div className={classes.bottom}>
             <Input />

@@ -18,7 +18,7 @@ const styles = theme => ({
     padding: 0,
     border: "none",
     "background-color": theme.palette.primary.main,
-    width: "100%",
+    flex: 1,
     height: "100%",
     "font-family": "'Courier New', monospace",
     "font-weight": "normal",
@@ -29,24 +29,18 @@ const styles = theme => ({
   },
   terminal: {
     flex: 1,
-    margin: 0,
-    padding: "0.25em",
     position: "relative",
-    overflow: "hidden",
+    overflowY: "scroll",
+    overflowX: "hidden",
+    padding: "0.25em 0.5em",
   },
   output: {
-    "overflow-y": "scroll",
-    "overflow-x": "hidden",
     "white-space": "pre-wrap",
     "word-wrap": "break-word",
     position: "absolute",
     margin: 0,
     border: 0,
     padding: 0,
-    top: "0.25em",
-    left: "0.25em",
-    bottom: "0.25em",
-    right: "0.25em",
   },
   taskbar: {
     padding: "0",
@@ -78,9 +72,10 @@ class Terminal extends React.Component {
     this.state = {
       lines: 0,
     };
+    
+    this.terminal = React.createRef();
     this.output = React.createRef();
     this.prompt = React.createRef();
-    this.container = React.createRef();
   }
   
   focusInput = () => {
@@ -90,8 +85,7 @@ class Terminal extends React.Component {
   componentDidMount() {
     document.addEventListener('resize', e => this.onChange() );
     window.client.react.terminal = this;
-    window.client.react.container = this.container.current;
-    window.client.initOutput(this.output.current);
+    window.client.initOutput(this.output.current, this.terminal.current);
     window.client.initPrompt(this.prompt.current);
   }
   
@@ -104,14 +98,13 @@ class Terminal extends React.Component {
   }
 
   render() {
-    const { classes } = this.props;
+    const { classes, ansiFG, ansiBG, containerRef } = this.props;
     const { lines } = this.state;
-    const { ansiFG, ansiBG } = window.client.settings;
     
     return (
-      <div id="terminal-container" className={classes.frame} ref={this.container} onClick={this.focusInput}>
-        <div className={classNames(classes.terminal, ansiFG, ansiBG)}>
-          <div ref={this.output} className={classNames(classes.output, ansiFG, ansiBG)} onScroll={this.onChange}></div>
+      <div id="terminal-container" className={classes.frame} onClick={this.focusInput} ref={containerRef}>
+        <div ref={this.terminal} className={classNames(classes.terminal, ansiFG, ansiBG)} onScroll={this.onChange}>
+          <div ref={this.output} className={classNames(classes.output, ansiFG, ansiBG)}></div>
         </div>
         <div className={classes.taskbar}>
           <div ref={this.prompt} className={classNames(classes.prompt, ansiFG, ansiBG)}></div>
@@ -129,6 +122,9 @@ class Terminal extends React.Component {
 Terminal.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
+  ansiFG: PropTypes.string.isRequired,
+  ansiBG: PropTypes.string.isRequired,
+  containerRef: PropTypes.object,
 };
 
 export default withStyles(styles, { withTheme: true })(Terminal);

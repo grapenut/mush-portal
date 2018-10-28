@@ -50,12 +50,14 @@ class MailList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      quickDelete: false
+      quickDelete: false,
+      selected: -1,
     };
   }
 
   purgeMail = () => {
     window.client.react.mailbox.purgeMail();
+    this.toggleDelete();
   };
 
   sendMail = () => {
@@ -68,7 +70,7 @@ class MailList extends React.Component {
   
   render() {
     const { classes, openMail, maillist, unread, handleMark } = this.props;
-    const { quickDelete } = this.state;
+    const { quickDelete, selected } = this.state;
     
     return (
       <div className={classes.frame}>
@@ -83,7 +85,7 @@ class MailList extends React.Component {
                 </IconButton>
               </Tooltip>
               <Tooltip title="Purge deleted mail.">
-                <IconButton onClick={this.purgeMail} disabled={quickDelete}>
+                <IconButton onClick={this.purgeMail}>
                   <DeleteForeverIcon />
                 </IconButton>
               </Tooltip>
@@ -101,7 +103,11 @@ class MailList extends React.Component {
             disablePadding
           >
             {maillist.map((mail,i) => (
-              <MailListItem key={i} quickDelete={quickDelete} mail={mail} onOpen={() => openMail(i)}
+              <MailListItem selected={selected === i} key={i} quickDelete={quickDelete} mail={mail}
+                onOpen={() => {
+                  this.setState({ selected: i });
+                  openMail(i);
+                }}
                 handleMark={() => handleMark(i)}
               />
             ))}

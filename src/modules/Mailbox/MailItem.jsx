@@ -46,8 +46,7 @@ const styles = theme => ({
   },
   body: {
     flex: 1,
-    "overflow-y": "auto",
-    "overflow-x": "hidden",
+    display: "flex",
   },
   actions: {
     "justify-content": "space-evenly",
@@ -60,11 +59,12 @@ const styles = theme => ({
     "font-weight": "normal",
     "font-size": "10pt",
     width: "100%",
-    height: "100%",
-    "overflow-y": "scroll",
+    flex: 1,
+    "overflow-y": "auto",
     "overflow-x": "hidden",
     "white-space": "pre-wrap",
     "word-wrap": "break-word",
+    padding: "0.25em 0.5em",
   },
 });
 

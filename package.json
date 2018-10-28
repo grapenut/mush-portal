@@ -9,6 +9,7 @@
     "@mikewesthad/dungeon": "^1.2.2",
     "file-saver": "^2.0.0-rc.4",
     "jspanel4": "^4.2.1",
+    "jss-nested": "^6.0.1",
     "material-ui-chip-input": "^1.0.0-beta.8",
     "phaser": "^3.15.1",
     "react": "^16.6.0",

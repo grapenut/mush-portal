@@ -5,6 +5,7 @@ import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 
 import Button from '@material-ui/core/Button';
+import Icon from '@material-ui/core/Icon';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -14,11 +15,16 @@ import ListSubheader from '@material-ui/core/ListSubheader';
 import Switch from '@material-ui/core/Switch';
 import TextField from '@material-ui/core/TextField';
 import Popover from '@material-ui/core/Popover';
+//import ListItemText from '@material-ui/core/ListItemText';
 
 import BugReportIcon from '@material-ui/icons/BugReport';
 import ColorLensIcon from '@material-ui/icons/ColorLens';
 import EditIcon from '@material-ui/icons/Edit';
 import CodeIcon from '@material-ui/icons/Code';
+import BorderLeftIcon from '@material-ui/icons/BorderLeft';
+import BorderRightIcon from '@material-ui/icons/BorderRight';
+import VerticalSplitIcon from '@material-ui/icons/VerticalSplit';
+import PictureInPictureIcon from '@material-ui/icons/PictureInPicture';
 
 
 //////////////////////////////////////////////////////////////////////
@@ -26,15 +32,17 @@ import CodeIcon from '@material-ui/icons/Code';
 
 const styles = theme => ({
   frame: {
+    width: "100%",
+    height: "100%",
     display: "flex",
   },
   content: {
     flex: 1,
     display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'flex-end',
-    padding: '0 8px',
-    ...theme.mixins.toolbar,
+//    alignItems: 'center',
+//    justifyContent: 'flex-end',
+//    padding: '0 8px',
+//    ...theme.mixins.toolbar,
   },
   close: {
   },
@@ -69,12 +77,14 @@ class Settings extends React.Component {
     window.client.changeSetting(name, event.target.checked);
     this.setState({ [name]: window.client.settings[name] });
     window.client.saveSettings();
+    window.client.react.portal.forceUpdate();
   };
   
   handleValue = name => event => {
     window.client.changeSetting(name, event.target.value);
     this.setState({ [name]: window.client.settings[name] });
     window.client.saveSettings();
+    window.client.react.portal.forceUpdate();
   };
   
   showColor = name => event => {
@@ -99,7 +109,8 @@ class Settings extends React.Component {
 
   render() {
     const { classes, closeDrawer } = this.props;
-    const { debugEvents, decompileEditor, decompileKey, ansiFG, ansiBG, colorAnchor } = this.state;
+    const { debugEvents, decompileEditor, decompileKey, ansiFG, ansiBG, 
+      sidebarOpen, sidebarAnchor, sidebarAlwaysShow, colorAnchor } = this.state;
     
     return (
       <div className={classes.frame}>
@@ -112,8 +123,8 @@ class Settings extends React.Component {
             ))}
           </Popover>
           
-          <List subheader={<ListSubheader>Debugging</ListSubheader>}>
-            <ListItem>
+          <List disablePadding dense subheader={<ListSubheader>Debugging</ListSubheader>}>
+            <ListItem dense>
               <ListItemIcon>
                 <BugReportIcon />
               </ListItemIcon>
@@ -124,19 +135,19 @@ class Settings extends React.Component {
             </ListItem>
           </List>
 
-          <List subheader={<ListSubheader>Display Settings</ListSubheader>}>
-            <ListItem>
+          <List disablePadding dense subheader={<ListSubheader>Display Settings</ListSubheader>}>
+            <ListItem dense>
               <ListItemText primary="Default ANSI CSS tags." />
             </ListItem>
 
-            <ListItem>
+            <ListItem dense>
               <ListItemIcon>
                 <ColorLensIcon />
               </ListItemIcon>
               <TextField label="Background" value={ansiBG} onChange={this.handleValue('ansiBG')} onFocus={this.showColor("ansiBG")} />
             </ListItem>
 
-            <ListItem>
+            <ListItem dense>
               <ListItemIcon>
                 <ColorLensIcon />
               </ListItemIcon>
@@ -144,8 +155,8 @@ class Settings extends React.Component {
             </ListItem>
           </List>
           
-          <List subheader={<ListSubheader>@decompile/tf</ListSubheader>}>
-            <ListItem>
+          <List disablePadding dense subheader={<ListSubheader>@decompile/tf</ListSubheader>}>
+            <ListItem dense>
               <ListItemIcon>
                 <EditIcon />
               </ListItemIcon>
@@ -155,14 +166,49 @@ class Settings extends React.Component {
               </ListItemSecondaryAction>
             </ListItem>
 
-            <ListItem>
-              <ListItemText primary="The TFPREFIX used by @dec/tf." />
-            </ListItem>
-            <ListItem>
+            <ListItem dense>
               <ListItemIcon>
                 <CodeIcon />
               </ListItemIcon>
-              <TextField label="TFPREFIX" value={decompileKey} onChange={this.handleValue('decompileKey')} />
+              <TextField label="TFPREFIX" value={decompileKey} onChange={this.handleValue('decompileKey')} helperText="Prefix used by @dec/tf." />
+            </ListItem>
+          </List>
+
+          <List disablePadding dense subheader={<ListSubheader>Sidebar Navigation</ListSubheader>}>
+            <ListItem dense>
+              <ListItemIcon>
+                <VerticalSplitIcon />
+              </ListItemIcon>
+              <ListItemText primary="Show sidebar?" />
+              <ListItemSecondaryAction>
+                <Switch checked={sidebarOpen} value="sidebarOpen" onChange={this.handleSwitch('sidebarOpen')} />
+              </ListItemSecondaryAction>
+            </ListItem>
+            
+            <ListItem dense disabled={!sidebarOpen}>
+              <ListItemIcon>
+                <PictureInPictureIcon />
+              </ListItemIcon>
+              <ListItemText primary="Keep panels off?" />
+              <ListItemSecondaryAction>
+                <Switch disabled={!sidebarOpen} checked={sidebarAlwaysShow} value="sidebarAlwaysShow" onChange={this.handleSwitch('sidebarAlwaysShow')} />
+              </ListItemSecondaryAction>
+            </ListItem>
+            
+            <ListItem dense disabled={!sidebarOpen}>
+              <Icon color="action">
+                <BorderLeftIcon />
+              </Icon>
+              <ListItemText primary="Left" />
+              <Switch checked={sidebarAnchor === "right"}
+                color="default" disabled={!sidebarOpen}
+                value={sidebarAnchor === "right" ? "left" : "right"}
+                onChange={this.handleValue('sidebarAnchor')}
+              />
+              <ListItemText primary="Right" />
+              <Icon color="action">
+                <BorderRightIcon />
+              </Icon>
             </ListItem>
           </List>
         </div>

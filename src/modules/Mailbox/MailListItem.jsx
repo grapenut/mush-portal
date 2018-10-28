@@ -41,7 +41,7 @@ class MailListItem extends React.Component {
   }
   
   render() {
-    const { classes, mail, onOpen, quickDelete, handleMark } = this.props;
+    const { classes, mail, onOpen, quickDelete, handleMark, selected } = this.props;
     
     var icon;
     if (mail.deleted) {
@@ -63,6 +63,7 @@ class MailListItem extends React.Component {
           button
           dense
           divider
+          selected={selected}
           onClick={quickDelete ? () => {} : onOpen}
         >
           <ListItemIcon className={classes.listicon}>
@@ -105,6 +106,7 @@ MailListItem.propTypes = {
   quickDelete: PropTypes.bool,
   onOpen: PropTypes.func,
   handleMark: PropTypes.func,
+  selected: PropTypes.bool,
 };
 
 export default withStyles(styles, { withTheme: true })(MailListItem);

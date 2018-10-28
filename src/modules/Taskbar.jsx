@@ -152,7 +152,7 @@ class Taskbar extends React.Component {
   
   closeDrawer = () => {
     this.setState({open: false});
-    window.client.react.terminal.forceUpdate();
+    window.client.react.portal.forceUpdate();
     window.client.focus(true);
   };
   
