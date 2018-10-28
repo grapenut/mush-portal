@@ -33,8 +33,9 @@ const styles = theme => ({
     flex: 1,
   },
   container: {
-    display: "flex",
-    paddingLeft: "2em",
+    display: "inline-flex",
+    paddingLeft: theme.spacing.unit,
+    "align-items": "center",
   },
   flex: {
     flex: 1,

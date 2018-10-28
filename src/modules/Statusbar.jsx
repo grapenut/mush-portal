@@ -24,7 +24,7 @@ const styles = theme => ({
 //////////////////////////////////////////////////////////////////////
 
 
-class StatusBar extends React.Component {
+class Statusbar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -62,10 +62,10 @@ class StatusBar extends React.Component {
   }
 }
 
-StatusBar.propTypes = {
+Statusbar.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles, { withTheme: true })(StatusBar);
+export default withStyles(styles, { withTheme: true })(Statusbar);
 

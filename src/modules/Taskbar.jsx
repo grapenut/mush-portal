@@ -120,7 +120,7 @@ function BadgeIcon(props) {
 //////////////////////////////////////////////////////////////////////
 
 
-class TaskBar extends React.Component {
+class Taskbar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -152,6 +152,7 @@ class TaskBar extends React.Component {
   
   closeDrawer = () => {
     this.setState({open: false});
+    window.client.react.terminal.forceUpdate();
     window.client.focus(true);
   };
   
@@ -382,15 +383,15 @@ class TaskBar extends React.Component {
             </Button>
           </Tooltip>
           
-          <Tooltip title="Who's online?">
-            <Button aria-label="send-who" onClick={() => this.sendCommand("who")}>
-              <PeopleIcon />
-            </Button>
-          </Tooltip>
-          
           <Tooltip title="What am I carrying?">
             <Button aria-label="send-inventory" onClick={() => this.sendCommand("inventory")}>
               <BusinessCenterIcon />
+            </Button>
+          </Tooltip>
+          
+          <Tooltip title="Who's online?">
+            <Button aria-label="send-who" onClick={() => this.sendCommand("who")}>
+              <PeopleIcon />
             </Button>
           </Tooltip>
           
@@ -548,10 +549,10 @@ class TaskBar extends React.Component {
   }
 }
 
-TaskBar.propTypes = {
+Taskbar.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles, { withTheme: true })(TaskBar);
+export default withStyles(styles, { withTheme: true })(Taskbar);
 

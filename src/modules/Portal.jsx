@@ -8,6 +8,7 @@ import Terminal from './Terminal';
 import Input from './Input';
 import StatusBar from './StatusBar';
 import Login from './Login';
+import SideBar from './SideBar';
 
 const styles = theme => ({
   frame: {
@@ -26,9 +27,13 @@ const styles = theme => ({
     width: "100%",
   },
   middle: {
+    displayer: "flex",
     flex: 1,
     left: 0,
     width: "100%",
+  },
+  flex: {
+    flex: 1,
   },
   bottom: {
     bottom: 0,
@@ -49,18 +54,24 @@ class Portal extends React.Component {
   
   render() {
     const { classes } = this.props;
+    const { openSidebar } = window.client.settings;
     return (
       <MuiThemeProvider theme={Theme}>
         <div className={classes.frame}>
           <div className={classes.top}>
-            <TaskBar title="MUSH Portal" />
+            <Taskbar title="MUSH Portal" />
           </div>
           <div className={classes.middle}>
-            <Terminal />
+            <div className={classes.flex}>
+              <Terminal />
+            </div>
+            <div>
+              <Sidebar />
+            </div>
           </div>
           <div className={classes.bottom}>
             <Input />
-            <StatusBar />
+            <Statusbar />
           </div>
           <Login />
         </div>

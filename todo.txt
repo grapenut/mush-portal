@@ -1,15 +1,13 @@
-Command History
-  Show command history popover.
-  Click to roll the input buffer back to that line.
-  Fix input focus after click.
+TODO
+------------------
 
-JSONAPI
-  EXEC Execute arbitrary softcode as the player. Use a unique key to set an
-       event for the return value.
-  PMATCH Validate player name matching (for mail sending).
+Sidebar
+  Configurable docked panel to show ferquently updated information.
+  Show basic information about the room (contents, players, exits).
+  Update online friends list.
 
-Activity Notification
-  Fix activity bubble to hide/unhide properly.
+Color Picker
+  Custom color picker with ANSI color grid 8 rows, 34 cols
 
 Command Macros
   Macros execute a block of commands at once, with some string insertion tokens.
@@ -37,10 +35,6 @@ BBoard
   Navigation icons (back, reload)
   +bbpost front-end
 
-Mailbox
-  Use a terminal emulator instead of <pre> tags for the message body.
-  Use an ace editor in the @mail composer.
-
 Taskbar
   Reorganize how windows are spawned and kept track of.
   Reorganize commands, icons and popovers for customization later.
@@ -48,16 +42,33 @@ Taskbar
 Terminal
   Split the terminal and contain panels in their own area.
 
-Sidebar
-  Show basic information about the room (contents, players).
-  Show online player list.
-
 Phaser
   Generate generic 2d tilemap for rooms.
   Auto-place exits.
   Start with generic player/object avatars.
   Eventually load custom graphics for room tilemaps and players/objects.
   Click navigation and interaction.
+
+
+DONE
+------------------
+
+Command History
+  Show command history popover.
+  Click to roll the input buffer back to that line.
+  Fix input focus after click.
+
+JSONAPI
+  EXEC Execute arbitrary softcode as the player. Use a unique key to set an
+       event for the return value.
+  PMATCH Validate player name matching (for mail sending).
+
+Activity Notification
+  Fix activity bubble to hide/unhide properly.
+
+Mailbox
+  Use a terminal emulator instead of <pre> tags for the message body.
+  Use an ace editor in the @mail composer.
 
 
 

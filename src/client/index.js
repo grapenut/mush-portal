@@ -42,11 +42,17 @@ class Client {
   constructor() {
     // client settings
     this.settings = {
-      // debugging
-      debugEvents: true,
+      // default emulator fg/bg
+      ansiFG: 'ansi-37',
+      ansiBG: 'ansi-40',
       // upload editor
       decompileEditor: true,
       decompileKey: 'FugueEdit > ',
+      // sidebar navigation
+      sidebarOpen: true,
+      sidebarAnchor: "right",
+      // debugging
+      debugEvents: true,
     };
     this.loadSettings();
     
@@ -325,7 +331,6 @@ class Client {
       return;
     }
     
-    
     var config = cfg || {};
     
     if (!config.headerTitle) {
@@ -545,7 +550,7 @@ class Client {
   
   execString(code, callback) {
     var id = "exec_"+shortid.generate();
-    var cmd = "th oob(%#,"+id+",json(object,result,json(string,"+code+")))";
+    var cmd = "th null(oob(%#,"+id+",json(object,result,json(string,"+code+"))))";
     
     this.events.on(id, (obj) => {
       callback(obj.result);
@@ -557,7 +562,7 @@ class Client {
 
   execJSON(code, callback) {
     var id = "exec_"+shortid.generate();
-    var cmd = "th oob(%#,"+id+","+code+")";
+    var cmd = "th null(oob(%#,"+id+","+code+"))";
     
     this.events.on(id, (obj) => {
       callback(obj);
@@ -566,6 +571,7 @@ class Client {
     
     this.sendText(cmd);
   }
+  
   
   /////////////////////////////////////////////////////////////////////////////////////////////////
   

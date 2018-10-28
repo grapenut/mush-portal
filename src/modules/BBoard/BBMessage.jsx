@@ -1,13 +1,14 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 
 import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
-import Typography from '@material-ui/core/Typography';
+//import Typography from '@material-ui/core/Typography';
 
 //import Icon from '@material-ui/core/Icon';
 //import Button from '@material-ui/core/Button';
@@ -19,6 +20,8 @@ import Typography from '@material-ui/core/Typography';
 //import MoreVertIcon from '@material-ui/icons/MoreVert';
 //import ReplyIcon from '@material-ui/icons/Reply';
 //import ForwardIcon from '@material-ui/icons/Forward';
+
+import Emulator from '../../client/emulator';
 
 
 //////////////////////////////////////////////////////////////////////
@@ -87,6 +90,7 @@ class BBMessage extends React.Component {
   
   render() {
     const { classes, message } = this.props;
+    const { ansiFG, ansiBG } = window.client.settings;
     
     this.emulator && this.emulator.clear();
     this.emulator && this.emulator.appendText(message.body);
@@ -107,7 +111,7 @@ class BBMessage extends React.Component {
           }
         />
         <CardContent className={classes.body}>
-          <div ref={this.body} className={classNames(classes.output, window.client.ansi_default)}></div>
+          <div ref={this.body} className={classNames(classes.output, ansiFG, ansiBG)}></div>
         </CardContent>
         <CardActions className={classes.actions}>
         </CardActions>

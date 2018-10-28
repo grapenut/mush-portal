@@ -1,16 +1,24 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 
 import Button from '@material-ui/core/Button';
-import FormLabel from '@material-ui/core/FormLabel';
-import FormControl from '@material-ui/core/FormControl';
-import FormGroup from '@material-ui/core/FormGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormHelperText from '@material-ui/core/FormHelperText';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import ListSubheader from '@material-ui/core/ListSubheader';
 import Switch from '@material-ui/core/Switch';
 import TextField from '@material-ui/core/TextField';
+import Popover from '@material-ui/core/Popover';
+
+import BugReportIcon from '@material-ui/icons/BugReport';
+import ColorLensIcon from '@material-ui/icons/ColorLens';
+import EditIcon from '@material-ui/icons/Edit';
+import CodeIcon from '@material-ui/icons/Code';
 
 
 //////////////////////////////////////////////////////////////////////
@@ -42,7 +50,15 @@ const styles = theme => ({
 class Settings extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { };
+    this.state = {
+      colorAnchor: null,
+    };
+    
+    this.color = null;
+    this.colorList = [
+                       [ "30", "31", "32", "33", "34", "35", "36", "37" ],
+                       [ "1-30", "1-31", "1-32", "1-33", "1-34", "1-35", "1-36", "1-37" ],
+                     ];
     
     Object.keys(window.client.settings).forEach(key => {
       this.state[key] = window.client.settings[key];
@@ -61,6 +77,20 @@ class Settings extends React.Component {
     window.client.saveSettings();
   };
   
+  showColor = name => event => {
+    this.color = name;
+    this.setState({ colorAnchor: event.currentTarget });
+  };
+  
+  closeColor = () => {
+    this.setState({ colorAnchor: null });
+  };
+  
+  chooseColor = color => event => {
+    this.setState({ [this.color]: "ansi-"+color });
+    this.closeColor();
+  };
+  
   componentDidMount() {
   }
   
@@ -69,37 +99,72 @@ class Settings extends React.Component {
 
   render() {
     const { classes, closeDrawer } = this.props;
-    const { debugEvents, decompileEditor, decompileKey } = this.state;
+    const { debugEvents, decompileEditor, decompileKey, ansiFG, ansiBG, colorAnchor } = this.state;
     
     return (
       <div className={classes.frame}>
         <div className={classes.content} tabIndex={0} role="button">
-          <FormControl component="fieldset">
-            <FormLabel component="legend">Debugging</FormLabel>
-            <FormGroup>
-              <FormControlLabel
-                control={<Switch checked={debugEvents} value="debugEvents" onChange={this.handleSwitch('debugEvents')} />}
-                label="Debug Events"
-              />
-            </FormGroup>
-            <FormHelperText>See the developer console for more.</FormHelperText>
-          </FormControl>
+          <Popover id="settings.color" anchorEl={colorAnchor} open={false} onClose={this.closeColor}>
+            {this.colorList.map((row,i) => (
+              row.map((color, c) => (
+                <div key={i+","+c} className={classNames(classes.colorButton, "ansi-"+color)} onClick={this.chooseColor(color)}></div>
+              ))
+            ))}
+          </Popover>
+          
+          <List subheader={<ListSubheader>Debugging</ListSubheader>}>
+            <ListItem>
+              <ListItemIcon>
+                <BugReportIcon />
+              </ListItemIcon>
+              <ListItemText primary="Debug JSON events" />
+              <ListItemSecondaryAction>
+                <Switch checked={debugEvents} value="debugEvents" onChange={this.handleSwitch('debugEvents')} />
+              </ListItemSecondaryAction>
+            </ListItem>
+          </List>
 
-          <FormControl component="fieldset">
-            <FormLabel component="legend">Command Upload Editor</FormLabel>
-            <FormGroup>
-              <FormControlLabel
-                control={<Switch checked={decompileEditor} value="decompileEditor" onChange={this.handleSwitch('decompileEditor')} />}
-                label="Send @dec/tf output to editor."
-              />
-              <FormControlLabel
-                control={<TextField label="TFPREFIX" value={decompileKey} onChange={this.handleValue('decompileKey')} />}
-                label="The TFPREFIX used by @dec/tf."
-              />
-            </FormGroup>
-            <FormHelperText>Controls the command upload editor.</FormHelperText>
-          </FormControl>
+          <List subheader={<ListSubheader>Display Settings</ListSubheader>}>
+            <ListItem>
+              <ListItemText primary="Default ANSI CSS tags." />
+            </ListItem>
 
+            <ListItem>
+              <ListItemIcon>
+                <ColorLensIcon />
+              </ListItemIcon>
+              <TextField label="Background" value={ansiBG} onChange={this.handleValue('ansiBG')} onFocus={this.showColor("ansiBG")} />
+            </ListItem>
+
+            <ListItem>
+              <ListItemIcon>
+                <ColorLensIcon />
+              </ListItemIcon>
+              <TextField label="Foreground" value={ansiFG} onChange={this.handleValue('ansiFG')} onFocus={this.showColor("ansiFG")} />
+            </ListItem>
+          </List>
+          
+          <List subheader={<ListSubheader>@decompile/tf</ListSubheader>}>
+            <ListItem>
+              <ListItemIcon>
+                <EditIcon />
+              </ListItemIcon>
+              <ListItemText primary="Send @dec/tf to editor." />
+              <ListItemSecondaryAction>
+                <Switch checked={decompileEditor} value="decompileEditor" onChange={this.handleSwitch('decompileEditor')} />
+              </ListItemSecondaryAction>
+            </ListItem>
+
+            <ListItem>
+              <ListItemText primary="The TFPREFIX used by @dec/tf." />
+            </ListItem>
+            <ListItem>
+              <ListItemIcon>
+                <CodeIcon />
+              </ListItemIcon>
+              <TextField label="TFPREFIX" value={decompileKey} onChange={this.handleValue('decompileKey')} />
+            </ListItem>
+          </List>
         </div>
         <div className={classes.flex}></div>
         <Button className={classes.close} onClick={closeDrawer}>

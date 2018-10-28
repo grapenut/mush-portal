@@ -15,6 +15,8 @@ import TextField from '@material-ui/core/TextField';
 import SendIcon from '@material-ui/icons/Send';
 import CancelIcon from '@material-ui/icons/Cancel';
 
+import ChipInput from 'material-ui-chip-input';
+
 import AceEditor from 'react-ace';
 import 'brace/mode/mushcode';
 import 'brace/theme/tomorrow_night_bright';
@@ -48,13 +50,13 @@ const styles = theme => ({
     width: "100%",
   },
   body: {
+    position: "relative",
     flex: 1,
     display: "flex",
-    "overflow-y": "auto",
-    "overflow-x": "hidden",
+    overflow: "hidden",
+    "flex-flow": "column nowrap",
   },
   bodytext: {
-    width: "100%",
     flex: 1,
   },
   actions: {
@@ -62,6 +64,13 @@ const styles = theme => ({
   },
   button: {
     display: "block",
+  },
+  helperText: {
+    textAlign: 'right',
+    width: '100%',
+  },
+  nameInput: {
+    minWidth: "10em",
   },
 });
 
@@ -73,16 +82,17 @@ class Sendmail extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      to: props.to ? props.to : "",
       subject: props.subject ? props.subject : "",
       body: props.body ? props.body : "",
+      error: null,
+      chips: []
     };
     
     this.editor = React.createRef();
   }
 
   setTarget(to) {
-    this.setState({ to });
+    this.addChip(to);
   }
   
   setSubject(subject) {
@@ -94,15 +104,16 @@ class Sendmail extends React.Component {
   }
 
   setFields(to, subject, body) {
-    this.setState({ to, subject, body });
+    to && this.addChip(to);
+    this.setState({ subject, body });
   }
   
   sendMail = () => {
-    const { to, subject, body } = this.state;
+    const { chips, subject, body } = this.state;
     var realsub = subject;
     
-    if (!to || to === "") {
-      alert("Invalid recipient.");
+    if (chips.length < 1) {
+      alert("Invalid recipients.");
       return;
     }
     
@@ -119,6 +130,7 @@ class Sendmail extends React.Component {
       }
     }
     
+    var to = '"'+chips.join('" "')+'"';
     window.client.sendCommand("@mail "+to+"="+realsub+"/"+body.split('\n').join('%r'));
     this.closePanel();
   };
@@ -129,6 +141,12 @@ class Sendmail extends React.Component {
   
   componentDidMount() {
     window.client.react.sendmail = this;
+    
+    const { panel, to } = this.props;
+    panel.options.resizeit.resize = this.onResize;
+    window.client.panels.resizeit(panel, panel.options.resizeit);
+    
+    to && this.addChip(to);
   }
   
   componentWillUnmount() {
@@ -145,27 +163,66 @@ class Sendmail extends React.Component {
     this.setState({ body });
   };
   
-  validatePlayer = () => {
-    const { to } = this.state;
-    var code = "iter("+to+",pmatch(%i0),,)";
-    window.client.execString(code, (result) => {
-      if (result === "1") {
-        this.setState({ valid: true });
+  onResize = () => {
+    this.editor.current.editor.resize();
+  };
+  
+  setError = error => {
+    this.setState({ error });
+//    setTimeout(() => { this.setState({ error: null }); }, 1000);
+  };
+  
+  onInput = () => {
+    this.setError(null);
+  };
+  
+  addChip = chip => {
+    const { chips } = this.state;
+    var str = chip.replace(/(?<!\\)\\/g, '').replace(/(?<!\\)"/g, '');
+    window.client.execString('if(setr(0,namelist("'+str+'")),name(%q0))', (result) => {
+      if (result !== "") {
+        if (chips.indexOf(result) === -1) {
+          chips.push(result);
+          this.setState({ chips });
+        }
+        this.setError(null);
       } else {
-        this.setState({ valid: false });
+        this.setError("Unknown player.");
       }
     });
+
+  };
+  
+  delChip = (chip, i) => {
+    const { chips } = this.state;
+    chips.splice(i, 1);
+    this.setState({ chips });
+    this.setError(null);
+  };
+  
+  beforeAdd = (chip) => {
+    if ((chip.startsWith('"') && !chip.endsWith('"')) || 
+        (chip.startsWith("'") && !chip.endsWith("'")) || chip.endsWith('\\')) {
+      return false;
+    }
+    
+    
+    
+    return true;
   };
   
   render() {
     const { classes } = this.props;
-    const { to, subject, body } = this.state;
+    const { chips, subject, body, error } = this.state;
     
     return (
       <Card className={classes.card}>
         <CardHeader className={classes.header}
           title={(
-            <TextField label="Recipient" value={to} onChange={this.handleChange("to")} className={classes.stretch} />
+            <ChipInput label="Recipients" fullWidth value={chips} blurBehavior="add" onUpdateInput={this.onInput}
+              newChipKeyCodes={[13,32,187]} onBeforeAdd={this.beforeAdd} onAdd={this.addChip} classes={{ input: classes.nameInput }}
+              onDelete={this.delChip} helperText={error} FormHelperTextProps={{ error: true, className: classes.helperText }}
+            />
           )}
           subheader={(
             <TextField label="Subject" value={subject} onChange={this.handleChange("subject")} className={classes.stretch} />
@@ -212,6 +269,7 @@ Sendmail.propTypes = {
   to: PropTypes.string,
   subject: PropTypes.string,
   body: PropTypes.string,
+  panel: PropTypes.object,
 };
 
 export default withStyles(styles, { withTheme: true })(Sendmail);

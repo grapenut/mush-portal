@@ -106,14 +106,15 @@ class Terminal extends React.Component {
   render() {
     const { classes } = this.props;
     const { lines } = this.state;
+    const { ansiFG, ansiBG } = window.client.settings;
     
     return (
       <div id="terminal-container" className={classes.frame} ref={this.container} onClick={this.focusInput}>
-        <div className={classNames(classes.terminal, "ansi-37 ansi-40")}>
-          <div ref={this.output} className={classNames(classes.output, "ansi-37 ansi-40")} onScroll={this.onChange}></div>
+        <div className={classNames(classes.terminal, ansiFG, ansiBG)}>
+          <div ref={this.output} className={classNames(classes.output, ansiFG, ansiBG)} onScroll={this.onChange}></div>
         </div>
         <div className={classes.taskbar}>
-          <div ref={this.prompt} className={classNames(classes.prompt, "ansi-37 ansi-40")}></div>
+          <div ref={this.prompt} className={classNames(classes.prompt, ansiFG, ansiBG)}></div>
           <div className={classes.scrollcount}>
             <Typography color="error" align="right">
               {lines > 0 && "...and "+lines+" more lines..."}
