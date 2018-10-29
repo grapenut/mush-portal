@@ -31,10 +31,10 @@ import SaveIcon from '@material-ui/icons/Save';
 import SettingsIcon from '@material-ui/icons/Settings';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import KeyboardIcon from '@material-ui/icons/Keyboard';
-
 import SearchIcon from '@material-ui/icons/Search';
+import WifiIcon from '@material-ui/icons/Wifi';
 
-import Settings from './Settings';
+import Settings from '../Settings';
 
 
 //////////////////////////////////////////////////////////////////////
@@ -342,6 +342,12 @@ class Taskbar extends React.Component {
     req.send();
   };
   
+  reconnect() {
+    if (window.confirm("Do you want to reconnect?")) {
+      window.client.conn.reconnect();
+    }
+  }
+  
   componentDidMount() {
     window.client.react.taskbar = this;
   }
@@ -427,7 +433,6 @@ class Taskbar extends React.Component {
             variant="temporary"
             anchor="top"
             open={open}
-            classes={{paper: classes.drawerPaper}}
             onClose={this.closeDrawer}
             onOpen={this.openDrawer}
           >
@@ -523,6 +528,11 @@ class Taskbar extends React.Component {
                 <BackspaceIcon />
               </Tooltip>
             </MenuItem>
+            <MenuItem onClick={this.reconnect}>
+              <Tooltip title="Reconnect.">
+                <WifiIcon />
+              </Tooltip>
+            </MenuItem>            
             <MenuItem onClick={() => {
               if (jsonapi) {
                 this.sendAPI("phaser")

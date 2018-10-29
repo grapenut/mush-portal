@@ -56,9 +56,7 @@ class Connection {
     
     // quit the old connection, if we have one
     if (this.isConnected()) {
-      var old = this.socket;
       this.sendText('QUIT');
-      this.isOpen && setTimeout(old.close, 1000);
     }
 
     this.socket = new window.WebSocket(this.url);

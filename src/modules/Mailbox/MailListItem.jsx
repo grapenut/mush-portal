@@ -29,9 +29,10 @@ const styles = theme => ({
     opacity: 0.5,
   },
   odd: {
-    background: 'rgba(1, 0, 0, 0.1)',
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
   },
   even: {
+    backgroundColor: 'rgba(0, 0, 0, 0.05)',
   },
 });
 
@@ -46,7 +47,7 @@ class MailListItem extends React.Component {
   }
   
   render() {
-    const { classes, mail, onOpen, quickDelete, handleMark, selected, key } = this.props;
+    const { classes, mail, onOpen, quickDelete, handleMark, selected, id } = this.props;
     
     var icon;
     if (mail.deleted) {
@@ -61,7 +62,7 @@ class MailListItem extends React.Component {
       icon = (<DraftsIcon className={classes.read} />);
     }
     
-    var even = (key % 2 === 0);
+    var even = (id % 2 === 0);
 
     return (
       <div className={classes.frame}>
@@ -115,6 +116,7 @@ MailListItem.propTypes = {
   onOpen: PropTypes.func,
   handleMark: PropTypes.func,
   selected: PropTypes.bool,
+  id: PropTypes.number,
 };
 
 export default withStyles(styles, { withTheme: true })(MailListItem);

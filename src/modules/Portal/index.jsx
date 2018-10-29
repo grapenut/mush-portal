@@ -1,14 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles, MuiThemeProvider } from '@material-ui/core/styles';
-import Theme from './Theme';
+import Theme from '../Theme';
 
-import Taskbar from './Taskbar';
-import Terminal from './Terminal';
-import Input from './Input';
-import Statusbar from './Statusbar';
-import Login from './Login';
-import Sidebar from './Sidebar';
+import Taskbar from '../Taskbar';
+import Terminal from '../Terminal';
+import Input from '../Input';
+import Statusbar from '../Statusbar';
+import Login from '../Login';
+import Sidebar from '../Sidebar';
 
 const styles = theme => ({
   frame: {
@@ -80,8 +80,9 @@ class Portal extends React.Component {
   
   render() {
     const { classes } = this.props;
-    const { sidebarOpen, sidebarAnchor, ansiFG, ansiBG,
-      wrapWidth, sidebarAlwaysShow } = window.client.settings;
+    const { sidebarOpen, sidebarAnchor, ansiFG, ansiBG, wrapWidth,
+      sidebarAlwaysShow, sidebarShowExits, sidebarShowPlayers,
+      sidebarShowThings } = window.client.settings;
     
     var left = sidebarOpen && sidebarAnchor === "left";
     var right = sidebarOpen && sidebarAnchor === "right";
@@ -91,6 +92,8 @@ class Portal extends React.Component {
     } else {
       window.client.container = this.middle.current;
     }
+    
+    var sidebar = (<Sidebar sidebarShowExits={sidebarShowExits} sidebarShowPlayers={sidebarShowPlayers} sidebarShowThings={sidebarShowThings} />);
 
     return (
       <MuiThemeProvider theme={Theme}>
@@ -99,9 +102,9 @@ class Portal extends React.Component {
             <Taskbar title="MUSH Portal" />
           </div>
           <div className={classes.middle} ref={this.middle}>
-            {left && (<Sidebar />)}
+            {left && sidebar}
             <Terminal width={wrapWidth} ansiFG={ansiFG} ansiBG={ansiBG} containerRef={this.terminal} />
-            {right && (<Sidebar />)}
+            {right && sidebar}
           </div>
           <div className={classes.bottom}>
             <Input />

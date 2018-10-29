@@ -9,7 +9,7 @@ import saveAs from 'file-saver';
 import Theme from '../modules/Theme';
 import Chargen from '../modules/Chargen';
 import Mailbox from '../modules/Mailbox';
-import Sendmail from '../modules/Mailbox/Sendmail';
+import Sendmail from '../modules/Sendmail';
 import BBoard from '../modules/BBoard';
 import Upload from '../modules/Upload';
 import Game from '../phaser';
@@ -53,7 +53,11 @@ class Client {
       // sidebar navigation
       sidebarOpen: true,
       sidebarAnchor: "right",
+      sidebarWidth: "20em",
       sidebarAlwaysShow: false,
+      sidebarShowPlayers: true,
+      sidebarShowThings: true,
+      sidebarShowExits: true,
       // debugging
       debugEvents: true,
     };

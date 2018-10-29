@@ -26,6 +26,10 @@ import BorderLeftIcon from '@material-ui/icons/BorderLeft';
 import BorderRightIcon from '@material-ui/icons/BorderRight';
 import VerticalSplitIcon from '@material-ui/icons/VerticalSplit';
 import PictureInPictureIcon from '@material-ui/icons/PictureInPicture';
+import GroupWorkIcon from '@material-ui/icons/GroupWork';
+import AccountCircleIcon from '@material-ui/icons/AccountCircle';
+import ExploreIcon from '@material-ui/icons/Explore';
+import FormatIndentIncreaseIcon from '@material-ui/icons/FormatIndentIncrease';
 
 
 //////////////////////////////////////////////////////////////////////
@@ -36,6 +40,7 @@ const styles = theme => ({
     width: "100%",
     height: "100%",
     display: "flex",
+    'flex-flow': 'row nowrap',
   },
   content: {
     flex: 1,
@@ -111,7 +116,8 @@ class Settings extends React.Component {
   render() {
     const { classes, closeDrawer } = this.props;
     const { debugEvents, decompileEditor, decompileKey, ansiFG, ansiBG, wrapWidth,
-      sidebarOpen, sidebarAnchor, sidebarAlwaysShow, colorAnchor } = this.state;
+      sidebarOpen, sidebarAnchor, sidebarAlwaysShow, colorAnchor, sidebarShowPlayers,
+      sidebarShowThings, sidebarShowExits, sidebarWidth } = this.state;
     
     return (
       <div className={classes.frame}>
@@ -178,7 +184,7 @@ class Settings extends React.Component {
             </ListItem>
           </List>
 
-          <List disablePadding dense subheader={<ListSubheader>Sidebar Navigation</ListSubheader>}>
+          <List disablePadding dense subheader={<ListSubheader>Sidebar Display</ListSubheader>}>
             <ListItem dense>
               <ListItemIcon>
                 <VerticalSplitIcon />
@@ -193,7 +199,7 @@ class Settings extends React.Component {
               <ListItemIcon>
                 <PictureInPictureIcon />
               </ListItemIcon>
-              <ListItemText primary="Keep panels off?" />
+              <ListItemText primary="Sidebar on top?" />
               <ListItemSecondaryAction>
                 <Switch disabled={!sidebarOpen} checked={sidebarAlwaysShow} value="sidebarAlwaysShow" onChange={this.handleSwitch('sidebarAlwaysShow')} />
               </ListItemSecondaryAction>
@@ -214,9 +220,47 @@ class Settings extends React.Component {
                 <BorderRightIcon />
               </Icon>
             </ListItem>
+            
+            <ListItem dense>
+              <ListItemIcon>
+                <FormatIndentIncreaseIcon />
+              </ListItemIcon>
+              <TextField label="Sidebar Width" value={sidebarWidth} onChange={this.handleValue('sidebarWidth')} />
+            </ListItem>
+          </List>
+          
+          <List disablePadding dense subheader={<ListSubheader>Sidebar Content</ListSubheader>}>
+            <ListItem dense>
+              <ListItemIcon>
+                <AccountCircleIcon />
+              </ListItemIcon>
+              <ListItemText primary="Show players?" />
+              <ListItemSecondaryAction>
+                <Switch checked={sidebarShowPlayers} value="sidebarShowPlayers" onChange={this.handleSwitch('sidebarShowPlayers')} />
+              </ListItemSecondaryAction>
+            </ListItem>
+            
+            <ListItem dense>
+              <ListItemIcon>
+                <GroupWorkIcon />
+              </ListItemIcon>
+              <ListItemText primary="Show things?" />
+              <ListItemSecondaryAction>
+                <Switch checked={sidebarShowThings} value="sidebarShowThings" onChange={this.handleSwitch('sidebarShowThings')} />
+              </ListItemSecondaryAction>
+            </ListItem>
+            
+            <ListItem dense>
+              <ListItemIcon>
+                <ExploreIcon />
+              </ListItemIcon>
+              <ListItemText primary="Show exits?" />
+              <ListItemSecondaryAction>
+                <Switch checked={sidebarShowExits} value="sidebarShowExits" onChange={this.handleSwitch('sidebarShowExits')} />
+              </ListItemSecondaryAction>
+            </ListItem>
           </List>
         </div>
-        <div className={classes.flex}></div>
         <Button className={classes.close} onClick={closeDrawer}>
           Close
         </Button>

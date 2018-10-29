@@ -61,7 +61,7 @@ class MailList extends React.Component {
   };
 
   sendMail = () => {
-    window.client.react.mailbox.sendMail("", "", "");
+    window.client.react.mailbox.sendMail(null, "", "");
   };
   
   toggleDelete = () => {
@@ -103,7 +103,7 @@ class MailList extends React.Component {
             disablePadding
           >
             {maillist.map((mail,i) => (
-              <MailListItem selected={selected === i} key={i} quickDelete={quickDelete} mail={mail}
+              <MailListItem selected={selected === i} id={i} key={i} quickDelete={quickDelete} mail={mail}
                 onOpen={() => {
                   this.setState({ selected: i });
                   openMail(i);
