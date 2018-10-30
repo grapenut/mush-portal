@@ -76,6 +76,8 @@ class Terminal extends React.Component {
     this.terminal = React.createRef();
     this.output = React.createRef();
     this.prompt = React.createRef();
+
+    this.init = false;
   }
   
   focusInput = () => {
@@ -83,12 +85,23 @@ class Terminal extends React.Component {
   };
 
   componentDidMount() {
-    document.addEventListener('resize', e => this.onChange() );
+    document.addEventListener('resize', this.onResize);
     window.client.react.terminal = this;
     window.client.initOutput(this.output.current, this.terminal.current);
     window.client.initPrompt(this.prompt.current);
+    this.init = true;
+    this.forceUpdate();
   }
   
+  onResize = event => {
+    window.client.output.calcDimensions();
+    window.client.sendText("SCREENWIDTH " + window.client.settings.wrapWidth);
+    window.client.sendText("SCREENHEIGHT " + Math.floor(window.client.output.root.parentNode.clientHeight / window.client.output.dims.height));
+    window.client.output.scrollDown();
+
+    this.onChange();
+  };
+
   onChange = () => {
     this.setState({ lines: this.linesOfScroll() });
   };
@@ -101,10 +114,17 @@ class Terminal extends React.Component {
     const { classes, width, ansiFG, ansiBG, containerRef } = this.props;
     const { lines } = this.state;
     
+    var dim;
+    if (this.init) {
+      dim = width * window.client.output.dims.width + "px";
+    } else {
+      dim = "100%";
+    }
+    
     return (
       <div id="terminal-container" className={classes.frame} onClick={this.focusInput} ref={containerRef}>
         <div ref={this.terminal} className={classNames(classes.terminal, ansiFG, ansiBG)} onScroll={this.onChange}>
-          <div ref={this.output} className={classNames(classes.output, ansiFG, ansiBG)} style={{ maxWidth: width }}></div>
+          <div ref={this.output} className={classNames(classes.output, ansiFG, ansiBG)} style={{ maxWidth: dim }}></div>
         </div>
         <div className={classes.taskbar}>
           <div ref={this.prompt} className={classNames(classes.prompt, ansiFG, ansiBG)}></div>

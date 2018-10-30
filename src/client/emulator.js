@@ -24,7 +24,9 @@ class Emulator {
     this.root = root;
     this.container = null;
     
-    this.lineHeight = this.calcLineHeight();
+    this.dims = { };
+    
+    this.calcDimensions();
     
     // setup the pueblo xch_cmd callback
     this.onCommand = null;
@@ -524,20 +526,24 @@ class Emulator {
     return false;
   }
   
-  // calculate the height of a single line of text
-  calcLineHeight() {
+  // calculate the width and height in characters
+  calcDimensions() {
     var element = this.root;
     if (!element) {
       return 0.0;
     }
     
+    var txt = "0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789";
+    
     var temp = document.createElement(element.nodeName);
     temp.setAttribute("style","margin:0px;padding:0px;font-family:"+element.style.fontFamily+";font-size:"+element.style.fontSize);
-    temp.innerHTML = "test";
-    temp = element.parentNode.appendChild(temp);
-    var ret = temp.clientHeight;
+    temp.innerText = txt;
+    temp = element.appendChild(temp);
+    this.dims.width = temp.clientWidth / 100.0;
+    this.dims.height = temp.clientHeight;
     temp.parentNode.removeChild(temp);
-    return ret;
+    
+    return this.dims;
   }
   
   // return the number of lines of text below the current viewport
@@ -547,25 +553,25 @@ class Emulator {
       return 0.0;
     }
     
-    if (this.lineHeight <= 0.0) {
+    if (this.dims.height <= 0.0) {
       return 0.0;
     }
     
-    return Math.round(Math.abs((root.scrollHeight - root.offsetHeight - root.scrollTop) / this.lineHeight));
+    return Math.round(Math.abs((root.scrollHeight - root.offsetHeight - root.scrollTop) / this.dims.height));
   }
 
   //////////////////////////////////////////////////////
   // scroll one page up
   scrollPageUp() {
     var root = this.container || this.root;
-    root.scrollTop -= root.clientHeight - this.lineHeight*5;
+    root.scrollTop -= root.clientHeight - this.dims.height*5;
   }
 
   //////////////////////////////////////////////////////
   // scroll one page down
   scrollPageDown() {
     var root = this.container || this.root;
-    root.scrollTop += root.clientHeight - this.lineHeight*4;
+    root.scrollTop += root.clientHeight - this.dims.height*4;
   }  
 
   //////////////////////////////////////////////////////

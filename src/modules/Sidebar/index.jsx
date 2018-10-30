@@ -284,7 +284,7 @@ class Sidebar extends React.Component {
     }
 
     return (
-      <div className={classes.frame} style={{ width: sidebarWidth }}>
+      <div className={classes.frame} style={{ width: sidebarWidth }} onClick={() => window.client.focus()}>
         <div className={classes.contents}>
           <span>
             {sidebarShowPlayers && players.length > 0 && (

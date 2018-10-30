@@ -55,7 +55,7 @@ class Client {
       // default emulator fg/bg
       ansiFG: 'ansi-37',
       ansiBG: 'ansi-40',
-      wrapWidth: '60em',
+      wrapWidth: 100,
       // upload editor
       decompileEditor: true,
       decompileKey: 'FugueEdit > ',
@@ -432,6 +432,10 @@ class Client {
       if (!client.conn.hasData) {
         // this is the first update, show the login screen
         client.react.login && client.react.login.openLogin();
+        
+        // send the screen dimensions
+        client.sendText("SCREENWIDTH " + client.settings.wrapWidth);
+        client.sendText("SCREENHEIGHT " + Math.floor(client.output.root.parentNode.clientHeight / client.output.dims.height));
       }
       
       if (client.hidden && data.endsWith('\n')) {
@@ -451,14 +455,19 @@ class Client {
         // match some login error conditions
         for (let i = 0; i < LOGINFAIL.length; i++) {
           if (text.match(LOGINFAIL[i])) {
-            client.react.login && client.react.login.openLogin();
+            client.react.login && client.react.login.openLogin(text);
             break;
           }
         }
         
+        // we logged in
         if (text.match(/Last( FAILED)? connect was from/)) {
           client.loggedIn = true;
-          setTimeout(() => { if (!client.jsonapi) client.sendAPI("listcontents"); }, client.delayContents);
+          setTimeout(() => {
+            if (!client.jsonapi) {
+              client.sendAPI("listcontents");
+            }
+          }, client.delayContents);
         }
       }
     

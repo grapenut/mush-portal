@@ -163,7 +163,7 @@ class Settings extends React.Component {
                 <ListItemIcon>
                   <WrapTextIcon />
                 </ListItemIcon>
-                <TextField label="Terminal Width" value={wrapWidth} onChange={this.handleValue('wrapWidth')} />
+                <TextField label="Terminal Width" value={wrapWidth} onChange={this.handleValue('wrapWidth')} type="number" />
               </ListItem>
               
               <ListItem dense>
