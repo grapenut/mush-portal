@@ -12,7 +12,6 @@ import Mailbox from '../modules/Mailbox';
 import Sendmail from '../modules/Sendmail';
 import BBoard from '../modules/BBoard';
 import Upload from '../modules/Upload';
-import Game from '../phaser';
 
 import Connection from './connection';
 import Emulator from './emulator';
@@ -98,7 +97,6 @@ class Client {
       sendmail: null,
       bboard: null,
       upload: null,
-      phaser: null,
     };
     
     // Server connection info
@@ -337,10 +335,6 @@ class Client {
       case 'BBoard':
         el = BBoard;
         obj = this.react.bboard;
-        break;
-      case 'Phaser':
-        el = Game;
-        obj = this.react.phaser;
         break;
       default:
         break;

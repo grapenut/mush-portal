@@ -58,17 +58,6 @@ client.events.on('chargen', (obj) => {
   client.addReactPanel("Chargen", obj);
 });
 
-// open the phaser window
-client.events.on('phaser', (obj) => {
-  obj.contentSize = {
-    width: "640px",
-    height: "480px",
-  };
-  obj.resizeit = false;
-  obj.panelSize = null;
-  client.addReactPanel("Phaser", obj);
-});
-
 // open the bboard reader window
 client.events.on('boardlist', (obj) => {
   openFullHeight("BBoard", obj);
@@ -107,13 +96,8 @@ client.events.on('sendmail', (obj) => {
   client.react.sendmail.setFields(obj.to, obj.subject, obj.body);
 });
 
-// update movement
+// update on movement, contents received by listcontents
 client.events.on('move', (obj) => {
-//  client.react.sidebar.updateExits(obj.exits);
-  
-  if (client.react.phaser) {
-    // tell phaser to redraw the current screen
-  }
 });
 
 // exit list

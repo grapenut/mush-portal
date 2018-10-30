@@ -23,7 +23,6 @@ import MailIcon from '@material-ui/icons/Mail';
 import ForumIcon from '@material-ui/icons/Forum';
 import TabIcon from '@material-ui/icons/Tab';
 import PeopleIcon from '@material-ui/icons/People';
-import VideogameAssetIcon from '@material-ui/icons/VideogameAsset';
 import RemoveRedEyeIcon from '@material-ui/icons/RemoveRedEye';
 import BusinessCenterIcon from '@material-ui/icons/BusinessCenter';
 import BackspaceIcon from '@material-ui/icons/Backspace';
@@ -357,7 +356,6 @@ class Taskbar extends React.Component {
   }
   
   render() {
-    const jsonapi = window.client.jsonapi;
     const input = window.client.input;
     const { classes } = this.props;
     const { title, taskbar, open, unreadBB, unreadMail, historyAnchor,
@@ -533,23 +531,6 @@ class Taskbar extends React.Component {
                 <WifiIcon />
               </Tooltip>
             </MenuItem>            
-            <MenuItem onClick={() => {
-              if (jsonapi) {
-                this.sendAPI("phaser")
-              } else {
-                window.client.addReactpanel("Phaser", {
-                  contentSize: { width: "640px", height: "480px" },
-                  resizeit: false,
-                  dragit: { snap: { callback: null } },
-                  panelSize: null,
-                });
-              }
-            }}>
-              <Tooltip title="2D Graphical UI">
-                <VideogameAssetIcon />
-              </Tooltip>
-            </MenuItem>
-
           </Menu>
 
           <div className={classes.tasksep}></div>
