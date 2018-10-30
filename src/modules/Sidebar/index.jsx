@@ -136,14 +136,14 @@ class Sidebar extends React.Component {
   }
 
   go = exit => event => {
-    const jsonapi = window.client.jsonapi;
+    const { jsonapi, delayContents } = window.client;
     
     if (exit && exit.length > 0) {
       this.sendCommand("go "+exit);
       if (!jsonapi) {
         // if we dont have movement events, do our own on a timer
         clearTimeout(this.getContents);
-        setTimeout(this.getContents, 1000);
+        setTimeout(this.getContents, delayContents);
       }
     }
   };

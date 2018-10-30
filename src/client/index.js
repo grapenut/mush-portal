@@ -115,6 +115,9 @@ class Client {
     this.updateLines = 0;
     this.eatNewline = false;
     
+    // delay time for auto-contents
+    this.delayContents = 500;
+    
     // number of lines of scroll within which the output scroll down when new items are received
     this.scrollThreshold = 5;
     
@@ -455,7 +458,7 @@ class Client {
         
         if (text.match(/Last( FAILED)? connect was from/)) {
           client.loggedIn = true;
-          setTimeout(() => { if (!client.jsonapi) client.sendAPI("listcontents"); }, 1000);
+          setTimeout(() => { if (!client.jsonapi) client.sendAPI("listcontents"); }, client.delayContents);
         }
       }
     

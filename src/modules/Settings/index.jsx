@@ -47,9 +47,6 @@ const styles = theme => ({
   },
   left: {
     flex: 1,
-//    display: "flex",
-//    flexFlow: "row wrap",
-//    justifyContent: "flex-end",
   },
   right: {
     display: "flex",
@@ -67,7 +64,6 @@ const styles = theme => ({
     flex: 1,
     display: "flex",
     flexFlow: "row nowrap",
-//    position: "absolute",
     height: "100%",
   },
 });
