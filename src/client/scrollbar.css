@@ -5,13 +5,13 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 10px;
   
 }
 
 ::-webkit-scrollbar-thumb {
-  background: gray;
+  background: rgba(255,255,255,0.5);
   border-radius: 10px;
 }
 
@@ -21,23 +21,23 @@
 }
 
 ::-moz-scrollbar-track {
-  background: transparent;
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 10px;
   
 }
 
 ::-moz-scrollbar-thumb {
-  background: gray;
+  background: rgba(255,255,255,0.5);
   border-radius: 10px;
 }
 
 body {
-  scrollbar-base-color: gray;
-  scrollbar-face-color: gray;
+  scrollbar-base-color: rgba(255,255,255,0.5);
+  scrollbar-face-color: rgba(255,255,255,0.5);
   scrollbar-3dlight-color: transparent;
-  scrollbar-highlight-color: gray;
-  scrollbar-track-color: transparent;
-  scrollbar-arrow-color: black;
+  scrollbar-highlight-color: rgba(255,255,255,0.5);
+  scrollbar-track-color: rgba(255, 255, 255, 0.1);
+  scrollbar-arrow-color: transparent;
   scrollbar-shadow-color: transparent;
   scrollbar-dark-shadow-color: transparent;
 }

@@ -24,7 +24,7 @@ import ForumIcon from '@material-ui/icons/Forum';
 import TabIcon from '@material-ui/icons/Tab';
 import PeopleIcon from '@material-ui/icons/People';
 import VideogameAssetIcon from '@material-ui/icons/VideogameAsset';
-import LandscapeIcon from '@material-ui/icons/Landscape';
+import RemoveRedEyeIcon from '@material-ui/icons/RemoveRedEye';
 import BusinessCenterIcon from '@material-ui/icons/BusinessCenter';
 import BackspaceIcon from '@material-ui/icons/Backspace';
 import SaveIcon from '@material-ui/icons/Save';
@@ -384,8 +384,8 @@ class Taskbar extends React.Component {
           <div className={classes.tasksep}></div>
           
           <Tooltip title="Look around.">
-            <Button aria-label="send-look" onClick={() => this.sendCommand("look")}>
-              <LandscapeIcon />
+            <Button aria-label="send-look" onClick={() => { this.sendCommand("look"); this.sendAPI("listcontents"); }}>
+              <RemoveRedEyeIcon />
             </Button>
           </Tooltip>
           

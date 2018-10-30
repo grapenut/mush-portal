@@ -82,7 +82,7 @@ class Portal extends React.Component {
     const { classes } = this.props;
     const { sidebarOpen, sidebarAnchor, ansiFG, ansiBG, wrapWidth,
       sidebarAlwaysShow, sidebarShowExits, sidebarShowPlayers,
-      sidebarShowThings } = window.client.settings;
+      sidebarShowThings, sidebarShowCompass, sidebarWidth } = window.client.settings;
     
     var left = sidebarOpen && sidebarAnchor === "left";
     var right = sidebarOpen && sidebarAnchor === "right";
@@ -93,7 +93,7 @@ class Portal extends React.Component {
       window.client.container = this.middle.current;
     }
     
-    var sidebar = (<Sidebar sidebarShowExits={sidebarShowExits} sidebarShowPlayers={sidebarShowPlayers} sidebarShowThings={sidebarShowThings} />);
+    var sidebar = (<Sidebar sidebarShowCompass={sidebarShowCompass} sidebarWidth={sidebarWidth} sidebarShowExits={sidebarShowExits} sidebarShowPlayers={sidebarShowPlayers} sidebarShowThings={sidebarShowThings} />);
 
     return (
       <MuiThemeProvider theme={Theme}>

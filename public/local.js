@@ -109,11 +109,42 @@ client.events.on('sendmail', (obj) => {
 
 // update movement
 client.events.on('move', (obj) => {
+//  client.react.sidebar.updateExits(obj.exits);
+  
   if (client.react.phaser) {
     // tell phaser to redraw the current screen
   }
 });
 
+// exit list
+client.events.on('listexits', (obj) => {
+  client.react.sidebar.updateExits(obj.exits);
+});
+
+// player list
+client.events.on('listplayers', (obj) => {
+  client.react.sidebar.updatePlayers(obj.players);
+});
+
+// thing list
+client.events.on('listthings', (obj) => {
+  client.react.sidebar.updateThings(obj.things);
+});
+
+// contents list
+client.events.on('listcontents', (obj) => {
+  client.react.sidebar.updateExits(obj.exits);
+  client.react.sidebar.updatePlayers(obj.players);
+  client.react.sidebar.updateThings(obj.things);
+});
+
+client.events.on('addobject', (obj) => {
+  client.react.sidebar.addObject(obj);
+});
+
+client.events.on('delobject', (obj) => {
+  client.react.sidebar.delObject(obj);
+});
 
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
@@ -149,6 +180,7 @@ client.events.on('unreadbb', (obj) => {
 
 // update the status bar after logging in
 client.events.on('login', (obj) => {
+  client.loggedIn = true;
   client.react.statusbar && client.react.statusbar.setStatus("Connected to "+obj.login+".");
 });
 

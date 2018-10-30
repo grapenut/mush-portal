@@ -38,6 +38,16 @@ import shortid from 'shortid';
 const EventEmitter = require('events');
 const TinyCon = require('tinycon');
 
+const LOGINFAIL = [
+  /There is no player with that name\./,
+  /That is not the correct password\./,
+  /Either that player does not exist, or has a different password\./,
+  /You cannot connect to that player at this time\./,
+  /Guest connections not allowed\./,
+  /Connection to .* (Non-GUEST) not allowed from .* (.*)/,
+  /Too many guests are connected now\./
+];
+
 class Client {
 
   constructor() {
@@ -46,21 +56,23 @@ class Client {
       // default emulator fg/bg
       ansiFG: 'ansi-37',
       ansiBG: 'ansi-40',
-      wrapWidth: '100%',
+      wrapWidth: '60em',
       // upload editor
       decompileEditor: true,
       decompileKey: 'FugueEdit > ',
       // sidebar navigation
       sidebarOpen: true,
       sidebarAnchor: "right",
-      sidebarWidth: "20em",
+      sidebarWidth: "192px",
       sidebarAlwaysShow: false,
       sidebarShowPlayers: true,
       sidebarShowThings: true,
       sidebarShowExits: true,
+      sidebarShowCompass: true,
       // debugging
       debugEvents: true,
     };
+    this.defaultSettings = this.settings;
     this.loadSettings();
     
     // Terminal UI elements
@@ -101,6 +113,7 @@ class Client {
     this.container = null;
 
     // app instance toggles
+    this.loggedIn = false;
     this.jsonapi = false;
     this.hidden = false;
     this.updateCounter = 0;
@@ -422,6 +435,11 @@ class Client {
     
     // onMessage callback before data handler
     this.conn.onUpdate = function(channel, data) {
+      if (!client.conn.hasData) {
+        // this is the first update, show the login screen
+        client.react.login && client.react.login.openLogin();
+      }
+      
       if (client.hidden && data.endsWith('\n')) {
         client.updateCounter++;
         // eventually set client.updateLines to the number of new lines
@@ -435,12 +453,27 @@ class Client {
 
     // handle incoming text
     this.conn.onText = function (text) {
-//      var re_fugueedit = /^FugueEdit > /;
+      if (!client.loggedIn) {
+        // match some login error conditions
+        for (let i = 0; i < LOGINFAIL.length; i++) {
+          if (text.match(LOGINFAIL[i])) {
+            client.react.login && client.react.login.openLogin();
+            break;
+          }
+        }
+        
+        if (text.match(/Last( FAILED)? connect was from/)) {
+          client.loggedIn = true;
+          setTimeout(() => { if (!client.jsonapi) client.sendAPI("listcontents"); }, 1000);
+        }
+      }
+    
       var re_fugueedit = new RegExp('^'+client.settings.decompileKey);
       if (text.match(re_fugueedit)) {
         var str = text.replace(re_fugueedit, "");
         client.eatNewline = true;
         
+        // send @dec/tf to the upload editor, or the command window
         if (client.settings.decompileEditor) {
           client.addReactPanel("Upload");
           client.react.upload.editor.current.editor.insert(str+"\n");

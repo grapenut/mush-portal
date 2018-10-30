@@ -15,6 +15,9 @@ const JSONAPI = {
   bbmsg: function(self, args) {
     self.sendText("+bbread "+args);
   },
+  listcontents: function(self, args) {
+    self.sendText("th null(oob(%#,listcontents,json(object,players,\\[[iter(remove(lvplayers(%l),%#),json(string,name(%i0)),,\\,)]\\],exits,\\[[iter(lexits(%l),json(string,fullname(%i0)),,\\,)]\\],things,\\[[iter(lvthings(%l),json(string,name(%i0)),,\\,)]\\])))");
+  },
 };
 
 export default JSONAPI;

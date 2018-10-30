@@ -24,7 +24,9 @@ class Connection {
     this.onHTML = null;
     this.onPueblo = null;
     this.onPrompt = null;
-
+    
+    this.hasData = false;
+    
     this.reconnect(that);
   }
   
@@ -97,6 +99,7 @@ class Connection {
 
   onMessage(channel, data) {
     this.onUpdate && this.onUpdate(channel, data);
+    this.hasData = true;
     
     switch (channel) {
     case Connection.CHANNEL_TEXT:

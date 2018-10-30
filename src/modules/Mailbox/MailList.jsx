@@ -57,7 +57,7 @@ class MailList extends React.Component {
 
   purgeMail = () => {
     window.client.react.mailbox.purgeMail();
-    this.toggleDelete();
+    this.setState({ quickDelete: false });
   };
 
   sendMail = () => {

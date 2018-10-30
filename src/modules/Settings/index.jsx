@@ -117,7 +117,7 @@ class Settings extends React.Component {
     const { classes, closeDrawer } = this.props;
     const { debugEvents, decompileEditor, decompileKey, ansiFG, ansiBG, wrapWidth,
       sidebarOpen, sidebarAnchor, sidebarAlwaysShow, colorAnchor, sidebarShowPlayers,
-      sidebarShowThings, sidebarShowExits, sidebarWidth } = this.state;
+      sidebarShowThings, sidebarShowExits, sidebarShowCompass, sidebarWidth } = this.state;
     
     return (
       <div className={classes.frame}>
@@ -257,6 +257,16 @@ class Settings extends React.Component {
               <ListItemText primary="Show exits?" />
               <ListItemSecondaryAction>
                 <Switch checked={sidebarShowExits} value="sidebarShowExits" onChange={this.handleSwitch('sidebarShowExits')} />
+              </ListItemSecondaryAction>
+            </ListItem>
+            
+            <ListItem dense disabled={!sidebarShowExits}>
+              <ListItemIcon>
+                <ExploreIcon />
+              </ListItemIcon>
+              <ListItemText primary="Show compass?" />
+              <ListItemSecondaryAction>
+                <Switch disabled={!sidebarShowExits} checked={sidebarShowCompass} value="sidebarShowCompass" onChange={this.handleSwitch('sidebarShowCompass')} />
               </ListItemSecondaryAction>
             </ListItem>
           </List>
