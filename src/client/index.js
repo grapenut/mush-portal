@@ -61,17 +61,21 @@ class Client {
       decompileKey: 'FugueEdit > ',
       // sidebar navigation
       sidebarOpen: true,
-      sidebarAnchor: "right",
+      sidebarAnchor: "left",
       sidebarWidth: "192px",
-      sidebarAlwaysShow: false,
+      sidebarAlwaysShow: true,
       sidebarShowPlayers: true,
       sidebarShowThings: true,
       sidebarShowExits: true,
       sidebarShowCompass: true,
       // debugging
-      debugEvents: true,
+      debugEvents: false,
+      // connection settings,
+      serverAddress: "node.grapenut.org",
+      serverPort: 2001,
+      serverSSL: true,
     };
-    this.defaultSettings = this.settings;
+    this.defaultSettings = Object.assign({}, this.settings);
     this.loadSettings();
     
     // Terminal UI elements
@@ -98,13 +102,6 @@ class Client {
       bboard: null,
       upload: null,
     };
-    
-    // Server connection info
-    this.serverAddress = null;
-    this.serverPort = null;
-    this.serverSSL = null;
-    this.serverProto = null;
-    this.serverUrl = null;
     
     // client variables
     this.conn = null;
@@ -399,17 +396,17 @@ class Client {
   // connect to the game server and setup message handlers
   connect(host, port, ssl) {
     var client = this;
-    this.serverAddress = host;
-    this.serverPort = port;
-    this.serverSSL = ssl;
+    this.settings.serverAddress = host;
+    this.settings.serverPort = port;
+    this.settings.serverSSL = ssl;
 
-    this.serverProto = this.serverSSL ? "wss://" : "ws://";
+    let serverProto = this.settings.serverSSL ? "wss://" : "ws://";
 
     // The connection URL is ws://host:port/wsclient (or wss:// for SSL connections)
-    this.serverUrl = this.serverProto + this.serverAddress + ":" + this.serverPort + '/wsclient'
+    let serverUrl = serverProto + this.settings.serverAddress + ":" + this.settings.serverPort + '/wsclient'
     
     this.close();
-    this.conn = new Connection(this.serverUrl);
+    this.conn = new Connection(serverUrl);
 
     // just log a standard message on these socket status events
     this.conn.onOpen = function (evt) {

@@ -50,7 +50,7 @@ const styles = theme => ({
     justifyContent: 'space-between',
   },
   contents: {
-    flexGrow: 1,
+    flexShrink: 1,
     overflowX: 'hidden',
     overflowY: 'auto',
   },
@@ -97,7 +97,6 @@ class Sidebar extends React.Component {
   
   parseExits(exits) {
     const { sidebarShowCompass } = this.props;
-    if (exits === this.state.exits) return;
     
     this.ucExits = [];
     this.customExits = [];
@@ -180,7 +179,6 @@ class Sidebar extends React.Component {
   };
   
   updateExits(exits) {
-    this.parseExits(exits);
     this.setState({ exits });
   }
   
@@ -237,48 +235,52 @@ class Sidebar extends React.Component {
   
   render() {
     const { classes, sidebarWidth, sidebarShowPlayers,
-      sidebarShowThings, sidebarShowExits } = this.props;
-    const { things, players } = this.state;
+      sidebarShowThings, sidebarShowExits, sidebarShowCompass } = this.props;
+    const { exits, things, players } = this.state;
     const customExits = this.customExits;
-
     var exitWidget;
-    if (customExits.length > 0) {
-      exitWidget = (
-        <div className={classes.customExits}>
-          <div className={classes.bottom}>
-            <List dense disablePadding subheader={<ListSubheader component="div">Other Exits</ListSubheader>}>
-              {customExits.map((exit, i) => (
-                <ListItem className={classes.exitItem} key={i} button onClick={this.go(exit.split(";")[0])}>
-                  <ListItemText primary={exit.split(";")[0]} />
-                </ListItem>
-              ))}
-            </List>
-          </div>
-        </div>
-      );
-    }
-    
     var navWidget;
-    if (this.useCompass) {
-      navWidget = (
-        <div className={classes.navWidget}>
-          <Typography variant="subtitle2" color="textSecondary">Navigation</Typography>
-          {this.buildExit("Northwest")}
-          {this.buildExit("North")}
-          {this.buildExit("Northeast")}
-          {this.buildExit("Up")}
-          <br />
-          {this.buildExit("West")}
-          {this.buildExit("In")}
-          {this.buildExit("East")}
-          {this.buildExit("Out")}
-          <br />
-          {this.buildExit("Southwest")}
-          {this.buildExit("South")}
-          {this.buildExit("Southeast")}
-          {this.buildExit("Down")}
-        </div>
-      );
+    
+    if (sidebarShowExits) {
+      this.parseExits(exits);
+      
+      if (customExits.length > 0) {
+        exitWidget = (
+          <div className={classes.customExits}>
+            <div className={classes.bottom}>
+              <List dense disablePadding subheader={<ListSubheader component="div">Other Exits</ListSubheader>}>
+                {customExits.map((exit, i) => (
+                  <ListItem className={classes.exitItem} key={i} button onClick={this.go(exit.split(";")[0])}>
+                    <ListItemText primary={exit.split(";")[0]} />
+                  </ListItem>
+                ))}
+              </List>
+            </div>
+          </div>
+        );
+      }
+      
+      if (this.useCompass) {
+        navWidget = (
+          <div className={classes.navWidget}>
+            <Typography variant="subtitle2" color="textSecondary">Navigation</Typography>
+            {this.buildExit("Northwest")}
+            {this.buildExit("North")}
+            {this.buildExit("Northeast")}
+            {this.buildExit("Up")}
+            <br />
+            {this.buildExit("West")}
+            {this.buildExit("In")}
+            {this.buildExit("East")}
+            {this.buildExit("Out")}
+            <br />
+            {this.buildExit("Southwest")}
+            {this.buildExit("South")}
+            {this.buildExit("Southeast")}
+            {this.buildExit("Down")}
+          </div>
+        );
+      }
     }
 
     return (
@@ -311,7 +313,7 @@ class Sidebar extends React.Component {
           </span>
         </div>
         {sidebarShowExits && exitWidget}
-        {sidebarShowExits && this.useCompass && navWidget}
+        {sidebarShowExits && sidebarShowCompass && navWidget}
       </div>
     );
   }

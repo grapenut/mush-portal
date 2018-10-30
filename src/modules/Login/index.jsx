@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
+
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
@@ -9,10 +10,13 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import IconButton from '@material-ui/core/IconButton';
 
 import PersonIcon from '@material-ui/icons/Person';
 import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
+import SettingsIcon from '@material-ui/icons/Settings';
 
 const styles = theme => ({
   frame: {
@@ -22,6 +26,9 @@ const styles = theme => ({
   },
   text: {
     "font-size": "16pt",
+  },
+  title: {
+    position: "relative",
   },
   block: {
     display: "flex",
@@ -101,12 +108,20 @@ class Login extends React.Component {
       <div className={classes.frame}>
         <Dialog
           open={open}
+          onEscapeKeyDown={() => window.client.react.taskbar.openDrawer()}
           onClose={this.closeLogin}
           aria-labelledby="responsive-dialog-title"
           disableBackdropClick
           disableEscapeKeyDown
         >
-          <DialogTitle id="responsive-dialog-title">Character Login</DialogTitle>
+          <DialogTitle className={classes.title} id="responsive-dialog-title">
+            Character Login
+            <ListItemSecondaryAction>
+              <IconButton onClick={() => window.client.react.taskbar.openDrawer()}>
+                <SettingsIcon />
+              </IconButton>
+            </ListItemSecondaryAction>
+          </DialogTitle>
           <DialogContent>
             <DialogContentText>
               <span dangerouslySetInnerHTML={{ __html: msg }} />

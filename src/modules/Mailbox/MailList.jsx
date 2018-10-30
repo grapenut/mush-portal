@@ -78,7 +78,6 @@ class MailList extends React.Component {
           <Typography variant="subtitle1" className={classes.title}>
             <span className={classes.container}>
               {maillist.length} Messages ({unread} unread)
-              <span className={classes.flex} />
               <Tooltip title="Move multiple files to trash.">
                 <IconButton onClick={this.toggleDelete}>
                   <DeleteSweepIcon />

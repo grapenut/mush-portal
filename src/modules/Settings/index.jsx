@@ -1,7 +1,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import classNames from 'classnames';
+//import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 
 import Button from '@material-ui/core/Button';
@@ -37,23 +37,38 @@ import FormatIndentIncreaseIcon from '@material-ui/icons/FormatIndentIncrease';
 
 const styles = theme => ({
   frame: {
+    position: "relative",
+    height: "auto",
     width: "100%",
-    height: "100%",
     display: "flex",
-    'flex-flow': 'row nowrap',
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "stretch",
+  },
+  left: {
+    flex: 1,
+//    display: "flex",
+//    flexFlow: "row wrap",
+//    justifyContent: "flex-end",
+  },
+  right: {
+    display: "flex",
+    flexFlow: "column nowrap",
   },
   content: {
-    flex: 1,
     display: 'flex',
-//    alignItems: 'center',
-//    justifyContent: 'flex-end',
-//    padding: '0 8px',
-//    ...theme.mixins.toolbar,
+    justifyContent: 'flex-end',
   },
-  close: {
+  switchText: {
+    paddingLeft: 0,
+    marginRight: 2*theme.spacing.unit,
   },
-  flex: {
+  buttons: {
     flex: 1,
+    display: "flex",
+    flexFlow: "row nowrap",
+//    position: "absolute",
+    height: "100%",
   },
 });
 
@@ -69,14 +84,8 @@ class Settings extends React.Component {
     };
     
     this.color = null;
-    this.colorList = [
-                       [ "30", "31", "32", "33", "34", "35", "36", "37" ],
-                       [ "1-30", "1-31", "1-32", "1-33", "1-34", "1-35", "1-36", "1-37" ],
-                     ];
     
-    Object.keys(window.client.settings).forEach(key => {
-      this.state[key] = window.client.settings[key];
-    });
+    this.state = Object.assign(this.state, window.client.settings);
   }
   
   handleSwitch = name => event => {
@@ -107,6 +116,21 @@ class Settings extends React.Component {
     this.closeColor();
   };
   
+  loadSettings = () => {
+    this.setState({ ...window.client.settings });
+  }
+  
+  resetSettings = () => {
+    if (!window.confirm("Are you sure you want to reset settings to defaults?")) {
+      return;
+    }
+    
+    window.client.settings = Object.assign({}, window.client.defaultSettings);
+    this.loadSettings();
+    window.client.saveSettings();
+    window.client.react.portal.forceUpdate();
+  };
+  
   componentDidMount() {
   }
   
@@ -121,159 +145,163 @@ class Settings extends React.Component {
     
     return (
       <div className={classes.frame}>
-        <div className={classes.content} tabIndex={0} role="button">
-          <Popover id="settings.color" anchorEl={colorAnchor} open={false} onClose={this.closeColor}>
-            {this.colorList.map((row,i) => (
-              row.map((color, c) => (
-                <div key={i+","+c} className={classNames(classes.colorButton, "ansi-"+color)} onClick={this.chooseColor(color)}></div>
-              ))
-            ))}
-          </Popover>
-          
-          <List disablePadding dense subheader={<ListSubheader>Debugging</ListSubheader>}>
-            <ListItem dense>
-              <ListItemIcon>
-                <BugReportIcon />
-              </ListItemIcon>
-              <ListItemText primary="Debug JSON events" />
-              <ListItemSecondaryAction>
-                <Switch checked={debugEvents} value="debugEvents" onChange={this.handleSwitch('debugEvents')} />
-              </ListItemSecondaryAction>
-            </ListItem>
-          </List>
+        <div className={classes.left}>
+          <div className={classes.content} tabIndex={0} role="button">
+            <Popover id="settings.color" anchorEl={colorAnchor} open={false} onClose={this.closeColor}>
+            </Popover>
+            
+            <List disablePadding dense subheader={<ListSubheader>Debugging</ListSubheader>}>
+              <ListItem dense>
+                <ListItemIcon>
+                  <BugReportIcon />
+                </ListItemIcon>
+                <ListItemText className={classes.switchText} primary="Debug server events?" />
+                <ListItemSecondaryAction>
+                  <Switch checked={debugEvents} value="debugEvents" onChange={this.handleSwitch('debugEvents')} />
+                </ListItemSecondaryAction>
+              </ListItem>
+            </List>
 
-          <List disablePadding dense subheader={<ListSubheader>Display Settings</ListSubheader>}>
-            <ListItem dense>
-              <ListItemIcon>
-                <WrapTextIcon />
-              </ListItemIcon>
-              <TextField label="Terminal Width" value={wrapWidth} onChange={this.handleValue('wrapWidth')} />
-            </ListItem>
-            
-            <ListItem dense>
-              <ListItemIcon>
-                <PaletteIcon />
-              </ListItemIcon>
-              <TextField label="Background Color" value={ansiBG} onChange={this.handleValue('ansiBG')} />
-            </ListItem>
+            <List disablePadding dense subheader={<ListSubheader>Display Settings</ListSubheader>}>
+              <ListItem dense>
+                <ListItemIcon>
+                  <WrapTextIcon />
+                </ListItemIcon>
+                <TextField label="Terminal Width" value={wrapWidth} onChange={this.handleValue('wrapWidth')} />
+              </ListItem>
+              
+              <ListItem dense>
+                <ListItemIcon>
+                  <PaletteIcon />
+                </ListItemIcon>
+                <TextField label="Background Color" value={ansiBG} onChange={this.handleValue('ansiBG')} />
+              </ListItem>
 
-            <ListItem dense>
-              <ListItemIcon>
-                <PaletteIcon />
-              </ListItemIcon>
-              <TextField label="Foreground Color" value={ansiFG} onChange={this.handleValue('ansiFG')} />
-            </ListItem>
-          </List>
-          
-          <List disablePadding dense subheader={<ListSubheader>@decompile/tf</ListSubheader>}>
-            <ListItem dense>
-              <ListItemIcon>
-                <EditIcon />
-              </ListItemIcon>
-              <ListItemText primary="Send @dec/tf to editor." />
-              <ListItemSecondaryAction>
-                <Switch checked={decompileEditor} value="decompileEditor" onChange={this.handleSwitch('decompileEditor')} />
-              </ListItemSecondaryAction>
-            </ListItem>
+              <ListItem dense>
+                <ListItemIcon>
+                  <PaletteIcon />
+                </ListItemIcon>
+                <TextField label="Foreground Color" value={ansiFG} onChange={this.handleValue('ansiFG')} />
+              </ListItem>
+            </List>
+            
+            <List disablePadding dense subheader={<ListSubheader>@decompile/tf</ListSubheader>}>
+              <ListItem dense>
+                <ListItemIcon>
+                  <EditIcon />
+                </ListItemIcon>
+                <ListItemText className={classes.switchText} primary="Send @dec/tf to editor." />
+                <ListItemSecondaryAction>
+                  <Switch checked={decompileEditor} value="decompileEditor" onChange={this.handleSwitch('decompileEditor')} />
+                </ListItemSecondaryAction>
+              </ListItem>
 
-            <ListItem dense>
-              <ListItemIcon>
-                <CodeIcon />
-              </ListItemIcon>
-              <TextField label="TFPREFIX" value={decompileKey} onChange={this.handleValue('decompileKey')} helperText="Prefix used by @dec/tf." />
-            </ListItem>
-          </List>
+              <ListItem dense>
+                <ListItemIcon>
+                  <CodeIcon />
+                </ListItemIcon>
+                <TextField label="TFPREFIX" value={decompileKey} onChange={this.handleValue('decompileKey')} helperText="Prefix used by @dec/tf." />
+              </ListItem>
+            </List>
 
-          <List disablePadding dense subheader={<ListSubheader>Sidebar Display</ListSubheader>}>
-            <ListItem dense>
-              <ListItemIcon>
-                <VerticalSplitIcon />
-              </ListItemIcon>
-              <ListItemText primary="Show sidebar?" />
-              <ListItemSecondaryAction>
-                <Switch checked={sidebarOpen} value="sidebarOpen" onChange={this.handleSwitch('sidebarOpen')} />
-              </ListItemSecondaryAction>
-            </ListItem>
+            <List disablePadding dense subheader={<ListSubheader>Sidebar Display</ListSubheader>}>
+              <ListItem dense>
+                <ListItemIcon>
+                  <VerticalSplitIcon />
+                </ListItemIcon>
+                <ListItemText className={classes.switchText} primary="Show sidebar?" />
+                <ListItemSecondaryAction>
+                  <Switch checked={sidebarOpen} value="sidebarOpen" onChange={this.handleSwitch('sidebarOpen')} />
+                </ListItemSecondaryAction>
+              </ListItem>
+              
+              <ListItem dense disabled={!sidebarOpen}>
+                <ListItemIcon>
+                  <PictureInPictureIcon />
+                </ListItemIcon>
+                <ListItemText className={classes.switchText} primary="Keep panels off sidebar?" />
+                <ListItemSecondaryAction>
+                  <Switch disabled={!sidebarOpen} checked={sidebarAlwaysShow} value="sidebarAlwaysShow" onChange={this.handleSwitch('sidebarAlwaysShow')} />
+                </ListItemSecondaryAction>
+              </ListItem>
+              
+              <ListItem dense disabled={!sidebarOpen}>
+                <Icon color="action">
+                  <BorderLeftIcon />
+                </Icon>
+                <ListItemText primary="Left" />
+                <Switch checked={sidebarAnchor === "right"}
+                  color="default" disabled={!sidebarOpen}
+                  value={sidebarAnchor === "right" ? "left" : "right"}
+                  onChange={this.handleValue('sidebarAnchor')}
+                />
+                <ListItemText primary="Right" />
+                <Icon color="action">
+                  <BorderRightIcon />
+                </Icon>
+              </ListItem>
+              
+              <ListItem dense disabled={!sidebarOpen}>
+                <ListItemIcon>
+                  <FormatIndentIncreaseIcon />
+                </ListItemIcon>
+                <TextField label="Sidebar Width" value={sidebarWidth} onChange={this.handleValue('sidebarWidth')} />
+              </ListItem>
+            </List>
             
-            <ListItem dense disabled={!sidebarOpen}>
-              <ListItemIcon>
-                <PictureInPictureIcon />
-              </ListItemIcon>
-              <ListItemText primary="Sidebar on top?" />
-              <ListItemSecondaryAction>
-                <Switch disabled={!sidebarOpen} checked={sidebarAlwaysShow} value="sidebarAlwaysShow" onChange={this.handleSwitch('sidebarAlwaysShow')} />
-              </ListItemSecondaryAction>
-            </ListItem>
-            
-            <ListItem dense disabled={!sidebarOpen}>
-              <Icon color="action">
-                <BorderLeftIcon />
-              </Icon>
-              <ListItemText primary="Left" />
-              <Switch checked={sidebarAnchor === "right"}
-                color="default" disabled={!sidebarOpen}
-                value={sidebarAnchor === "right" ? "left" : "right"}
-                onChange={this.handleValue('sidebarAnchor')}
-              />
-              <ListItemText primary="Right" />
-              <Icon color="action">
-                <BorderRightIcon />
-              </Icon>
-            </ListItem>
-            
-            <ListItem dense>
-              <ListItemIcon>
-                <FormatIndentIncreaseIcon />
-              </ListItemIcon>
-              <TextField label="Sidebar Width" value={sidebarWidth} onChange={this.handleValue('sidebarWidth')} />
-            </ListItem>
-          </List>
-          
-          <List disablePadding dense subheader={<ListSubheader>Sidebar Content</ListSubheader>}>
-            <ListItem dense>
-              <ListItemIcon>
-                <AccountCircleIcon />
-              </ListItemIcon>
-              <ListItemText primary="Show players?" />
-              <ListItemSecondaryAction>
-                <Switch checked={sidebarShowPlayers} value="sidebarShowPlayers" onChange={this.handleSwitch('sidebarShowPlayers')} />
-              </ListItemSecondaryAction>
-            </ListItem>
-            
-            <ListItem dense>
-              <ListItemIcon>
-                <GroupWorkIcon />
-              </ListItemIcon>
-              <ListItemText primary="Show things?" />
-              <ListItemSecondaryAction>
-                <Switch checked={sidebarShowThings} value="sidebarShowThings" onChange={this.handleSwitch('sidebarShowThings')} />
-              </ListItemSecondaryAction>
-            </ListItem>
-            
-            <ListItem dense>
-              <ListItemIcon>
-                <ExploreIcon />
-              </ListItemIcon>
-              <ListItemText primary="Show exits?" />
-              <ListItemSecondaryAction>
-                <Switch checked={sidebarShowExits} value="sidebarShowExits" onChange={this.handleSwitch('sidebarShowExits')} />
-              </ListItemSecondaryAction>
-            </ListItem>
-            
-            <ListItem dense disabled={!sidebarShowExits}>
-              <ListItemIcon>
-                <ExploreIcon />
-              </ListItemIcon>
-              <ListItemText primary="Show compass?" />
-              <ListItemSecondaryAction>
-                <Switch disabled={!sidebarShowExits} checked={sidebarShowCompass} value="sidebarShowCompass" onChange={this.handleSwitch('sidebarShowCompass')} />
-              </ListItemSecondaryAction>
-            </ListItem>
-          </List>
+            <List disabled={!sidebarOpen} disablePadding dense subheader={<ListSubheader>Sidebar Content</ListSubheader>}>
+              <ListItem dense disabled={!sidebarOpen}>
+                <ListItemIcon>
+                  <AccountCircleIcon />
+                </ListItemIcon>
+                <ListItemText className={classes.switchText} primary="Show players?" />
+                <ListItemSecondaryAction>
+                  <Switch disabled={!sidebarOpen} checked={sidebarShowPlayers} value="sidebarShowPlayers" onChange={this.handleSwitch('sidebarShowPlayers')} />
+                </ListItemSecondaryAction>
+              </ListItem>
+              
+              <ListItem dense disabled={!sidebarOpen}>
+                <ListItemIcon>
+                  <GroupWorkIcon />
+                </ListItemIcon>
+                <ListItemText className={classes.switchText} primary="Show things?" />
+                <ListItemSecondaryAction>
+                  <Switch disabled={!sidebarOpen} checked={sidebarShowThings} value="sidebarShowThings" onChange={this.handleSwitch('sidebarShowThings')} />
+                </ListItemSecondaryAction>
+              </ListItem>
+              
+              <ListItem dense disabled={!sidebarOpen}>
+                <ListItemIcon>
+                  <ExploreIcon />
+                </ListItemIcon>
+                <ListItemText className={classes.switchText} primary="Show exits?" />
+                <ListItemSecondaryAction>
+                  <Switch checked={sidebarShowExits} disabled={!sidebarOpen} value="sidebarShowExits" onChange={this.handleSwitch('sidebarShowExits')} />
+                </ListItemSecondaryAction>
+              </ListItem>
+              
+              <ListItem dense disabled={!sidebarOpen || !sidebarShowExits}>
+                <ListItemIcon>
+                  <ExploreIcon />
+                </ListItemIcon>
+                <ListItemText className={classes.switchText} primary="Show compass?" />
+                <ListItemSecondaryAction>
+                  <Switch disabled={!sidebarOpen || !sidebarShowExits} checked={sidebarShowCompass} value="sidebarShowCompass" onChange={this.handleSwitch('sidebarShowCompass')} />
+                </ListItemSecondaryAction>
+              </ListItem>
+            </List>
+          </div>
         </div>
-        <Button className={classes.close} onClick={closeDrawer}>
-          Close
-        </Button>
+        <div className={classes.right}>
+          <div className={classes.buttons}>
+            <Button className={classes.reset} onClick={this.resetSettings}>
+              Reset
+            </Button>
+            <Button className={classes.close} onClick={closeDrawer}>
+              Close
+            </Button>
+          </div>
+        </div>
       </div>
     );
   }
