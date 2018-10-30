@@ -5,20 +5,18 @@
   "dependencies": {
     "@material-ui/core": "^3.2.2",
     "@material-ui/icons": "^3.0.1",
-    "@material-ui/lab": "^3.0.0-alpha.21",
-    "@mikewesthad/dungeon": "^1.2.2",
     "file-saver": "^2.0.0-rc.4",
     "jspanel4": "^4.2.1",
     "jss-nested": "^6.0.1",
     "material-ui-chip-input": "^1.0.0-beta.8",
-    "phaser": "^3.15.1",
     "react": "^16.6.0",
     "react-ace": "^6.2.0",
-    "react-color": "^2.14.1",
     "react-dom": "^16.6.0",
     "react-scripts": "1.1.4",
     "shortid": "^2.2.13",
-    "tinycon": "^0.6.8"
+    "tinycon": "^0.6.8",
+    "phaser": "^3.15.1",
+    "@mikewesthad/dungeon": "^1.2.2"
   },
   "scripts": {
     "start": "react-app-rewired start",
@@ -29,9 +27,7 @@
   "devDependencies": {
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-plugin-transform-react-jsx-source": "^6.22.0",
-    "babel-preset-expo": "^4.0.0",
     "flow-bin": "^0.76.0",
-    "jest-expo": "^28.0.0",
     "react-app-rewired": "^1.6.2",
     "react-test-renderer": "^16.6.0"
   }
