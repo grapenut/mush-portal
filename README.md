@@ -3,7 +3,7 @@ The Mush Portal is an interactive web portal for PennMUSH servers (v1.8.7 and up
 
 See <https://node.grapenut.org> for a live demo on my test server. This MUSH has server-side events that send additional information to the client.
 
-You can also try <https://node.grapenut.org?mush.pennmush.org:4202> to see it in action on a standard PennMUSH server without additional enhancements.
+You can also try <https://node.grapenut.org?mush.pennmush.org:4202> to see it in action on a standard PennMUSH server without additional enhancements. Note the live demo is running on HTTPS and may only connect to MUSH servers on the SSL port (browser security rules). When hosting on HTTP you can connect to the standard telnet port.
 
 After cloning the repository you can find the pre-built app in ```build/```. This has been built to live at the root of your web server, so you can just copy the contents of ```build/``` to ```/your/html/directory```. If you are hosting from a subdirectory on your web server, you will need to rebuild following the instructions below.
 
