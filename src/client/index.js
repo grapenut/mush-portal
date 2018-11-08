@@ -70,10 +70,6 @@ class Client {
       sidebarShowCompass: true,
       // debugging
       debugEvents: false,
-      // connection settings,
-      serverAddress: "node.grapenut.org",
-      serverPort: 2001,
-      serverSSL: true,
     };
     this.defaultSettings = Object.assign({}, this.settings);
     this.loadSettings();
@@ -106,6 +102,11 @@ class Client {
     // client variables
     this.conn = null;
     this.container = null;
+    
+    // default connection settings, can override in public/local.js
+    this.serverAddress = "node.grapenut.org";
+    this.serverPort = 2001;
+    this.serverSSL = true;
 
     // app instance toggles
     this.loggedIn = false;
@@ -397,16 +398,13 @@ class Client {
   /////////////////////////////////////////////////////////////////////////////////////////////////
 
   // connect to the game server and setup message handlers
-  connect(host, port, ssl) {
+  connect() {
     var client = this;
-    this.settings.serverAddress = host;
-    this.settings.serverPort = port;
-    this.settings.serverSSL = ssl;
 
-    let serverProto = this.settings.serverSSL ? "wss://" : "ws://";
+    let serverProto = this.serverSSL ? "wss://" : "ws://";
 
     // The connection URL is ws://host:port/wsclient (or wss:// for SSL connections)
-    let serverUrl = serverProto + this.settings.serverAddress + ":" + this.settings.serverPort + '/wsclient'
+    let serverUrl = serverProto + this.serverAddress + ":" + this.serverPort + '/wsclient'
     
     this.close();
     this.conn = new Connection(serverUrl);
