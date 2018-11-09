@@ -1,0 +1,50 @@
+@@
+@@ Make sure VB is set to the #dbref of Myrddin's bbpocket.
+@@
+@@ You can set your own connection events using the attributes
+@@ PLAYER`CONNECT`LOCAL and PLAYER`DISCONNECT`LOCAL.
+@@
+@create System
+@set System = WIZARD
+@@
+&CMD`JSONAPI`BBMSG System=$jsonapi/bbmsg *=*:th oob(%#,bbmsg,u(JSON`BBMSG,%0,%1))
+&CMD`JSONAPI`BBMSGLIST System=$jsonapi/bbmsglist *:th oob(%#,bbmsglist,u(JSON`BBMSGLIST,%#,%0))
+&CMD`JSONAPI`BOARDLIST System=$jsonapi/boardlist:th oob(%#,boardlist,u(JSON`BOARDLIST,%#))
+&CMD`JSONAPI`LISTCONTENTS System=$jsonapi/listcontents:th oob(%#,listcontents,u(JSON`LISTCONTENTS,%l,%#))
+&CMD`JSONAPI`LISTEXITS System=$jsonapi/listexits:th oob(%#,listexits,u(JSON`LISTEXITS,%l))
+&CMD`JSONAPI`LISTPLAYERS System=$jsonapi/listplayers:th oob(%#,listplayers,u(JSON`LISTPLAYERS,%l,%#))
+&CMD`JSONAPI`LISTTHINGS System=$jsonapi/listthings:th oob(%#,listthings,u(JSON`LISTTHINGS,%l))
+&CMD`JSONAPI`MAILITEM System=$jsonapi/mailitem *:th oob(%#,mailitem,u(JSON`MAILITEM,%#,%0))
+&CMD`JSONAPI`MAILLIST System=$jsonapi/maillist*:th oob(%#,maillist,u(JSON`MAILLIST,%#,%0))
+&CMD`JSONAPI`PHASER System=$jsonapi/phaser*:th oob(%#,phaser,null)
+&CMD`JSONAPI`SENDMAIL System=$jsonapi/sendmail *=*/*:th oob(%#,sendmail,u(JSON`SENDMAIL,%0,%1,%2))
+&HOOK`AFTER`@MAIL System=if(setr(p,pmatch(r(LS,args))),iter(%qp,oob(%i0,unreadmail,u(JSON`MAILSTATS,%i0))))[oob(%#,unreadmail,u(JSON`MAILSTATS,%#))]
+&HTML`CREATEFAIL System=Unable to register new user "<span style="color: red">%0</span>"[if(%1,\, [after(%1,:)].,.)]
+&HTML`LOGINFAIL System=Unable to connect to "<span style="color: red">%0</span>".
+&JSON`ADDOBJECT System=json(object,name,json(string,name(%0)),player,json(boolean,hastype(%0,PLAYER)))
+&JSON`API System=json(object,gmcp,json(string,jsonapi))
+&JSON`BBMSG System=json(object,id,json(string,%1),subject,json(string,extract(setr(1,xget(setr(0,u(%vb/GET_GROUP,%0)),HDR_%1)),1,1,|)),date,json(string,extract(%q1,2,1,|)),author,json(string,extract(%q1,3,1,|)),body,json(string,xget(%q0,BDY_%1)))
+&JSON`BBMSGHEADER System=json(object,id,json(string,%1),subject,json(string,extract(setr(1,xget(%0,HDR_%1)),1,1,|)),date,json(string,extract(%q1,2,1,|)),author,json(string,extract(%q1,3,1,|)))
+&JSON`BBMSGLIST System=json(object,id,json(string,%1),messages,\[[iter(xget(setr(0,u(%vb/GET_GROUP,%1)),MESS_LST),u(JSON`BBMSGHEADER,%q0,%i0),,\,)]\])
+&JSON`BOARDHEADER System=json(object,name,json(string,name(%1)),lastmod,json(string,xget(%1,LAST_MOD)),posts,json(number,words(xget(%1,MESS_LST))),id,json(string,member(u(%vb/GROUPS),%1)))
+&JSON`BOARDLIST System=json(object,boardlist,\[[iter(u(%vb/VALID_GROUPS,%0,READ),u(JSON`BOARDHEADER,%0,%i0),,\,)]\])
+&JSON`CHANGETITLE System=json(object,title,json(string,mudname()))
+&JSON`CONNECT System=json(object,gmcp,json(string,connect),msg,json(string,if(%0,%0,Welcome to [mudname()]!)))
+&JSON`DELOBJECT System=json(object,name,json(string,name(%0)),player,json(boolean,hastype(%0,PLAYER)))
+&JSON`LISTCONTENTS System=json_mod(json_mod(u(JSON`LISTPLAYERS,%0,%1),patch,u(JSON`LISTTHINGS,%0)),patch,u(JSON`LISTEXITS,%0))
+&JSON`LISTEXITS System=json(object,exits,\[[iter(lexits(%0),json(string,fullname(%i0)),,\,)]\])
+&JSON`LISTPLAYERS System=json(object,players,\[[iter(remove(lvplayers(%0),%1),json(string,name(%i0)),,\,)]\])
+&JSON`LISTTHINGS System=json(object,things,\[[iter(lvthings(%0),json(string,name(%i0)),,\,)]\])
+&JSON`MAILHEADER System=json(object,id,json(string,%1),deleted,switch(setr(0,mailstatus(%0,%1)),*C*,true,false),unread,switch(%q0,N*,true,false),urgent,switch(%q0,*U*,true,false),time,json(string,mailtime(%0,%1)),subject,json(string,mailsubject(%0,%1)),from,json(string,if(setr(0,mailfrom(%0,%1)),name(%q0),!PURGED!)))
+&JSON`MAILITEM System=json(object,id,json(string,%1),deleted,switch(setr(0,mailstatus(%0,%1)),*C*,true,false),unread,switch(%q0,N*,true,false),urgent,switch(%q0,*U*,true,false),time,json(string,mailtime(%0,%1)),subject,json(string,mailsubject(%0,%1)),from,json(string,if(setr(0,mailfrom(%0,%1)),name(%q0),!PURGED!)),body,json(string,mail(%0,%1)))
+&JSON`MAILLIST System=json(object,folder,json(number,if(%1,before(%1,:),0)),maillist,\[[iter(maillist(%0,if(%1,before(%1,:):,0:)),u(JSON`MAILHEADER,%0,%i0),,\,)]\],unread,json(number,extract(mailfstats(%0),6,1)))
+&JSON`MAILSTATS System=json(object,unread,json(number,extract(mailfstats(%0),6,1)))
+&JSON`SENDMAIL System=json(object,to,json(string,%0),subject,json(string,%1),body,json(string,%2))
+&OBJECT`MOVE System=th if(andlflags(%0,PLAYER CONNECTED),oob(%0,listcontents,u(JSON`LISTCONTENTS,%1,num(%0))))[if(nor(hasflag(%0,DARK),hidden(%0)),oob(lcon(%2),delobject,u(JSON`DELOBJECT,%0))[oob(remove(lcon(%1),num(%0)),addobject,u(JSON`ADDOBJECT,%0))])]
+&PLAYER`CONNECT System=@tr %!/PLAYER`CONNECT`LOCAL=%0 ; th oob(%0,login,json(string,name(%0)))[oob(%0,changetitle,u(JSON`CHANGETITLE))][oob(%0,unreadmail,u(JSON`MAILSTATS,%0))][oob(%0,listcontents,u(JSON`LISTCONTENTS,%l,num(%0)))][if(nor(hasflag(%0,DARK),hidden(%0),gt(%1,1)),oob(remove(lcon(loc(%0)),num(%0)),addobject,u(JSON`ADDOBJECT,%0)))][oob(%0,jsonapi,null)]
+&PLAYER`DISCONNECT System=@tr %!/PLAYER`DISCONNECT`LOCAL=%0 ; th if(nor(orlflags(%0,DARK CONNECTED),hidden(%0)),oob(lcon(loc(%0)),delobject,u(JSON`DELOBJECT,%0))) ; @switch terminfo(%5)=*websocket*,@pemit/port %5=wsjson(u(JSON`CONNECT))
+&SOCKET`CONNECT System=@wait 1=@switch terminfo(%0)=*websocket*,@pemit/port %0=wsjson(u(JSON`CONNECT))
+&SOCKET`CREATEFAIL System=@switch terminfo(%0)=*websocket*,@pemit/port %0=wsjson(u(JSON`CONNECT,u(HTML`CREATEFAIL,%4,%3)))
+&SOCKET`LOGINFAIL System=@switch terminfo(%0)=*websocket*,@pemit/port %0=wsjson(u(JSON`CONNECT,u(HTML`LOGINFAIL,if(%5,%5,if(%4,name(%4))),%3)))
+&STARTUP System=@dol lattr(%!/HOOK`BEFORE`*)=@hook/before [last(%i0,`)]=%!,%i0 ; @dol lattr(%!/HOOK`AFTER`*)=@hook/after [last(%i0,`)]=%!,%i0 ; @dol lattr(%!/HOOK`IGNORE`*)=@hook/ignore [last(%i0,`)]=%!,%i0 ; @dol lattr(%!/HOOK`OVERRIDE`*)=@hook/override/inline [last(%i0,`)]=%!,%i0 ; @dol lattr(%!/HOOK`EXTEND`*)=@hook/extend/inline [last(%i0,`)]=%!,%i0
+@set System=VB:[lsearch(all,name,bbpocket)]
