@@ -56,6 +56,7 @@ class Client {
       ansiFG: 'ansi-37',
       ansiBG: 'ansi-40',
       wrapWidth: 100,
+      invertHighlight: false,
       // upload editor
       decompileEditor: true,
       decompileKey: 'FugueEdit > ',
@@ -141,6 +142,25 @@ class Client {
     document.getElementsByTagName('body')[0].appendChild(tag);
   }
   
+  // load custom CSS style sheet
+  loadStyle(src) {
+    var style = document.createElement("link");
+    style.setAttribute("rel", "stylesheet");
+    style.setAttribute("type", "text/css");
+    style.setAttribute("href", src);
+    document.getElementsByTagName("head")[0].appendChild(style);
+  }
+  
+  // unload custom CSS style sheet
+  unloadStyle(src) {
+    var links = document.getElementsByTagName("link");
+    for (var i = links.length; i >= 0; i--) {
+      if (links[i] && links[i].getAttribute("href") !== null && links[i].getAttribute("href").indexOf(src) !== -1) {
+        links[i].parentNode.removeChild(links[i]);
+      }
+    }
+  }
+  
   // load settings from localstorage
   loadSettings() {
     const store = window.localStorage;
@@ -167,22 +187,29 @@ class Client {
     
     if (typeof value === type) {
       this.settings[key] = value;
-      return;
+    } else {
+      switch (type) {
+        case "string":
+          this.settings[key] = String.bind(null, value)();
+          break;
+        case "number":
+          this.settings[key] = Number.bind(null, value)();
+          break;
+        case "boolean":
+          this.settings[key] = (value === "true" ? true : false);
+          break;
+        default:
+          this.settings[key] = value;
+          break;
+      }
     }
     
-    switch (type) {
-      case "string":
-        this.settings[key] = String.bind(null, value)();
-        break;
-      case "number":
-        this.settings[key] = Number.bind(null, value)();
-        break;
-      case "boolean":
-        this.settings[key] = (value === "true" ? true : false);
-        break;
-      default:
-        this.settings[key] = value;
-        break;
+    if (key === 'invertHighlight') {
+      if (this.settings[key]) {
+        this.loadStyle('./inverse.css');
+      } else {
+        this.unloadStyle('./inverse.css');
+      }
     }
   }
   

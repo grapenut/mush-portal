@@ -15,39 +15,39 @@
 
 /* standard 16 foreground colors */
 .ansi-30 { color: black; }
-.ansi-1-30 { color: gray; }
+.ansi-30-1 { color: gray; }
 .ansi-31 { color: maroon; }
-.ansi-1-31 { color: red; }
+.ansi-31-1 { color: red; }
 .ansi-32 { color: green; }
-.ansi-1-32 { color: lime; }
+.ansi-32-1 { color: lime; }
 .ansi-33 { color: olive; }
-.ansi-1-33 { color: yellow; }
+.ansi-33-1 { color: yellow; }
 .ansi-34 { color: navy; }
-.ansi-1-34 { color: blue; }
+.ansi-34-1 { color: blue; }
 .ansi-35 { color: purple; }
-.ansi-1-35 { color: fuchsia; }
+.ansi-35-1 { color: fuchsia; }
 .ansi-36 { color: teal; }
-.ansi-1-36 { color: aqua; }
+.ansi-36-1 { color: aqua; }
 .ansi-37 { color: silver; }
-.ansi-1-37 { color: white; }
+.ansi-37-1 { color: white; }
 
 /* standard 16 background colors */
 .ansi-40 { background-color: black; }
-.ansi-1-40 { background-color: gray; }
+.ansi-40-1 { background-color: gray; }
 .ansi-41 { background-color: maroon; }
-.ansi-1-41 { background-color: red; }
+.ansi-41-1 { background-color: red; }
 .ansi-42 { background-color: green; }
-.ansi-1-42 { background-color: lime; }
+.ansi-42-1 { background-color: lime; }
 .ansi-43 { background-color: olive; }
-.ansi-1-43 { background-color: yellow; }
+.ansi-43-1 { background-color: yellow; }
 .ansi-44 { background-color: navy; }
-.ansi-1-44 { background-color: blue; }
+.ansi-44-1 { background-color: blue; }
 .ansi-45 { background-color: purple; }
-.ansi-1-45 { background-color: fuchsia; }
+.ansi-45-1 { background-color: fuchsia; }
 .ansi-46 { background-color: teal; }
-.ansi-1-46 { background-color: aqua; }
+.ansi-46-1 { background-color: aqua; }
 .ansi-47 { background-color: silver; }
-.ansi-1-47 { background-color: white; }
+.ansi-47-1 { background-color: white; }
 
 /* xterm256 foreground colors */
 .ansi-38-5-0 { color: #000000; }

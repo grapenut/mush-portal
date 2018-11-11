@@ -15,7 +15,8 @@ import ListSubheader from '@material-ui/core/ListSubheader';
 import Switch from '@material-ui/core/Switch';
 import TextField from '@material-ui/core/TextField';
 import Popover from '@material-ui/core/Popover';
-//import ListItemText from '@material-ui/core/ListItemText';
+
+import ColorPicker from './colorpicker';
 
 import BugReportIcon from '@material-ui/icons/BugReport';
 import PaletteIcon from '@material-ui/icons/Palette';
@@ -98,6 +99,13 @@ class Settings extends React.Component {
     window.client.react.portal.forceUpdate();
   };
   
+  handleColor = name => color => {
+    window.client.changeSetting(name, color);
+    this.setState({ [name]: window.client.settings[name] });
+    window.client.saveSettings();
+    window.client.react.portal.forceUpdate();
+  };
+  
   showColor = name => event => {
     this.color = name;
     this.setState({ colorAnchor: event.currentTarget });
@@ -135,7 +143,7 @@ class Settings extends React.Component {
 
   render() {
     const { classes, closeDrawer } = this.props;
-    const { debugEvents, decompileEditor, decompileKey, ansiFG, ansiBG, wrapWidth,
+    const { debugEvents, decompileEditor, decompileKey, ansiFG, ansiBG, wrapWidth, invertHighlight,
       sidebarOpen, sidebarAnchor, sidebarAlwaysShow, colorAnchor, sidebarShowPlayers,
       sidebarShowThings, sidebarShowExits, sidebarShowCompass, sidebarWidth } = this.state;
     
@@ -170,14 +178,24 @@ class Settings extends React.Component {
                 <ListItemIcon>
                   <PaletteIcon />
                 </ListItemIcon>
-                <TextField label="Background Color" value={ansiBG} onChange={this.handleValue('ansiBG')} />
+                <ColorPicker label="Background Color" value={ansiBG} onChange={this.handleColor('ansiBG')} background />
               </ListItem>
 
               <ListItem dense>
                 <ListItemIcon>
                   <PaletteIcon />
                 </ListItemIcon>
-                <TextField label="Foreground Color" value={ansiFG} onChange={this.handleValue('ansiFG')} />
+                <ColorPicker label="Foreground Color" value={ansiFG} onChange={this.handleColor('ansiFG')} />
+              </ListItem>
+              
+              <ListItem dense>
+                <ListItemIcon>
+                  <PaletteIcon />
+                </ListItemIcon>
+                <ListItemText className={classes.switchText} primary="Swap black and white?" />
+                <ListItemSecondaryAction>
+                  <Switch checked={invertHighlight} value="invertHighlight" onChange={this.handleSwitch('invertHighlight')} />
+                </ListItemSecondaryAction>
               </ListItem>
             </List>
             

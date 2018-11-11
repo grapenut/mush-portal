@@ -73,7 +73,7 @@ class Emulator {
             classes[classes.length] = 'ansi-' + fg;
           }
         } else {
-          classes[classes.length] = 'ansi-1-' + fg;
+          classes[classes.length] = 'ansi-' + fg + '-1';
         }
       } else if (fg !== Emulator.DEFAULT_FG) {
         classes[classes.length] = 'ansi-' + fg;
@@ -85,7 +85,7 @@ class Emulator {
     } else {
       if (state[Emulator.ANSI_BRIGHT]) {
         if (state[Emulator.ANSI_INVERSE]) {
-          classes[classes.length] = 'ansi-1-' + (bg + 10);
+          classes[classes.length] = 'ansi-' + (bg + 10) + '-1';
         } else {
           if (bg !== Emulator.DEFAULT_BG) {
             classes[classes.length] = 'ansi-' + (bg + 10);
