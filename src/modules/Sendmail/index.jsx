@@ -178,7 +178,7 @@ class Sendmail extends React.Component {
   
   addChip = chip => {
     const { chips } = this.state;
-    var str = chip.replace(/(?<!\\)\\/g, '').replace(/(?<!\\)"/g, '');
+    var str = chip.replace(/(?!\\)\\/g, '').replace(/(?!\\)"/g, '');
     window.client.execString('if(setr(0,namelist("'+str+'")),name(%q0))', (result) => {
       if (result !== "") {
         if (chips.indexOf(result) === -1) {

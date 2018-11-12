@@ -1,0 +1,9 @@
+.ansi-30 { color: white; }
+.ansi-30-1 { color: silver; }
+.ansi-37 { color: black; }
+.ansi-37-1 { color: gray; }
+
+.ansi-40 { background-color: white; }
+.ansi-40-1 { background-color: silver; }
+.ansi-47 { background-color: black; }
+.ansi-47-1 { background-color: gray; }
