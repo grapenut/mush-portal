@@ -3,9 +3,9 @@
 // custom color configuration
 /////////////////////////////////////////////////////////////////////
 // override the default color settings, unless the user has chosen
-if (!window.localStorage.hasOwnProperty("settings_invertHighlight")) {
-  client.changeSetting('invertHighlight', true);
-}
+//if (!window.localStorage.hasOwnProperty("settings_invertHighlight")) {
+//  client.changeSetting('invertHighlight', true);
+//}
 
 
 /////////////////////////////////////////////////////////////////////
@@ -14,8 +14,8 @@ if (!window.localStorage.hasOwnProperty("settings_invertHighlight")) {
 /////////////////////////////////////////////////////////////////////
 // server address, port and protocol
 var serverSSL = window.location.protocol === "https:";
-var defaultAddress = "mush.pennmush.org";
-var defaultPort = serverSSL ? '4202' : '4201';
+var defaultAddress = "node.grapenut.org";
+var defaultPort = serverSSL ? '2001' : '2000';
 
 // you can override the default address
 // www.mysite.com/app?address:port
