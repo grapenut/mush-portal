@@ -2,11 +2,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { MuiThemeProvider } from '@material-ui/core/styles';
+import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 
 import saveAs from 'file-saver';
 
-import Theme from '../modules/Theme';
+import Portal from '../modules/Portal';
 import Chargen from '../modules/Chargen';
 import Mailbox from '../modules/Mailbox';
 import Sendmail from '../modules/Sendmail';
@@ -19,8 +19,6 @@ import UserInput from './userinput';
 import Utils from './utils';
 import JSONAPI from './jsonapi';
 
-import './ansi.css';
-import './scrollbar.css';
 import 'jspanel4/dist/jspanel.min.css';
 
 import { jsPanel } from 'jspanel4';
@@ -36,6 +34,7 @@ import shortid from 'shortid';
 
 const EventEmitter = require('events');
 const TinyCon = require('tinycon');
+const Colors = require('@material-ui/core/colors');
 
 const LOGINFAIL = [
   /There is no player with that name\./,
@@ -75,6 +74,9 @@ class Client {
     this.defaultSettings = Object.assign({}, this.settings);
     this.loadSettings();
     
+    this.colors = Colors;
+    this.theme = this.createTheme();
+    
     // Terminal UI elements
     this.output = null;
     this.prompt = null;
@@ -83,7 +85,6 @@ class Client {
     // App Components
     this.events = new EventEmitter();
     this.panels = jsPanel;
-    this.theme = Theme;
     this.tinycon = TinyCon;
     
     // React Components
@@ -132,6 +133,30 @@ class Client {
     window.client = this;
     this.initPanels();
     this.initNotifications();
+    
+    // render the app
+    this.render();
+  }
+  
+  // create a theme
+  createTheme(theme) {
+    const defaultTheme = {
+      typography: {
+        useNextVariants: true,
+      },
+      palette: {
+        primary: this.colors.indigo,
+        secondary: this.colors.blueGrey,
+        type: 'dark',
+      },
+    };
+    
+    return createMuiTheme(Object.assign(defaultTheme, theme));
+  }
+  
+  // render the main react component
+  render() {
+    ReactDOM.render(React.createElement(Portal, { theme: this.theme }, null), document.getElementById('root'));
   }
   
   // load additional scripts for custom events
@@ -383,10 +408,10 @@ class Client {
       config.headerTitle = name;
     }
     
-    config.callback = function(container) {
-      container.content.style.backgroundColor = Theme.palette.background.paper;
+    config.callback = (container) => {
+      container.content.style.backgroundColor = this.theme.palette.background.paper;
       var child = React.createElement(el, { panel: container }, null);
-      ReactDOM.render(React.createElement(MuiThemeProvider, { theme: Theme }, child), container.content);
+      ReactDOM.render(React.createElement(MuiThemeProvider, { theme: this.theme }, child), container.content);
     };
     
     config.container = this.container;

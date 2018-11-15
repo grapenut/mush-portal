@@ -1,6 +1,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
 
 
@@ -14,8 +15,8 @@ const styles = theme => ({
   },
   text: {
     flex: 1,
-    "background-color": "black",
-    color: "silver",
+//    "background-color": "black",
+//    color: "silver",
     margin: "1px 0 0 0",
     border: "none",
     outline: "none",
@@ -47,11 +48,11 @@ class Input extends React.Component {
   }
   
   render() {
-    const { classes } = this.props;
+    const { classes, ansiFG, ansiBG } = this.props;
     
     return (
       <div className={classes.frame}>
-        <textarea ref={this.input} className={classes.text}  autoComplete="off" autoFocus></textarea>
+        <textarea ref={this.input} className={classNames(classes.text, ansiFG, ansiBG)}  autoComplete="off" autoFocus></textarea>
       </div>
     );
   }
@@ -60,6 +61,8 @@ class Input extends React.Component {
 Input.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
+  ansiFG: PropTypes.string.isRequired,
+  ansiBG: PropTypes.string.isRequired,
 };
 
 export default withStyles(styles, { withTheme: true })(Input);

@@ -1,0 +1,82 @@
+
+html, body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
+  background: rgba(64,64,64,1.0);
+}
+
+a {
+  display: inline;
+  text-decoration: none;
+  border-bottom: 1px solid blue;
+}
+
+a:hover {
+  cursor: pointer;
+}
+
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+.localEcho {
+  color: yellow;
+  font-weight: bold;
+}
+
+.logMessage {
+  color: red;
+  font-weight: bold;
+}
+
+#root {
+  top: 1px;
+  width: 100%;
+  height: 100%;
+}
+
+::-webkit-scrollbar {
+  width: 15px;
+  background: transparent;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.5);
+  border-radius: 10px;
+}
+
+::-moz-scrollbar {
+  width: 15px;
+  background: transparent;
+}
+
+::-moz-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  
+}
+
+::-moz-scrollbar-thumb {
+  background: rgba(255,255,255,0.5);
+  border-radius: 10px;
+}
+
+body {
+  scrollbar-base-color: rgba(255,255,255,0.5);
+  scrollbar-face-color: rgba(255,255,255,0.5);
+  scrollbar-3dlight-color: transparent;
+  scrollbar-highlight-color: rgba(255,255,255,0.5);
+  scrollbar-track-color: rgba(255, 255, 255, 0.1);
+  scrollbar-arrow-color: transparent;
+  scrollbar-shadow-color: transparent;
+  scrollbar-dark-shadow-color: transparent;
+}

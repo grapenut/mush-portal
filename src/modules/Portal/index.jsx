@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles, MuiThemeProvider } from '@material-ui/core/styles';
-import Theme from '../Theme';
 
 import Taskbar from '../Taskbar';
 import Terminal from '../Terminal';
@@ -52,7 +51,9 @@ const styles = theme => ({
 class Portal extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { };
+    this.state = {
+      theme: props.theme,
+    };
     
     this.middle = React.createRef();
     this.terminal = React.createRef();
@@ -71,15 +72,19 @@ class Portal extends React.Component {
     } else {
       window.client.container = this.middle.current;
     }
-
   }
 
   componentWillUnmount() {
     window.client.react.portal = null;
   }
   
+  updateTheme(theme) {
+    this.setState({ theme });
+  }
+  
   render() {
     const { classes } = this.props;
+    const { theme } = this.state;
     const { sidebarOpen, sidebarAnchor, ansiFG, ansiBG, wrapWidth,
       sidebarAlwaysShow, sidebarShowExits, sidebarShowPlayers,
       sidebarShowThings, sidebarShowCompass, sidebarWidth } = window.client.settings;
@@ -96,7 +101,7 @@ class Portal extends React.Component {
     var sidebar = (<Sidebar sidebarShowCompass={sidebarShowCompass} sidebarWidth={sidebarWidth} sidebarShowExits={sidebarShowExits} sidebarShowPlayers={sidebarShowPlayers} sidebarShowThings={sidebarShowThings} />);
 
     return (
-      <MuiThemeProvider theme={Theme}>
+      <MuiThemeProvider theme={theme}>
         <div className={classes.frame}>
           <div className={classes.top}>
             <Taskbar title="MUSH Portal" />
@@ -107,7 +112,7 @@ class Portal extends React.Component {
             {right && sidebar}
           </div>
           <div className={classes.bottom}>
-            <Input />
+            <Input ansiFG={ansiFG} ansiBG={ansiBG} />
             <Statusbar />
           </div>
           <Login />

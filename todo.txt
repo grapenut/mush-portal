@@ -1,9 +1,6 @@
 TODO
 ------------------
 
-Color Picker
-  Custom color picker with ANSI color grid 8 rows, 34 cols
-
 BBoard
   Navigation icons (back, reload)
   +bbpost front-end
@@ -66,6 +63,9 @@ Activity Notification
 Mailbox
   Use a terminal emulator instead of <pre> tags for the message body.
   Use an ace editor in the @mail composer.
+
+Color Picker
+  Custom color picker with ANSI color grid 8 rows, 34 cols
 
 
 

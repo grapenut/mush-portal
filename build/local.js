@@ -2,11 +2,19 @@
 /////////////////////////////////////////////////////////////////////
 // custom color configuration
 /////////////////////////////////////////////////////////////////////
-// override the default color settings, unless the user has chosen
+// override the default emulator color settings, unless user-defined
 //if (!window.localStorage.hasOwnProperty("settings_invertHighlight")) {
 //  client.changeSetting('invertHighlight', true);
 //}
 
+//client.theme = client.createTheme({
+//  palette: {
+//    primary: client.colors.red,
+//    secondary: client.colors.black,
+//    type: 'light',
+//  },
+//});
+//client.react.portal.updateTheme(client.theme);
 
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////

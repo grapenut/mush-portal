@@ -6,6 +6,7 @@
   "dependencies": {
     "@material-ui/core": "^3.4.0",
     "@material-ui/icons": "^3.0.1",
+    "annyang": "^2.6.1",
     "file-saver": "^2.0.0-rc.4",
     "jspanel4": "^4.2.1",
     "jss-nested": "^6.0.1",
