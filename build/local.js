@@ -7,14 +7,14 @@
 //  client.changeSetting('invertHighlight', true);
 //}
 
-//client.theme = client.createTheme({
-//  palette: {
-//    primary: client.colors.red,
-//    secondary: client.colors.black,
-//    type: 'light',
-//  },
-//});
-//client.react.portal.updateTheme(client.theme);
+client.theme = client.createTheme({
+  palette: {
+    primary: client.colors.indigo,
+    secondary: client.colors.blueGrey,
+    type: 'dark',
+  },
+});
+client.react.portal.updateTheme(client.theme);
 
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
@@ -37,27 +37,21 @@ client.connect();
 /////////////////////////////////////////////////////////////////////
 // panel defaults
 /////////////////////////////////////////////////////////////////////
-var config = client.panels.defaults;
+var panelConfig = client.panels.defaults;
 
-config.theme = "#3f51b5";
-//config.container = client.react.container;
-config.contentOverflow = "auto";
-config.maximizedMargin = 5;
-config.syncMargins = true;
-config.boxShadow = false;
-config.border = "1px solid black";
-//config.borderRadius = 10;
-//config.panelSize = {
-//  width: 'calc(50% - ' + 1.5*config.maximizedMargin + 'px)',
-//  height: 'calc(50% - ' + 1.5*config.maximizedMargin + 'px)',
-//};
-config.position = {
+panelConfig.theme = client.theme.palette.primary.main;
+panelConfig.contentOverflow = "auto";
+panelConfig.maximizedMargin = 5;
+panelConfig.syncMargins = true;
+panelConfig.boxShadow = false;
+panelConfig.border = "1px solid black";
+panelConfig.position = {
   my: "right-top",
   at: "right-top",
-  offsetX: -config.maximizedMargin,
-  offsetY: config.maximizedMargin,
+  offsetX: -panelConfig.maximizedMargin,
+  offsetY: panelConfig.maximizedMargin,
 };
-config.dragit.snap = { repositionOnSnap: true };
+panelConfig.dragit.snap = { repositionOnSnap: true };
 
 
 /////////////////////////////////////////////////////////////////////
@@ -71,8 +65,8 @@ config.dragit.snap = { repositionOnSnap: true };
 /////////////////////////////////////////////////////////////////////
 function openFullHeight(which, obj) {
   obj.panelSize = {
-    width: 'calc(50% - ' + 1.5*config.maximizedMargin + 'px)',
-    height: 'calc(100% - ' + 2*config.maximizedMargin + 'px)',
+    width: 'calc(50% - ' + 1.5*panelConfig.maximizedMargin + 'px)',
+    height: 'calc(100% - ' + 2*panelConfig.maximizedMargin + 'px)',
   };
   client.addReactPanel(which, obj);
 }
