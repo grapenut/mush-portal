@@ -128,19 +128,16 @@ client.events.on('spawn', function(obj) {
   client.panels.create(obj);
 });
 
-// open the chargen window
-client.events.on('chargen', function(obj) {
-  client.addReactPanel("Chargen", obj);
-});
-
 // open the bboard reader window
 client.events.on('boardlist', function(obj) {
+  obj.icon = "forum";
   openFullHeight("BBoard", obj);
   client.react.bboard.updateBoardList(obj.boardlist);
 });
 
 // open the bboard reader window
 client.events.on('bbmsglist', function(obj) {
+  obj.icon = "forum";
   openFullHeight("BBoard", obj);
   obj.messages.reverse();
   client.react.bboard.updateBoard(obj);
@@ -148,12 +145,14 @@ client.events.on('bbmsglist', function(obj) {
 
 // open the bboard reader window
 client.events.on('bbmsg', function(obj) {
+  obj.icon = "forum";
   openFullHeight("BBoard", obj);
   client.react.bboard.openMessage(obj);
 });
 
 // open the mail reader window
 client.events.on('maillist', function(obj) {
+  obj.icon = "mail";
   openFullHeight("Mailbox", obj);
   obj.maillist.reverse();
   client.react.mailbox.updateMailList(obj.folder, obj.maillist, obj.unread);
@@ -161,12 +160,15 @@ client.events.on('maillist', function(obj) {
 
 // open a single mail item
 client.events.on('mailitem', function(obj) {
+  obj.icon = "mail";
   openFullHeight("Mailbox", obj);
   client.react.mailbox.openMailItem(obj);
 });
 
 // send a mail
 client.events.on('sendmail', function(obj) {
+  obj.icon = "mail";
+  obj.panelSize = "30em 30em";
   client.addReactPanel("Sendmail", obj);
   client.react.sendmail.setFields(obj.to, obj.subject, obj.body);
 });

@@ -408,6 +408,11 @@ class Client {
       config.headerTitle = name;
     }
     
+    if (!config.headerLogo) {
+      var icon = config.icon || "tab";
+      config.headerLogo = "<i class='material-icons'>"+icon+"</i>";
+    }
+    
     config.callback = (container) => {
       container.content.style.backgroundColor = this.theme.palette.background.paper;
       var child = React.createElement(el, { panel: container }, null);
@@ -528,7 +533,7 @@ class Client {
         
         // send @dec/tf to the upload editor, or the command window
         if (client.settings.decompileEditor) {
-          client.addReactPanel("Upload");
+          client.addReactPanel("Upload", { icon: 'cloud_upload' });
           client.react.upload.editor.current.editor.insert(str+"\n");
         } else {
           client.input.root.value = str;

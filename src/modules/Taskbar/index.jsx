@@ -20,7 +20,6 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Icon from '@material-ui/core/Icon';
 
 import MenuIcon from '@material-ui/icons/Menu';
-import TabIcon from '@material-ui/icons/Tab';
 import BackspaceIcon from '@material-ui/icons/Backspace';
 import SaveIcon from '@material-ui/icons/Save';
 import SettingsIcon from '@material-ui/icons/Settings';
@@ -182,7 +181,7 @@ class Taskbar extends React.Component {
   setUnreadBB = u => {
     this.setState({unreadBB: u});
   };
-  
+
   addButton = (button) => {
     const { buttons } = this.state;
     buttons.push(button);
@@ -301,7 +300,7 @@ class Taskbar extends React.Component {
   };
   
   previewUpload = () => {
-    window.client.addReactPanel("Upload");
+    window.client.addReactPanel("Upload", { icon: 'cloud_upload' });
 
     if (this.file && this.file.length > 0) {
       window.client.react.upload.setText(this.file);
@@ -377,7 +376,7 @@ class Taskbar extends React.Component {
           {taskbar.map((task,i) => (
             <Tooltip key={i} title={task.headertitle.innerText}>
               <Button key={task.id} classes={{ label: classes.tasklabel }} className={classes.taskbutton} aria-label="open-task" onClick={() => this.popTask(task)}>
-                <TabIcon className={classes.taskicon} />
+                <Icon className={classes.taskicon}>{task.headerlogo.innerText}</Icon>
                 {task.headertitle.innerText}
               </Button>
             </Tooltip>
