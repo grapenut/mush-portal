@@ -56,6 +56,58 @@ panelConfig.dragit.snap = { repositionOnSnap: true };
 
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
+// Taskbar buttons
+/////////////////////////////////////////////////////////////////////
+
+client.react.taskbar.addButton({
+  title: "Look around.",
+  ariaLabel: "send-look",
+  action: function() { client.sendCommand("look"); client.sendAPI("listcontents"); },
+  icon: "remove_red_eye",
+});
+
+client.react.taskbar.addButton({
+  title: "What am I carrying?",
+  ariaLabel: "send-inventory",
+  action: function() { client.sendCommand("inventory"); },
+  icon: "business_center",
+
+});
+
+client.react.taskbar.addButton({
+  title: "Who's online?",
+  ariaLabel: "send-who",
+  action: function() { client.sendCommand("who"); },
+  icon: "people",
+
+});
+
+client.react.taskbar.addButton({
+  title: "Bulletin Boards",
+  ariaLabel: "open-bbs",
+  action: function() { client.sendAPI("boardlist"); },
+  count: function() { return client.react.taskbar.state.unreadBB; },
+  icon: "forum",
+});
+
+client.react.taskbar.addButton({
+  title: "@mail Inbox",
+  ariaLabel: "open-mail",
+  action: function() { client.sendAPI("maillist"); },
+  count: function() { return client.react.taskbar.state.unreadMail; },
+  icon: "mail",
+});
+
+client.react.taskbar.addButton({
+  title: "Need help?",
+  ariaLabel: "help",
+  action: function(e) { client.react.taskbar.showHelp(e); },
+  icon: "search",
+});
+
+
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
 // MUSH event handlers
 /////////////////////////////////////////////////////////////////////
 

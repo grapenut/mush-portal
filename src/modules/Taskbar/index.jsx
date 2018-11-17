@@ -17,20 +17,15 @@ import InputAdornment from '@material-ui/core/InputAdornment';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import Icon from '@material-ui/core/Icon';
 
 import MenuIcon from '@material-ui/icons/Menu';
-import MailIcon from '@material-ui/icons/Mail';
-import ForumIcon from '@material-ui/icons/Forum';
 import TabIcon from '@material-ui/icons/Tab';
-import PeopleIcon from '@material-ui/icons/People';
-import RemoveRedEyeIcon from '@material-ui/icons/RemoveRedEye';
-import BusinessCenterIcon from '@material-ui/icons/BusinessCenter';
 import BackspaceIcon from '@material-ui/icons/Backspace';
 import SaveIcon from '@material-ui/icons/Save';
 import SettingsIcon from '@material-ui/icons/Settings';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import KeyboardIcon from '@material-ui/icons/Keyboard';
-import SearchIcon from '@material-ui/icons/Search';
 import WifiIcon from '@material-ui/icons/Wifi';
 
 import Settings from '../Settings';
@@ -105,14 +100,16 @@ const styles = theme => ({
 
 
 function BadgeIcon(props) {
-  if (props.count > 0) {
+  var count = props.count ? props.count() : 0;
+
+  if (count > 0) {
     return (
-      <Badge badgeContent={props.count} color="error">
-        {props.children}
+      <Badge badgeContent={count} color="error">
+        <Icon>{props.children}</Icon>
       </Badge>
     );
   }
-  return props.children;
+  return (<Icon>{props.children}</Icon>);
 };
 
 
@@ -126,6 +123,7 @@ class Taskbar extends React.Component {
       open: false,
       title: props.title,
       taskbar: [ ],
+      buttons: [ ],
       unreadBB: 0,
       unreadMail: 0,
       menuAnchor: null,
@@ -183,6 +181,12 @@ class Taskbar extends React.Component {
 
   setUnreadBB = u => {
     this.setState({unreadBB: u});
+  };
+  
+  addButton = (button) => {
+    const { buttons } = this.state;
+    buttons.push(button);
+    this.setState({ buttons });
   };
   
   pushTask = (task) => {
@@ -358,7 +362,7 @@ class Taskbar extends React.Component {
   render() {
     const input = window.client.input;
     const { classes } = this.props;
-    const { title, taskbar, open, unreadBB, unreadMail, historyAnchor,
+    const { title, taskbar, open, buttons, historyAnchor,
             menuAnchor, uploadAnchor, helpAnchor, logAnchor } = this.state;
 
     var rev = input ? input.history.slice().reverse() : [];
@@ -381,45 +385,15 @@ class Taskbar extends React.Component {
           
           <div className={classes.tasksep}></div>
           
-          <Tooltip title="Look around.">
-            <Button aria-label="send-look" onClick={() => { this.sendCommand("look"); this.sendAPI("listcontents"); }}>
-              <RemoveRedEyeIcon />
-            </Button>
-          </Tooltip>
-          
-          <Tooltip title="What am I carrying?">
-            <Button aria-label="send-inventory" onClick={() => this.sendCommand("inventory")}>
-              <BusinessCenterIcon />
-            </Button>
-          </Tooltip>
-          
-          <Tooltip title="Who's online?">
-            <Button aria-label="send-who" onClick={() => this.sendCommand("who")}>
-              <PeopleIcon />
-            </Button>
-          </Tooltip>
-          
-          <Tooltip title="Bulletin Boards">
-            <Button aria-label="open-bbs" onClick={() => this.sendAPI("boardlist")}>
-              <BadgeIcon count={unreadBB}>
-                <ForumIcon />
-              </BadgeIcon>
-            </Button>
-          </Tooltip>
-          
-          <Tooltip title="@mail Inbox">
-            <Button aria-label="open-mail" onClick={() => this.sendAPI("maillist")}>
-              <BadgeIcon count={unreadMail}>
-                <MailIcon />
-              </BadgeIcon>
-            </Button>
-          </Tooltip>
-          
-          <Tooltip title="Need help?">
-            <Button aria-owns={helpAnchor ? 'taskbar.help' : null} aria-label="help" aria-haspopup="true" onClick={this.showHelp}>
-              <SearchIcon />
-            </Button>
-          </Tooltip>
+          {buttons.map((button,i) => (
+            <Tooltip key={i} title={button.title}>
+              <Button aria-label={button.ariaLabel} onClick={button.action}>
+                <BadgeIcon count={button.count}>
+                  {button.icon}
+                </BadgeIcon>
+              </Button>
+            </Tooltip>
+          ))}
           
           <Tooltip title="More tasks...">
             <Button aria-owns={menuAnchor ? 'taskbar.menu' : null} aria-label="open-menu" aria-haspopup="true" onClick={this.showMenu}>
