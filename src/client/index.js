@@ -1,3 +1,4 @@
+/* eslint no-eval: 0 */
 
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -94,7 +95,7 @@ class Client {
     this.prompt = null;
     this.input = null;
     
-    // App Components
+    // External Components
     this.events = new EventEmitter();
     this.panels = jsPanel;
     this.tinycon = TinyCon;
@@ -206,29 +207,20 @@ class Client {
   // save and load objects from localStorage
   
   // load object from localstorage
-  loadLocalStorage(obj, prefix) {
-    const store = window.localStorage;
-    Object.keys(obj).forEach((key) => {
-      if (store[prefix+key]) {
-        this.castString(obj, key, store[prefix+key]);
-      }
-    });
+  loadLocalStorage(obj, key) {
+    if (window.localStorage.hasOwnProperty(key)) {
+      obj = Object.assign(obj, JSON.parse(window.localStorage[key]));
+    }
   }
   
   // clear localStorage keys starting with prefix
-  clearLocalStorage(prefix) {
-    const store = window.localStorage;
-    Object.keys(store).filter(key => key.startsWith(prefix)).forEach((key) => {
-      delete store[key];
-    });
+  clearLocalStorage(key) {
+    delete window.localStorage[key];
   }
   
   // save object to localstorage
-  saveLocalStorage(obj, prefix) {
-    const store = window.localStorage;
-    Object.keys(obj).forEach((key) => {
-      store[prefix+key] = String(obj[key]);
-    });
+  saveLocalStorage(obj, key) {
+    window.localStorage[key] = JSON.stringify(obj);
   }
   
   // casting a string argument to the correct type
@@ -272,57 +264,63 @@ class Client {
   
   // load regex/wildcard pattern triggers
   loadTriggers() {
-    this.loadLocalStorage(this.triggers, "triggers_");
+    this.loadLocalStorage(this.triggers, "triggers");
   }
   
   // load automatic timers
   loadTimers() {
-    this.loadLocalStorage(this.timers, "timers_");
+    this.loadLocalStorage(this.timers, "timers");
   }
   
   // load slash command macros
   loadMacros() {
-    this.loadLocalStorage(this.macros, "macros_");
+    this.loadLocalStorage(this.macros, "macros");
   }
   
   // load custom keybindings
   loadKeys() {
-    this.loadLocalStorage(this.keys, "keys_");
+    this.loadLocalStorage(this.keys, "keys");
   }
   
   // load client settings
   loadSettings() {
-    this.loadLocalStorage(this.settings, "settings_");
+    this.loadLocalStorage(this.settings, "settings");
+    
+    if (this.settings['invertHighlight']) {
+      this.loadStyle('./inverse.css');
+    } else {
+      this.unloadStyle('./inverse.css');
+    }
   }
   
   // save regex/wildcard pattern triggers
   saveTriggers() {
-    this.clearLocalStorage("triggers_");
-    this.saveLocalStorage(this.triggers, "triggers_");
+    this.clearLocalStorage("triggers");
+    this.saveLocalStorage(this.triggers, "triggers");
   }
   
   // save automatic timers
   saveTimers() {
-    this.clearLocalStorage("timers_");
-    this.saveLocalStorage(this.timers, "timers_");
+    this.clearLocalStorage("timers");
+    this.saveLocalStorage(this.timers, "timers");
   }
   
   // save slash command macros
   saveMacros() {
-    this.clearLocalStorage("macros_");
-    this.saveLocalStorage(this.macros, "macros_");
+    this.clearLocalStorage("macros");
+    this.saveLocalStorage(this.macros, "macros");
   }
   
   // save custom keybindings
   saveKeys() {
-    this.clearLocalStorage("keys_");
-    this.saveLocalStorage(this.keys, "keys_");
+    this.clearLocalStorage("keys");
+    this.saveLocalStorage(this.keys, "keys");
   }
   
   // save client settings
   saveSettings() {
-    this.clearLocalStorage("settings_");
-    this.saveLocalStorage(this.settings, "settings_");
+    this.clearLocalStorage("settings");
+    this.saveLocalStorage(this.settings, "settings");
   }
 
 
@@ -351,6 +349,42 @@ class Client {
   }
   
   
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // manage triggers, timers, macros, and keys
+  
+  addTrigger(name, pattern, regex, action) {
+    this.triggers.push({ name, pattern, regex, action });
+  }
+  
+  delTrigger(which) {
+    this.triggers.splice(which, 1);
+  }
+  
+  addTimer(name, delay, repeat, times, action) {
+    this.timers.push({ name, delay, repeat, times, action });
+  }
+  
+  delTimer(which) {
+    this.timers.splice(which, 1);
+  }
+  
+  addMacro(name, javascript, action) {
+    this.macros.push({ name, javascript, action });
+  }
+  
+  delMacro(which) {
+    this.macros.splice(which, 1);
+  }
+  
+  addKey(name, key, ctrl, alt, shift, action) {
+    this.keys.push({ name, key, ctrl, alt, shift, action });
+  }
+  
+  delKey(which) {
+    this.keys.splice(which, 1);
+  }
+
+
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // initialize terminal elements (input, output, prompt) and clear them
   
@@ -719,16 +753,39 @@ class Client {
 
   // function to send a user input command string to the server
   sendCommand(cmd) {
-    if (this.isConnected()) {
-      if (cmd !== '') {
-        this.sendText(cmd);
-        this.scrollIfNeeded(() => this.appendMessage('localEcho', cmd));
-      }
-    } else {
+    if (!this.isConnected()) {
       // connection was broken, let's force a reconnect
       this.conn && this.conn.reconnect();
       this.scrollIfNeeded(() => this.appendMessage('logMessage', '%% Reconnecting to server...'));
+      return;
     }
+    
+    if (cmd === '') return;
+    
+    let matched = false;
+    
+    if (cmd.startsWith('/')) {
+      let macro = cmd.split(' ')[0].slice(1);
+      if (macro !== '') {
+        this.macros.forEach((m) => {
+          if (macro === m.name) {
+            matched = true;
+            if (m.javascript) {
+              eval(m.action);
+            } else {
+              this.sendText(m.action);
+            }
+          }
+        });
+        if (matched) {
+          this.scrollIfNeeded(() => this.appendMessage('localEcho', cmd));
+          return;
+        }
+      }
+    }
+    
+    this.sendText(cmd);
+    this.scrollIfNeeded(() => this.appendMessage('localEcho', cmd));
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////

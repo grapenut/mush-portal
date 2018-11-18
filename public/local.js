@@ -51,7 +51,7 @@ panelConfig.position = {
   offsetX: -panelConfig.maximizedMargin,
   offsetY: panelConfig.maximizedMargin,
 };
-panelConfig.dragit.snap = { repositionOnSnap: true };
+//panelConfig.dragit.snap = { repositionOnSnap: true };
 
 
 /////////////////////////////////////////////////////////////////////

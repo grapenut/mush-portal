@@ -150,6 +150,8 @@ class Sendmail extends React.Component {
   }
   
   componentWillUnmount() {
+    const { panel } = this.props;
+    panel.options.resizeit.resize = null;
     window.client.react.sendmail = null;
   }
   

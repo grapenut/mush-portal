@@ -301,7 +301,13 @@ class Taskbar extends React.Component {
   };
 
   openTriggers = () => {
-    window.client.addReactPanel("Triggers", { icon: 'build' });
+    window.client.addReactPanel("Triggers", {
+      panelSize: {
+        width: 'calc(50% - ' + 1.5*window.client.panels.defaults.maximizedMargin + 'px)',
+        height: 'calc(100% - ' + 2*window.client.panels.defaults.maximizedMargin + 'px)',
+      },
+      icon: 'build',
+    });
   };
   
   previewUpload = () => {
