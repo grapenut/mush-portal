@@ -352,8 +352,8 @@ class Client {
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // manage triggers, timers, macros, and keys
   
-  addTrigger(name, pattern, regex, action) {
-    this.triggers.push({ name, pattern, regex, action });
+  addTrigger(name, pattern, regex, suppress, action) {
+    this.triggers.push({ name, pattern, regex, suppress, action });
   }
   
   delTrigger(which) {
@@ -638,7 +638,11 @@ class Client {
         setTimeout(client.setBubble, 1000);
       }
     }
-
+    
+    regExpEscape (s) {
+      return s.replace(/[|\\{}()[\]^$+*?.]/g, '\\$&');
+    }
+    
     // handle incoming text
     this.conn.onText = function (text) {
       if (!client.loggedIn) {
@@ -661,6 +665,7 @@ class Client {
         }
       }
     
+      // implement @dec/tf
       var re_fugueedit = new RegExp('^'+client.settings.decompileKey);
       if (text.match(re_fugueedit)) {
         var str = text.replace(re_fugueedit, "");
@@ -679,7 +684,28 @@ class Client {
         return;
       }
       
+      // handle text triggers
+      let suppress = false;
+      client.triggers.forEach((trigger, i) => {
+        let re;
+        if (trigger.regex) {
+          re = new RegExp(trigger.pattern);
+        } else {
+          re = new RegExp('^' + trigger.pattern.split(/\*+/).map(client.regExpEscape).join('(.*)') + '$');
+        }
+        if (text.match(re)) {
+          eval(trigger.action);
+          
+          if (trigger.suppress) {
+            suppress = true;
+          }
+        }
+      });
+      
       client.eatNewline = false;
+      
+      if (suppress) return;
+      
       client.scrollIfNeeded(() => client.output.appendText(text));
     };
     
