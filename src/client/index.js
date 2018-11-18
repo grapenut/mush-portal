@@ -12,6 +12,7 @@ import Mailbox from '../modules/Mailbox';
 import Sendmail from '../modules/Sendmail';
 import BBoard from '../modules/BBoard';
 import Upload from '../modules/Upload';
+import Triggers from '../modules/Triggers';
 
 import Connection from './connection';
 import Emulator from './emulator';
@@ -74,6 +75,17 @@ class Client {
     this.defaultSettings = Object.assign({}, this.settings);
     this.loadSettings();
     
+    // triggers, timers, macros, and keybindings
+    this.triggers = [];
+    this.timers = [];
+    this.macros = [];
+    this.keys = [];
+    this.loadTriggers();
+    this.loadTimers();
+    this.loadMacros();
+    this.loadKeys();
+    
+    // Client colors and theme
     this.colors = Colors;
     this.theme = this.createTheme();
     
@@ -99,6 +111,7 @@ class Client {
       sendmail: null,
       bboard: null,
       upload: null,
+      triggers: null,
     };
     
     // client variables
@@ -138,21 +151,8 @@ class Client {
     this.render();
   }
   
-  // create a theme
-  createTheme(theme) {
-    const defaultTheme = {
-      typography: {
-        useNextVariants: true,
-      },
-      palette: {
-        primary: this.colors.indigo,
-        secondary: this.colors.blueGrey,
-        type: 'dark',
-      },
-    };
-    
-    return createMuiTheme(Object.assign(defaultTheme, theme));
-  }
+  ///////////////////////////////////////////////////////////////////////////////////////////////////
+  // rendering, themeing, and styling react components
   
   // render the main react component
   render() {
@@ -186,48 +186,80 @@ class Client {
     }
   }
   
-  // load settings from localstorage
-  loadSettings() {
+  // create a theme
+  createTheme(theme) {
+    const defaultTheme = {
+      typography: {
+        useNextVariants: true,
+      },
+      palette: {
+        primary: this.colors.indigo,
+        secondary: this.colors.blueGrey,
+        type: 'dark',
+      },
+    };
+    
+    return createMuiTheme(Object.assign(defaultTheme, theme));
+  }
+  
+  ///////////////////////////////////////////////////////////////////////////////////////////////////
+  // save and load objects from localStorage
+  
+  // load object from localstorage
+  loadLocalStorage(obj, prefix) {
     const store = window.localStorage;
-    Object.keys(this.settings).forEach((key) => {
-      if (store["settings_"+key]) {
-        this.changeSetting(key, store["settings_"+key]);
+    Object.keys(obj).forEach((key) => {
+      if (store[prefix+key]) {
+        this.castString(obj, key, store[prefix+key]);
       }
     });
   }
   
-  // save settings to localstorage
-  saveSettings() {
+  // clear localStorage keys starting with prefix
+  clearLocalStorage(prefix) {
     const store = window.localStorage;
-    Object.keys(this.settings).forEach((key) => {
-      store["settings_"+key] = String(this.settings[key]);
+    Object.keys(store).filter(key => key.startsWith(prefix)).forEach((key) => {
+      delete store[key];
     });
   }
   
-  // change a setting, casting the string argument to the correct type
-  changeSetting(key, value) {
-    if (!this.settings.hasOwnProperty(key)) return;
+  // save object to localstorage
+  saveLocalStorage(obj, prefix) {
+    const store = window.localStorage;
+    Object.keys(obj).forEach((key) => {
+      store[prefix+key] = String(obj[key]);
+    });
+  }
+  
+  // casting a string argument to the correct type
+  castString(obj, key, value) {
+    if (!obj.hasOwnProperty(key)) return;
     
-    var type = typeof this.settings[key];
+    var type = typeof obj[key];
     
     if (typeof value === type) {
-      this.settings[key] = value;
+      obj[key] = value;
     } else {
       switch (type) {
         case "string":
-          this.settings[key] = String.bind(null, value)();
+          obj[key] = String.bind(null, value)();
           break;
         case "number":
-          this.settings[key] = Number.bind(null, value)();
+          obj[key] = Number.bind(null, value)();
           break;
         case "boolean":
-          this.settings[key] = (value === "true" ? true : false);
+          obj[key] = (value === "true" ? true : false);
           break;
         default:
-          this.settings[key] = value;
+          obj[key] = value;
           break;
       }
     }
+  }
+  
+  // change a setting, performing a secondary action if necessary
+  changeSetting(key, value) {
+    this.castString(this.settings, key, value);
     
     if (key === 'invertHighlight') {
       if (this.settings[key]) {
@@ -237,6 +269,65 @@ class Client {
       }
     }
   }
+  
+  // load regex/wildcard pattern triggers
+  loadTriggers() {
+    this.loadLocalStorage(this.triggers, "triggers_");
+  }
+  
+  // load automatic timers
+  loadTimers() {
+    this.loadLocalStorage(this.timers, "timers_");
+  }
+  
+  // load slash command macros
+  loadMacros() {
+    this.loadLocalStorage(this.macros, "macros_");
+  }
+  
+  // load custom keybindings
+  loadKeys() {
+    this.loadLocalStorage(this.keys, "keys_");
+  }
+  
+  // load client settings
+  loadSettings() {
+    this.loadLocalStorage(this.settings, "settings_");
+  }
+  
+  // save regex/wildcard pattern triggers
+  saveTriggers() {
+    this.clearLocalStorage("triggers_");
+    this.saveLocalStorage(this.triggers, "triggers_");
+  }
+  
+  // save automatic timers
+  saveTimers() {
+    this.clearLocalStorage("timers_");
+    this.saveLocalStorage(this.timers, "timers_");
+  }
+  
+  // save slash command macros
+  saveMacros() {
+    this.clearLocalStorage("macros_");
+    this.saveLocalStorage(this.macros, "macros_");
+  }
+  
+  // save custom keybindings
+  saveKeys() {
+    this.clearLocalStorage("keys_");
+    this.saveLocalStorage(this.keys, "keys_");
+  }
+  
+  // save client settings
+  saveSettings() {
+    this.clearLocalStorage("settings_");
+    this.saveLocalStorage(this.settings, "settings_");
+  }
+
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // miscellaneous logging and command links
   
   // pueblo command links, prompt for user input and replace ?? token if present
   onCommand(cmd) {
@@ -259,7 +350,9 @@ class Client {
     }
   }
   
+  
   /////////////////////////////////////////////////////////////////////////////////////////////////
+  // initialize terminal elements (input, output, prompt) and clear them
   
   // clear terminal
   clear() {
@@ -310,6 +403,7 @@ class Client {
   }
   
   /////////////////////////////////////////////////////////////////////////////////////////////////
+  // handle input window focus and output window scrolling
   
   //////////////////////////////////////////////////////
   // animate scrolling the terminal window to the bottom
@@ -364,8 +458,11 @@ class Client {
     }
   }
 
+
   /////////////////////////////////////////////////////////////////////////////////////////////////
+  // spawn, focus and close window panels
   
+  // spawn a window using a react components
   addReactPanel(name, cfg) {
     var el = null;
     var obj = null;
@@ -389,6 +486,10 @@ class Client {
         el = BBoard;
         obj = this.react.bboard;
         break;
+      case 'Triggers':
+        el = Triggers;
+        obj = this.react.triggers;
+        break;
       default:
         break;
     }
@@ -410,7 +511,7 @@ class Client {
     
     if (!config.headerLogo) {
       var icon = config.icon || "tab";
-      config.headerLogo = "<i class='material-icons'>"+icon+"</i>";
+      config.headerLogo = "<i class='material-icons' style='margin-left: "+this.theme.spacing.unit+"px'>"+icon+"</i>";
     }
     
     config.callback = (container) => {

@@ -27,10 +27,6 @@ Ace Editor
   Add a toolbar?
   Auto-completion
 
-Taskbar
-  Reorganize how windows are spawned and kept track of.
-  Reorganize commands, icons and popovers for customization later.
-
 Phaser
   Generate generic 2d tilemap for rooms.
   Auto-place exits.
@@ -66,6 +62,10 @@ Mailbox
 
 Color Picker
   Custom color picker with ANSI color grid 8 rows, 34 cols
+
+Taskbar
+  Reorganize how windows are spawned and kept track of.
+  Reorganize commands, icons and popovers for customization later.
 
 
 

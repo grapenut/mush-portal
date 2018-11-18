@@ -22,6 +22,7 @@ import Icon from '@material-ui/core/Icon';
 import MenuIcon from '@material-ui/icons/Menu';
 import BackspaceIcon from '@material-ui/icons/Backspace';
 import SaveIcon from '@material-ui/icons/Save';
+import BuildIcon from '@material-ui/icons/Build';
 import SettingsIcon from '@material-ui/icons/Settings';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import KeyboardIcon from '@material-ui/icons/Keyboard';
@@ -298,6 +299,10 @@ class Taskbar extends React.Component {
   typeURL = event => {
     this.url = event.target.value;
   };
+
+  openTriggers = () => {
+    window.client.addReactPanel("Triggers", { icon: 'build' });
+  };
   
   previewUpload = () => {
     window.client.addReactPanel("Upload", { icon: 'cloud_upload' });
@@ -477,6 +482,11 @@ class Taskbar extends React.Component {
             <MenuItem onClick={this.openDrawer}>
               <Tooltip title="Change settings.">
                 <SettingsIcon />
+              </Tooltip>
+            </MenuItem>
+            <MenuItem onClick={this.openTriggers}>
+              <Tooltip title="Manage triggers.">
+                <BuildIcon />
               </Tooltip>
             </MenuItem>
             <MenuItem aria-owns={uploadAnchor ? 'taskbar.upload' : null} aria-label="open-upload" aria-haspopup="true" onClick={this.showUpload}>
