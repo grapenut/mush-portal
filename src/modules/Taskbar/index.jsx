@@ -300,8 +300,8 @@ class Taskbar extends React.Component {
     this.url = event.target.value;
   };
 
-  openTriggers = () => {
-    window.client.addReactPanel("Triggers", {
+  openActions = () => {
+    window.client.addReactPanel("Actions", {
       panelSize: {
         width: 'calc(50% - ' + 1.5*window.client.panels.defaults.maximizedMargin + 'px)',
         height: 'calc(100% - ' + 2*window.client.panels.defaults.maximizedMargin + 'px)',
@@ -490,8 +490,8 @@ class Taskbar extends React.Component {
                 <SettingsIcon />
               </Tooltip>
             </MenuItem>
-            <MenuItem onClick={this.openTriggers}>
-              <Tooltip title="Manage triggers.">
+            <MenuItem onClick={this.openActions}>
+              <Tooltip title="Manage actions.">
                 <BuildIcon />
               </Tooltip>
             </MenuItem>

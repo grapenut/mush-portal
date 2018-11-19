@@ -143,7 +143,8 @@ class Settings extends React.Component {
 
   render() {
     const { classes, closeDrawer } = this.props;
-    const { debugEvents, decompileEditor, decompileKey, ansiFG, ansiBG, wrapWidth, invertHighlight,
+    const { debugEvents, decompileEditor, decompileKey, ansiFG, ansiBG, wrapWidth,
+      invertHighlight, debugRegistry,
       sidebarOpen, sidebarAnchor, sidebarAlwaysShow, colorAnchor, sidebarShowPlayers,
       sidebarShowThings, sidebarShowExits, sidebarShowCompass, sidebarWidth } = this.state;
     
@@ -162,6 +163,15 @@ class Settings extends React.Component {
                 <ListItemText className={classes.switchText} primary="Debug server events?" />
                 <ListItemSecondaryAction>
                   <Switch checked={debugEvents} value="debugEvents" onChange={this.handleSwitch('debugEvents')} />
+                </ListItemSecondaryAction>
+              </ListItem>
+              <ListItem dense>
+                <ListItemIcon>
+                  <BugReportIcon />
+                </ListItemIcon>
+                <ListItemText className={classes.switchText} primary="Debug registry errors?" />
+                <ListItemSecondaryAction>
+                  <Switch checked={debugRegistry} value="debugRegistry" onChange={this.handleSwitch('debugRegistry')} />
                 </ListItemSecondaryAction>
               </ListItem>
             </List>

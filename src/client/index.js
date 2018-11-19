@@ -13,7 +13,7 @@ import Mailbox from '../modules/Mailbox';
 import Sendmail from '../modules/Sendmail';
 import BBoard from '../modules/BBoard';
 import Upload from '../modules/Upload';
-import Triggers from '../modules/Triggers';
+import Actions from '../modules/Actions';
 
 import Connection from './connection';
 import Emulator from './emulator';
@@ -72,15 +72,52 @@ class Client {
       sidebarShowCompass: true,
       // debugging
       debugEvents: false,
+      debugActions: false,
     };
     this.defaultSettings = Object.assign({}, this.settings);
     this.loadSettings();
     
     // triggers, timers, macros, and keybindings
+    this.actionTemplates = {
+      triggers: {
+        name: "",
+        action: "",
+        javascript: false,
+        pattern: "",
+        regex: false,
+        suppress: false,
+      },
+      timers: {
+        name: "",
+        action: "",
+        javascript: false,
+        delay: 0,
+        repeat: false,
+        times: 0,
+      },
+      macros: {
+        name: "",
+        action: "",
+        javascript: false,
+        pattern: "",
+        regex: false,
+      },
+      keys: {
+        name: "",
+        action: "",
+        javascript: false,
+        keycode: null,
+        ctrl: false,
+        alt: false,
+        shift: false,
+      },
+    };
+        
     this.triggers = [];
     this.timers = [];
     this.macros = [];
     this.keys = [];
+    
     this.loadTriggers();
     this.loadTimers();
     this.loadMacros();
@@ -112,7 +149,7 @@ class Client {
       sendmail: null,
       bboard: null,
       upload: null,
-      triggers: null,
+      actions: null,
     };
     
     // client variables
@@ -351,33 +388,49 @@ class Client {
   
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // manage triggers, timers, macros, and keys
+  createPattern(regex, pattern) {
+    if (regex) {
+      return new RegExp('^' + pattern + '$');
+    } else {
+      return new RegExp('^' + pattern.split(/\*+/).map(s => s.replace(/[|\\{}()[\]^$+*?.]/g, '\\$&')).join('(.*)') + '$');
+    }
+  }
   
-  addTrigger(name, pattern, regex, suppress, action) {
-    this.triggers.push({ name, pattern, regex, suppress, action });
+  applyPattern(args, text) {
+    let newText = text;
+    for (let i = args.length-1; i > -1; i--) {
+      let re = new RegExp('(?![\\%])(%'+i+')', 'g');
+      newText = newText.replace(re, args[i]);
+    }
+    return newText;
+  }
+  
+  addTrigger(name, pattern, regex, javascript, suppress, action) {
+    this.triggers.push({ name, pattern, regex, javascript, suppress, action });
   }
   
   delTrigger(which) {
     this.triggers.splice(which, 1);
   }
   
-  addTimer(name, delay, repeat, times, action) {
-    this.timers.push({ name, delay, repeat, times, action });
+  addTimer(name, delay, repeat, times, javascript, action) {
+    this.timers.push({ name, delay, repeat, times, javascript, action });
   }
   
   delTimer(which) {
     this.timers.splice(which, 1);
   }
   
-  addMacro(name, javascript, action) {
-    this.macros.push({ name, javascript, action });
+  addMacro(name, pattern, regex, javascript, action) {
+    this.macros.push({ name, pattern, regex, javascript, action });
   }
   
   delMacro(which) {
     this.macros.splice(which, 1);
   }
   
-  addKey(name, key, ctrl, alt, shift, action) {
-    this.keys.push({ name, key, ctrl, alt, shift, action });
+  addKey(name, key, ctrl, alt, shift, javascript, action) {
+    this.keys.push({ name, key, ctrl, alt, shift, javascript, action });
   }
   
   delKey(which) {
@@ -520,9 +573,9 @@ class Client {
         el = BBoard;
         obj = this.react.bboard;
         break;
-      case 'Triggers':
-        el = Triggers;
-        obj = this.react.triggers;
+      case 'Actions':
+        el = Actions;
+        obj = this.react.actions;
         break;
       default:
         break;
@@ -639,10 +692,6 @@ class Client {
       }
     }
     
-    regExpEscape (s) {
-      return s.replace(/[|\\{}()[\]^$+*?.]/g, '\\$&');
-    }
-    
     // handle incoming text
     this.conn.onText = function (text) {
       if (!client.loggedIn) {
@@ -679,32 +728,41 @@ class Client {
           client.input.root.value = str;
         }
         return;
-      } else if (client.eatNewline && (text === "\n" || text === "\r\n")) {
-        client.eatNewline = false;
-        return;
       }
       
       // handle text triggers
       let suppress = false;
       client.triggers.forEach((trigger, i) => {
-        let re;
-        if (trigger.regex) {
-          re = new RegExp(trigger.pattern);
-        } else {
-          re = new RegExp('^' + trigger.pattern.split(/\*+/).map(client.regExpEscape).join('(.*)') + '$');
-        }
-        if (text.match(re)) {
-          eval(trigger.action);
+        try {
+          let re = client.createPattern(trigger.regex, trigger.pattern);
+          let args = text.match(re);
           
-          if (trigger.suppress) {
-            suppress = true;
+          if (args) {
+            if (trigger.javascript) {
+              eval(trigger.action);
+            } else {
+              let action = client.applyPattern(args, trigger.action);
+              client.sendText(action);
+            }
+          
+            if (trigger.suppress) {
+              client.eatNewline = true;
+              suppress = true;
+            }
           }
+        } catch (e) {
+          client.settings.debugActions && console.log("Trigger error:", e);
         }
       });
       
-      client.eatNewline = false;
-      
       if (suppress) return;
+      
+      if (client.eatNewline && (text === "\n" || text === "\r\n")) {
+        client.eatNewline = false;
+        return;
+      }
+      
+      client.eatNewline = false;
       
       client.scrollIfNeeded(() => client.output.appendText(text));
     };
@@ -789,28 +847,29 @@ class Client {
     if (cmd === '') return;
     
     let matched = false;
-    
-    if (cmd.startsWith('/')) {
-      let macro = cmd.split(' ')[0].slice(1);
-      if (macro !== '') {
-        this.macros.forEach((m) => {
-          if (macro === m.name) {
-            matched = true;
-            if (m.javascript) {
-              eval(m.action);
-            } else {
-              this.sendText(m.action);
-            }
+    this.macros.forEach((m) => {
+      try {
+        let re = this.createPattern(m.regex, m.pattern);
+        let args = cmd.match(re);
+        
+        if (args) {
+          matched = true;
+          if (m.javascript) {
+            eval(m.action);
+          } else {
+            let action = this.applyPattern(args, m.action);
+            this.sendText(action);
           }
-        });
-        if (matched) {
-          this.scrollIfNeeded(() => this.appendMessage('localEcho', cmd));
-          return;
         }
+      } catch (e) {
+        this.settings.debugActions && console.log("Macro error:", e);
       }
+    });
+    
+    if (!matched) {
+      this.sendText(cmd);
     }
     
-    this.sendText(cmd);
     this.scrollIfNeeded(() => this.appendMessage('localEcho', cmd));
   }
 
