@@ -491,7 +491,7 @@ class Taskbar extends React.Component {
               </Tooltip>
             </MenuItem>
             <MenuItem onClick={this.openActions}>
-              <Tooltip title="Manage actions.">
+              <Tooltip title="User-defined actions.">
                 <BuildIcon />
               </Tooltip>
             </MenuItem>

@@ -396,11 +396,11 @@ class Client {
     }
   }
   
-  applyPattern(args, text) {
-    let newText = text;
+  replaceArgs(args, text) {
+    let newText = text.slice();
     for (let i = args.length-1; i > -1; i--) {
-      let re = new RegExp('(?![\\%])(%'+i+')', 'g');
-      newText = newText.replace(re, args[i]);
+      let re = new RegExp('(^|[^\\%])%'+i, 'g');
+      newText = newText.replace(re, '$1'+args[i]);
     }
     return newText;
   }
@@ -741,7 +741,7 @@ class Client {
             if (trigger.javascript) {
               eval(trigger.action);
             } else {
-              let action = client.applyPattern(args, trigger.action);
+              let action = client.replaceArgs(args, trigger.action);
               client.sendText(action);
             }
           
@@ -857,7 +857,7 @@ class Client {
           if (m.javascript) {
             eval(m.action);
           } else {
-            let action = this.applyPattern(args, m.action);
+            let action = this.replaceArgs(args, m.action);
             this.sendText(action);
           }
         }
