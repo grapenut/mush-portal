@@ -16,7 +16,7 @@ import Button from '@material-ui/core/Button';
 
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 
-import ActionForm from './ActionForm';
+import FormEditor from './FormEditor';
 import TriggerForm from './TriggerForm';
 import TimerForm from './TimerForm';
 import MacroForm from './MacroForm';
@@ -79,9 +79,50 @@ const styles = theme => ({
 //////////////////////////////////////////////////////////////////////
 
 
-class Actions extends React.Component {
+class Customizer extends React.Component {
   constructor(props) {
     super(props);
+    
+    const client = window.client;
+    
+    this.tabs = [
+      {
+        list: client.triggers,
+        listName: "Triggers",
+        Form: TriggerForm,
+        immutable: false,
+      },
+      {
+        list: client.macros,
+        listName: "Macros",
+        Form: MacroForm,
+        immutable: false,
+      },
+      {
+        list: client.css,
+        listName: "CSS",
+        Form: null,
+        immutable: true,
+      },
+      {
+        list: client.scripts,
+        listName: "Scripts",
+        Form: null,
+        immutable: true,
+      },
+      {
+        list: client.timers,
+        listName: "Timers",
+        Form: TimerForm,
+        immutable: false,
+      },
+      {
+        list: client.keys,
+        listName: "Keys",
+        Form: KeyForm,
+        immutable: false,
+      },
+    ];
     
     this.state = {
       tab: 0,
@@ -99,61 +140,30 @@ class Actions extends React.Component {
   }; 
   
   componentDidMount() {
-    window.client.react.actions = this;
+    window.client.react.customizer = this;
   }
   
   componentWillUnmount() {
-    window.client.react.actions = null;
+    window.client.react.customizer = null;
   }
   
   render() {
     const { classes, panel } = this.props;
-    const { tab, selected } = this.state;
-    const client = window.client;
-    
-    var Form;
-    var list;
-    var listName;
-    switch (tab) {
-      case 0:
-        list = client.triggers;
-        listName = "Triggers";
-        Form = TriggerForm;
-        break;
-      case 1:
-        list = client.timers;
-        listName = "Timers";
-        Form = TimerForm;
-        break;
-      case 2:
-        list = client.macros;
-        listName = "Macros";
-        Form = MacroForm;
-        break;
-      case 3:
-        list = client.keys;
-        listName = "Keys";
-        Form = KeyForm;
-        break;
-      default:
-        break;
-    }
+    const { selected } = this.state;
+    const tab = this.tabs[this.state.tab];
     
     return (
       <div className={classes.frame}>
         <AppBar position="static">
-          <Tabs value={tab} onChange={this.changeTab}>
-            <Tab label="Triggers" />
-            <Tab label="Timers" />
-            <Tab label="Macros" />
-            <Tab label="Keys" />
+          <Tabs value={this.state.tab} scrollable scrollButtons="auto" onChange={this.changeTab}>
+            {this.tabs.map((t,i) => (<Tab key={i} label={t.listName} />))}
           </Tabs>
         </AppBar>
         <Typography className={classes.container} component="div" >
           <div className={classes.left}>
             <div className={classes.overflow}>
-              <List disablePadding dense subheader={<ListSubheader>{listName}</ListSubheader>}>
-                {list.map((item, i) => (
+              <List disablePadding dense subheader={<ListSubheader>{tab.listName}</ListSubheader>}>
+                {tab.list.map((item, i) => (
                   <ListItem key={i} dense button divider selected={selected === i} onClick={this.onSelect(i)} className={i % 2 === 0 ? classes.even : classes.odd} >
                     <ListItemIcon className={classes.listNum}><span>{i+1}</span></ListItemIcon>
                     <ListItemText className={classes.listText} primary={item.name} />
@@ -163,11 +173,11 @@ class Actions extends React.Component {
             </div>
             <Button classes={{ label: classes.block }} onClick={() => this.setState({ selected: -1 })}>
               <AddCircleIcon />
-              New {listName.slice(0,-1)}
+              New {tab.listName.slice(0,-1)}
             </Button>
           </div>
           <div className={classes.right}>
-            <ActionForm list={list} listName={listName.toLowerCase()} selected={selected} panel={panel} Form={Form} />
+            <FormEditor list={tab.list} listName={tab.listName.toLowerCase()} selected={selected} panel={panel} Form={tab.Form} immutable={tab.immutable} />
           </div>
         </Typography>
       </div>
@@ -175,11 +185,11 @@ class Actions extends React.Component {
   }
 }
 
-Actions.propTypes = {
+Customizer.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
   panel: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles, { withTheme: true })(Actions);
+export default withStyles(styles, { withTheme: true })(Customizer);
 

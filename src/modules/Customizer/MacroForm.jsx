@@ -27,7 +27,7 @@ const styles = theme => ({
 //////////////////////////////////////////////////////////////////////
 
 
-class TimerForm extends React.Component {
+class MacroForm extends React.Component {
   constructor(props) {
     super(props);
     
@@ -42,32 +42,31 @@ class TimerForm extends React.Component {
   }
 
   render() {
-    const { classes, item, refs, handleNumber, handleSwitch } = this.props;
+    const { classes, item, handleChange, handleSwitch } = this.props;
     
     return (
       <div className={classes.frame}>
-        <TextField type="number" ref={refs.delay} label="Delay seconds" className={classes.flex} value={String(item.delay)} onChange={handleNumber('delay')} />
+        <TextField label="Matching pattern" className={classes.flex} value={item.pattern} onChange={handleChange('pattern')} />
         <span>
           <ListItem dense>
-            <ListItemText primary="Repeat this timer?" />
-            <Switch ref={refs.repeat} checked={item.repeat} onChange={handleSwitch('repeat')} />
+            <ListItemText primary="Wildcard" />
+            <Switch color="default" checked={item.regex} onChange={handleSwitch('regex')} />
+            <ListItemText primary="RegExp" />
           </ListItem>
         </span>
-        <TextField type="number" ref={refs.times} disabled={!item.repeat} label="Number of times" className={classes.flex} value={String(item.times)} onChange={handleNumber('times')} />
       </div>
     );
   }
 }
 
-TimerForm.propTypes = {
+MacroForm.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
   item: PropTypes.object.isRequired,
-  refs: PropTypes.object.isRequired,
   handleChange: PropTypes.func.isRequired,
   handleNumber: PropTypes.func.isRequired,
   handleSwitch: PropTypes.func.isRequired,
 };
 
-export default withStyles(styles, { withTheme: true })(TimerForm);
+export default withStyles(styles, { withTheme: true })(MacroForm);
 

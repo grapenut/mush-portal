@@ -300,8 +300,8 @@ class Taskbar extends React.Component {
     this.url = event.target.value;
   };
 
-  openActions = () => {
-    window.client.addReactPanel("Actions", {
+  openCustomizer = () => {
+    window.client.addReactPanel("Customizer", {
       panelSize: {
         width: 'calc(50% - ' + 1.5*window.client.panels.defaults.maximizedMargin + 'px)',
         height: 'calc(100% - ' + 2*window.client.panels.defaults.maximizedMargin + 'px)',
@@ -376,6 +376,10 @@ class Taskbar extends React.Component {
             menuAnchor, uploadAnchor, helpAnchor, logAnchor } = this.state;
 
     var rev = input ? input.history.slice().reverse() : [];
+    
+    const desktopMenu = null;
+    
+    const mobileMenu = null;
     
     return (
       <AppBar className={classes.root} position="static" onClick={() => window.client.focus()}>
@@ -490,8 +494,8 @@ class Taskbar extends React.Component {
                 <SettingsIcon />
               </Tooltip>
             </MenuItem>
-            <MenuItem onClick={this.openActions}>
-              <Tooltip title="User-defined actions.">
+            <MenuItem onClick={this.openCustomizer}>
+              <Tooltip title="Client customization.">
                 <BuildIcon />
               </Tooltip>
             </MenuItem>

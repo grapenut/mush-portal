@@ -48,6 +48,7 @@ const styles = theme => ({
   },
   left: {
     flex: 1,
+    overflowY: "auto",
   },
   right: {
     display: "flex",
@@ -55,17 +56,23 @@ const styles = theme => ({
   },
   content: {
     display: 'flex',
-    justifyContent: 'flex-end',
+    flexFlow: "row wrap",
+    justifyContent: 'flex-start',
+  },
+  list: {
+    flex: 1,
   },
   switchText: {
     paddingLeft: 0,
     marginRight: 2*theme.spacing.unit,
   },
   buttons: {
+    right: 0,
+    top: 0,
+    bottom: 0,
     flex: 1,
     display: "flex",
     flexFlow: "row nowrap",
-    height: "100%",
   },
 });
 
@@ -144,7 +151,7 @@ class Settings extends React.Component {
   render() {
     const { classes, closeDrawer } = this.props;
     const { debugEvents, decompileEditor, decompileKey, ansiFG, ansiBG, wrapWidth,
-      invertHighlight, debugRegistry,
+      invertHighlight, debugActions,
       sidebarOpen, sidebarAnchor, sidebarAlwaysShow, colorAnchor, sidebarShowPlayers,
       sidebarShowThings, sidebarShowExits, sidebarShowCompass, sidebarWidth } = this.state;
     
@@ -155,7 +162,7 @@ class Settings extends React.Component {
             <Popover id="settings.color" anchorEl={colorAnchor} open={false} onClose={this.closeColor}>
             </Popover>
             
-            <List disablePadding dense subheader={<ListSubheader>Debugging</ListSubheader>}>
+            <List className={classes.list} disablePadding dense subheader={<ListSubheader>Debugging</ListSubheader>}>
               <ListItem dense>
                 <ListItemIcon>
                   <BugReportIcon />
@@ -169,14 +176,14 @@ class Settings extends React.Component {
                 <ListItemIcon>
                   <BugReportIcon />
                 </ListItemIcon>
-                <ListItemText className={classes.switchText} primary="Debug registry errors?" />
+                <ListItemText className={classes.switchText} primary="Debug user-defined actions?" />
                 <ListItemSecondaryAction>
-                  <Switch checked={debugRegistry} value="debugRegistry" onChange={this.handleSwitch('debugRegistry')} />
+                  <Switch checked={debugActions} value="debugActions" onChange={this.handleSwitch('debugActions')} />
                 </ListItemSecondaryAction>
               </ListItem>
             </List>
 
-            <List disablePadding dense subheader={<ListSubheader>Display Settings</ListSubheader>}>
+            <List className={classes.list} disablePadding dense subheader={<ListSubheader>Display Settings</ListSubheader>}>
               <ListItem dense>
                 <ListItemIcon>
                   <WrapTextIcon />
@@ -202,14 +209,14 @@ class Settings extends React.Component {
                 <ListItemIcon>
                   <PaletteIcon />
                 </ListItemIcon>
-                <ListItemText className={classes.switchText} primary="Swap black and white?" />
+                <ListItemText className={classes.switchText} primary="Invert foreground & background?" />
                 <ListItemSecondaryAction>
                   <Switch checked={invertHighlight} value="invertHighlight" onChange={this.handleSwitch('invertHighlight')} />
                 </ListItemSecondaryAction>
               </ListItem>
             </List>
             
-            <List disablePadding dense subheader={<ListSubheader>@decompile/tf</ListSubheader>}>
+            <List className={classes.list} disablePadding dense subheader={<ListSubheader>@decompile/tf</ListSubheader>}>
               <ListItem dense>
                 <ListItemIcon>
                   <EditIcon />
@@ -228,7 +235,7 @@ class Settings extends React.Component {
               </ListItem>
             </List>
 
-            <List disablePadding dense subheader={<ListSubheader>Sidebar Display</ListSubheader>}>
+            <List className={classes.list} disablePadding dense subheader={<ListSubheader>Sidebar Display</ListSubheader>}>
               <ListItem dense>
                 <ListItemIcon>
                   <VerticalSplitIcon />
@@ -273,7 +280,7 @@ class Settings extends React.Component {
               </ListItem>
             </List>
             
-            <List disabled={!sidebarOpen} disablePadding dense subheader={<ListSubheader>Sidebar Content</ListSubheader>}>
+            <List className={classes.list} disabled={!sidebarOpen} disablePadding dense subheader={<ListSubheader>Sidebar Content</ListSubheader>}>
               <ListItem dense disabled={!sidebarOpen}>
                 <ListItemIcon>
                   <AccountCircleIcon />

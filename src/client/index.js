@@ -8,12 +8,11 @@ import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import saveAs from 'file-saver';
 
 import Portal from '../modules/Portal';
-import Chargen from '../modules/Chargen';
 import Mailbox from '../modules/Mailbox';
 import Sendmail from '../modules/Sendmail';
 import BBoard from '../modules/BBoard';
 import Upload from '../modules/Upload';
-import Actions from '../modules/Actions';
+import Customizer from '../modules/Customizer';
 
 import Connection from './connection';
 import Emulator from './emulator';
@@ -75,13 +74,12 @@ class Client {
       debugActions: false,
     };
     this.defaultSettings = Object.assign({}, this.settings);
-    this.loadSettings();
     
     // triggers, timers, macros, and keybindings
     this.actionTemplates = {
       triggers: {
         name: "",
-        action: "",
+        text: "",
         javascript: false,
         pattern: "",
         regex: false,
@@ -89,7 +87,7 @@ class Client {
       },
       timers: {
         name: "",
-        action: "",
+        text: "",
         javascript: false,
         delay: 0,
         repeat: false,
@@ -97,19 +95,27 @@ class Client {
       },
       macros: {
         name: "",
-        action: "",
+        text: "",
         javascript: false,
         pattern: "",
         regex: false,
       },
       keys: {
         name: "",
-        action: "",
+        text: "",
         javascript: false,
         keycode: null,
         ctrl: false,
         alt: false,
         shift: false,
+      },
+      css: {
+        name: "",
+        text: "",
+      },
+      scripts: {
+        name: "",
+        text: "// Insert JavaScript below.\n",
       },
     };
         
@@ -117,11 +123,19 @@ class Client {
     this.timers = [];
     this.macros = [];
     this.keys = [];
+    this.scripts = [{ name: "onLoad.js", text: "" }];
+    this.css = [{ name: "ansi.css", text: "" },
+                { name: "inverse.css", text: "" }];
     
     this.loadTriggers();
     this.loadTimers();
     this.loadMacros();
     this.loadKeys();
+    this.loadCSS();
+    this.loadScripts();
+    
+    // must come after client.css definition
+    this.loadSettings();
     
     // Client colors and theme
     this.colors = Colors;
@@ -149,7 +163,7 @@ class Client {
       sendmail: null,
       bboard: null,
       upload: null,
-      actions: null,
+      customizer: null,
     };
     
     // client variables
@@ -205,22 +219,99 @@ class Client {
     document.getElementsByTagName('body')[0].appendChild(tag);
   }
   
+  execUserScript(name) {
+    // load user customization file
+    const client = this;
+    try {
+      var script = null;
+      for (let i=0; i < client.scripts.length; i++) {
+        if (client.scripts[i].name === name) {
+          script = client.scripts[i];
+          break;
+        }
+      }
+      if (script && script.text !== "") {
+        eval(script.text);
+      }
+    } catch (e) {
+      client.debugActions && console.log("Error executing `" + name + "'.");
+    }
+  }
+  
   // load custom CSS style sheet
   loadStyle(src) {
-    var style = document.createElement("link");
+    const file = src.split('/').slice(-1)[0];
+
+    // see if we have a matching css override
+    var css = null;
+    for (let i=0; i < this.css.length; i++) {
+      if (this.css[i].name === file) {
+        css = this.css[i];
+        break;
+      }
+    }
+    
+    var style;
+    if (css) {
+      // just update the <style> element
+      style = this.updateCSS(css);
+      if (css.text !== "") return;
+    }
+    
+    // css is not overridden, try to load a <link>
+    style = document.createElement("link");
     style.setAttribute("rel", "stylesheet");
     style.setAttribute("type", "text/css");
     style.setAttribute("href", src);
-    document.getElementsByTagName("head")[0].appendChild(style);
+    document.head.appendChild(style);
+  }
+  
+  // update the css object's rules on its <style> element 
+  updateCSS(css, erase=false) {
+    if (!css) return null;
+    
+    var style = document.getElementById("override_" + css.name);
+    if (style) {
+      // remove what's already there
+      while (style.firstChild) {
+        style.removeChild(style.firstChild);
+      }
+    } else {
+      // create a new style element
+      style = document.createElement('style');
+      style.setAttribute('id', 'override_' + css.name);
+      document.head.appendChild(style);
+    }
+    
+    // update the CSS text on the <style> element
+    if (!erase) style.appendChild(document.createTextNode(css.text));
+    
+    return style;
   }
   
   // unload custom CSS style sheet
   unloadStyle(src) {
+    // remove the <link> if it exists
     var links = document.getElementsByTagName("link");
     for (var i = links.length; i >= 0; i--) {
       if (links[i] && links[i].getAttribute("href") !== null && links[i].getAttribute("href").indexOf(src) !== -1) {
         links[i].parentNode.removeChild(links[i]);
       }
+    }
+    
+    // see if we have a css override to erase
+    const file = src.split('/').slice(-1)[0];
+    var css = null;
+    for (let i=0; i < this.css.length; i++) {
+      if (this.css[i].name === file) {
+        css = this.css[i];
+        break;
+      }
+    }
+    
+    // we found a css override, delete the contents
+    if (css) {
+      this.updateCSS(css, true);
     }
   }
   
@@ -319,6 +410,26 @@ class Client {
     this.loadLocalStorage(this.keys, "keys");
   }
   
+  // load custom css overrides
+  loadCSS() {
+    this.loadLocalStorage(this.css, "css");
+    
+    for (let i=0; i < this.css.length; i++) {
+      // override CSS, first check existing styles
+      let css = this.css[i];
+      
+      // autoload CSS changes, except inverse.css
+      if (css.name !== "inverse.css") {
+        this.updateCSS(css);
+      }
+    }
+  }
+  
+  // load custom scrips
+  loadScripts() {
+    this.loadLocalStorage(this.scripts, "scripts");
+  }
+  
   // load client settings
   loadSettings() {
     this.loadLocalStorage(this.settings, "settings");
@@ -352,6 +463,50 @@ class Client {
   saveKeys() {
     this.clearLocalStorage("keys");
     this.saveLocalStorage(this.keys, "keys");
+  }
+  
+  // save custom css overrides
+  saveCSS() {
+    this.clearLocalStorage("css");
+    this.saveLocalStorage(this.css, "css");
+    
+    for (let i=0; i < this.css.length; i++) {
+      // update rules in css <style> element
+      let css = this.css[i];
+      
+      if (css.name === "inverse.css") {
+        // only load inverse.css if we need it
+        if (this.settings.invertHighlight) {
+          // unload inverse.css if it is linked
+          let links = document.getElementsByTagName("link");
+          for (let j = links.length; j >= 0; j--) {
+            if (links[j] && links[j].getAttribute("href") !== null) {
+              let name = links[j].getAttribute("href").split("/").slice(-1)[0];
+              if (name === css.name) {
+                links[j].parentNode.removeChild(links[j]);
+              }
+            }
+          }
+          
+          if (css.text === "") {
+            // there is no override, so relink inverse.css
+            this.loadStyle('./inverse.css');
+          } else {
+            // there is an override, use update it
+            this.updateCSS(css);
+          }
+        }
+      } else {
+        // autoload all files that aren't inverse.css
+        this.updateCSS(css);
+      }
+    }
+  }
+  
+  // save custom css overrides
+  saveScripts() {
+    this.clearLocalStorage("scripts");
+    this.saveLocalStorage(this.css, "scripts");
   }
   
   // save client settings
@@ -405,38 +560,6 @@ class Client {
     return newText;
   }
   
-  addTrigger(name, pattern, regex, javascript, suppress, action) {
-    this.triggers.push({ name, pattern, regex, javascript, suppress, action });
-  }
-  
-  delTrigger(which) {
-    this.triggers.splice(which, 1);
-  }
-  
-  addTimer(name, delay, repeat, times, javascript, action) {
-    this.timers.push({ name, delay, repeat, times, javascript, action });
-  }
-  
-  delTimer(which) {
-    this.timers.splice(which, 1);
-  }
-  
-  addMacro(name, pattern, regex, javascript, action) {
-    this.macros.push({ name, pattern, regex, javascript, action });
-  }
-  
-  delMacro(which) {
-    this.macros.splice(which, 1);
-  }
-  
-  addKey(name, key, ctrl, alt, shift, javascript, action) {
-    this.keys.push({ name, key, ctrl, alt, shift, javascript, action });
-  }
-  
-  delKey(which) {
-    this.keys.splice(which, 1);
-  }
-
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // initialize terminal elements (input, output, prompt) and clear them
@@ -554,9 +677,6 @@ class Client {
     var el = null;
     var obj = null;
     switch (name) {
-      case 'Chargen':
-        el = Chargen;
-        break;
       case 'Mailbox':
         el = Mailbox;
         obj = this.react.mailbox;
@@ -573,9 +693,9 @@ class Client {
         el = BBoard;
         obj = this.react.bboard;
         break;
-      case 'Actions':
-        el = Actions;
-        obj = this.react.actions;
+      case 'Customizer':
+        el = Customizer;
+        obj = this.react.customizer;
         break;
       default:
         break;
@@ -739,10 +859,10 @@ class Client {
           
           if (args) {
             if (trigger.javascript) {
-              eval(trigger.action);
+              eval(trigger.text);
             } else {
-              let action = client.replaceArgs(args, trigger.action);
-              client.sendText(action);
+              let txt = client.replaceArgs(args, trigger.text);
+              client.sendText(txt);
             }
           
             if (trigger.suppress) {
@@ -855,10 +975,10 @@ class Client {
         if (args) {
           matched = true;
           if (m.javascript) {
-            eval(m.action);
+            eval(m.text);
           } else {
-            let action = this.replaceArgs(args, m.action);
-            this.sendText(action);
+            let text = this.replaceArgs(args, m.text);
+            this.sendText(text);
           }
         }
       } catch (e) {

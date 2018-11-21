@@ -20,6 +20,15 @@ import SettingsIcon from '@material-ui/icons/Settings';
 
 const styles = theme => ({
   frame: {
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    right: 0,
+    left: 0,
+  },
+  right: {
+    position: "absolute",
+    right: 0,
   },
   left: {
     marginRight: "auto",
@@ -28,7 +37,6 @@ const styles = theme => ({
     "font-size": "16pt",
   },
   title: {
-    position: "relative",
   },
   block: {
     display: "flex",
@@ -101,66 +109,64 @@ class Login extends React.Component {
   }
   
   render() {
-    const { classes } = this.props;
+    const { classes, fullScreen } = this.props;
     const { open, msg } = this.state;
     
     return (
-      <div className={classes.frame}>
-        <Dialog
-          open={open}
-          onEscapeKeyDown={() => window.client.react.taskbar.openDrawer()}
-          onClose={this.closeLogin}
-          aria-labelledby="responsive-dialog-title"
-          disableBackdropClick
-          disableEscapeKeyDown
-        >
-          <DialogTitle className={classes.title} id="responsive-dialog-title">
-            Character Login
-            <ListItemSecondaryAction>
-              <IconButton onClick={() => window.client.react.taskbar.openDrawer()}>
-                <SettingsIcon />
-              </IconButton>
-            </ListItemSecondaryAction>
-          </DialogTitle>
-          <DialogContent>
-            <DialogContentText>
-              <span dangerouslySetInnerHTML={{ __html: msg }} />
-            </DialogContentText>
-            <TextField
-              className={classes.text}
-              margin="dense"
-              id="username"
-              label="Character Name"
-              type="string"
-              fullWidth
-              onKeyPress={this.catchReturn}
-            />
-            <TextField
-              className={classes.text}
-              margin="dense"
-              id="password"
-              label="Password"
-              type="password"
-              fullWidth
-              onKeyPress={this.catchReturn}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button className={classes.left} classes={{ label: classes.block }} onClick={this.submitCreate} color="primary" variant="extendedFab">
-              <PersonAddIcon />
-              Register
-            </Button>
-            <Button classes={{ label: classes.block }} onClick={this.submitGuest} color="primary" variant="extendedFab">
-              <PersonOutlineIcon />
-              Guest
-            </Button>
-            <Button classes={{ label: classes.block }} onClick={this.submitLogin} color="primary" variant="extendedFab" aria-label="login">
-              <PersonIcon />
-              Login
-            </Button>
-          </DialogActions>
-        </Dialog>
-      </div>
+      <Dialog
+        className={classes.frame}
+        open={open}
+        fullScreen={fullScreen}
+        onEscapeKeyDown={() => window.client.react.taskbar.openDrawer()}
+        onClose={this.closeLogin}
+        aria-labelledby="responsive-dialog-title"
+        disableBackdropClick
+        disableEscapeKeyDown
+      >
+        <DialogTitle className={classes.title} id="responsive-dialog-title">
+          Character Login
+          <IconButton className={classes.right} onClick={() => window.client.react.taskbar.openDrawer()}>
+            <SettingsIcon />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            <span dangerouslySetInnerHTML={{ __html: msg }} />
+          </DialogContentText>
+          <TextField
+            className={classes.text}
+            margin="dense"
+            id="username"
+            label="Character Name"
+            type="string"
+            fullWidth
+            onKeyPress={this.catchReturn}
+          />
+          <TextField
+            className={classes.text}
+            margin="dense"
+            id="password"
+            label="Password"
+            type="password"
+            fullWidth
+            onKeyPress={this.catchReturn}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button className={classes.left} classes={{ label: classes.block }} onClick={this.submitCreate} color="primary" variant="extendedFab">
+            <PersonAddIcon />
+            Register
+          </Button>
+          <Button classes={{ label: classes.block }} onClick={this.submitGuest} color="primary" variant="extendedFab">
+            <PersonOutlineIcon />
+            Guest
+          </Button>
+          <Button classes={{ label: classes.block }} onClick={this.submitLogin} color="primary" variant="extendedFab" aria-label="login">
+            <PersonIcon />
+            Login
+          </Button>
+        </DialogActions>
+      </Dialog>
     );
   }
 }
@@ -168,6 +174,7 @@ class Login extends React.Component {
 Login.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
+  fullScreen: PropTypes.bool.isRequired,
 };
 
 export default withMobileDialog()(withStyles(styles, { withTheme: true })(Login));

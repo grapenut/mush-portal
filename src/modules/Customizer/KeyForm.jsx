@@ -42,29 +42,29 @@ class KeyForm extends React.Component {
   }
 
   render() {
-    const { classes, item, refs, handleChange, handleSwitch } = this.props;
+    const { classes, item, handleChange, handleSwitch } = this.props;
     
     return (
       <div className={classes.frame}>
         <span className={classes.flex}>
-          <TextField ref={refs.keycode} label="Key code" value={item.keycode ? item.keycode : ""} onChange={handleChange('keycode')} />
+          <TextField label="Key code" value={item.keycode ? item.keycode : ""} onChange={handleChange('keycode')} />
         </span>
         <span>
           <ListItem dense>
             <ListItemText primary="Ctrl" />
-            <Checkbox ref={refs.ctrl} checked={item.ctrl} onChange={handleSwitch('ctrl')} />
+            <Checkbox checked={item.ctrl} onChange={handleSwitch('ctrl')} />
           </ListItem>
         </span>
         <span>
           <ListItem dense>
             <ListItemText primary="Alt" />
-            <Checkbox ref={refs.alt} checked={item.alt} onChange={handleSwitch('alt')} />
+            <Checkbox checked={item.alt} onChange={handleSwitch('alt')} />
           </ListItem>
         </span>
         <span>
           <ListItem dense>
             <ListItemText primary="Shift" />
-            <Checkbox ref={refs.Shift} checked={item.Shift} onChange={handleSwitch('Shift')} />
+            <Checkbox checked={item.Shift} onChange={handleSwitch('Shift')} />
           </ListItem>
         </span>
       </div>
@@ -76,7 +76,6 @@ KeyForm.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
   item: PropTypes.object.isRequired,
-  refs: PropTypes.object.isRequired,
   handleChange: PropTypes.func.isRequired,
   handleNumber: PropTypes.func.isRequired,
   handleSwitch: PropTypes.func.isRequired,

@@ -21,10 +21,8 @@ const styles = theme => ({
   row: {
     width: "100%",
     display: "flex",
-    flexFlow: "row nowrap",
-  },
-  flex: {
-    flex: 1,
+    flexFlow: "row wrap",
+    justifyContent: "space-between",
   },
 });
 
@@ -47,24 +45,23 @@ class TriggerForm extends React.Component {
   }
 
   render() {
-    const { classes, item, refs, handleChange, handleSwitch } = this.props;
+    const { classes, item, handleChange, handleSwitch } = this.props;
     
     return (
       <div className={classes.frame}>
-        <TextField ref={refs.pattern} label="Matching pattern" fullWidth value={item.pattern} onChange={handleChange('pattern')} />
+        <TextField label="Matching pattern" fullWidth value={item.pattern} onChange={handleChange('pattern')} />
         <div className={classes.row}>
           <span>
             <ListItem dense>
               <ListItemText primary="Wildcard" />
-              <Switch ref={refs.regex} color="default" checked={item.regex} onChange={handleSwitch('regex')} />
+              <Switch color="default" checked={item.regex} onChange={handleSwitch('regex')} />
               <ListItemText primary="RegExp" />
             </ListItem>
           </span>
-          <span className={classes.flex}></span>
           <span>
             <ListItem dense>
               <ListItemText primary="Suppress terminal output?" />
-              <Switch ref={refs.suppress} checked={item.suppress} onChange={handleSwitch('suppress')} />
+              <Switch checked={item.suppress} onChange={handleSwitch('suppress')} />
             </ListItem>
           </span>
         </div>
@@ -77,7 +74,6 @@ TriggerForm.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
   item: PropTypes.object.isRequired,
-  refs: PropTypes.object.isRequired,
   handleChange: PropTypes.func.isRequired,
   handleNumber: PropTypes.func.isRequired,
   handleSwitch: PropTypes.func.isRequired,
