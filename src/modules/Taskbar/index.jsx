@@ -27,6 +27,9 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import KeyboardIcon from '@material-ui/icons/Keyboard';
 import WifiIcon from '@material-ui/icons/Wifi';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 
 import Settings from '../Settings';
 
@@ -42,6 +45,7 @@ const styles = theme => ({
   },
   title: {
     margin: '0 20px',
+    flex: 1,
   },
   tasksep: {
     marginRight: theme.spacing.unit,
@@ -96,6 +100,21 @@ const styles = theme => ({
     maxHeight: "10em",
     overflowY: "auto",
   },
+  sectionDesktop: {
+    display: 'none',
+    [theme.breakpoints.up('md')]: {
+      display: 'flex',
+    },
+  },
+  sectionMobile: {
+    display: 'flex',
+    [theme.breakpoints.up('md')]: {
+      display: 'none',
+    },
+  },
+  overflowButtons: {
+    
+  },
 });
 
 
@@ -131,6 +150,7 @@ class Taskbar extends React.Component {
       helpAnchor: null,
       logAnchor: null,
       historyAnchor: null,
+      mobileAnchor: null,
     };
     
     this.help = "";
@@ -211,6 +231,25 @@ class Taskbar extends React.Component {
   closeMenu = () => {
     this.setState({ menuAnchor: null });
     window.client.focus(true);
+  };
+  
+  showMobileMenu = event => {
+    this.setState({ mobileAnchor: event.currentTarget });
+  };
+  
+  closeMobileMenu = () => {
+    this.setState({ mobileAnchor: null });
+    window.client.focus(true);
+  };
+
+  toggleSidebar = () => {
+    const client = window.client;
+    
+    const toggle = !client.settings.sidebarOpen;
+    client.changeSetting('sidebarOpen', toggle);
+    this.setState({ sidebarOpen: toggle });
+    client.saveSettings();
+    client.react.portal.forceUpdate();
   };
   
   showHelp = event => {
@@ -372,48 +411,81 @@ class Taskbar extends React.Component {
   render() {
     const input = window.client.input;
     const { classes } = this.props;
-    const { title, taskbar, open, buttons, historyAnchor,
+    const { title, taskbar, open, buttons, historyAnchor, mobileAnchor,
             menuAnchor, uploadAnchor, helpAnchor, logAnchor } = this.state;
+    const { sidebarOpen, sidebarAnchor } = window.client.settings;
 
     var rev = input ? input.history.slice().reverse() : [];
     
-    const desktopMenu = null;
-    
-    const mobileMenu = null;
+    const renderTasks = taskbar.map((task,i) => (
+      <Tooltip key={i} title={task.headertitle.innerText}>
+        <Button key={task.id} classes={{ label: classes.tasklabel }} className={classes.taskbutton} aria-label="open-task" onClick={() => this.popTask(task)}>
+          <Icon className={classes.taskicon}>{task.headerlogo.innerText}</Icon>
+          {task.headertitle.innerText}
+        </Button>
+      </Tooltip>
+    ));
+
+    const renderButtons = buttons.map((button,i) => (
+      <Tooltip key={i} title={button.title}>
+        <Button aria-label={button.ariaLabel} onClick={button.action}>
+          <BadgeIcon count={button.count}>
+            {button.icon}
+          </BadgeIcon>
+        </Button>
+      </Tooltip>
+    ));
     
     return (
       <AppBar className={classes.root} position="static" onClick={() => window.client.focus()}>
         <Toolbar disableGutters={!this.state.open}>
+          {sidebarAnchor === "left" && (
+            <div className={classes.sectionMobile}>
+              <Tooltip title={sidebarOpen ? "Open sidebar." : "Close sidebar."}>
+                <Button aria-label="open-left-sidebar" onClick={this.toggleSidebar}>
+                  {sidebarOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+                </Button>
+              </Tooltip>
+            </div>
+          )}
+          
           <Typography variant="h6" color="inherit" noWrap className={classes.title}>
             {title}
           </Typography>
-          <div className={classes.flex}></div>
-          {taskbar.map((task,i) => (
-            <Tooltip key={i} title={task.headertitle.innerText}>
-              <Button key={task.id} classes={{ label: classes.tasklabel }} className={classes.taskbutton} aria-label="open-task" onClick={() => this.popTask(task)}>
-                <Icon className={classes.taskicon}>{task.headerlogo.innerText}</Icon>
-                {task.headertitle.innerText}
+          
+          <div className={classes.sectionDesktop}>
+            <div className={classes.flex}></div>
+            {renderTasks}
+            <div className={classes.tasksep}></div>
+            {renderButtons}
+          </div>
+          
+          <div className={classes.overflowButtons}>
+          </div>
+          
+          <div className={classes.sectionMobile}>
+            <Tooltip title="Windows and commands...">
+              <Button aria-owns={mobileAnchor ? 'taskbar.mobile' : null} aria-label="open-mobile" aria-haspopup="true" onClick={this.showMobileMenu}>
+                <MoreVertIcon />
               </Button>
             </Tooltip>
-          ))}
+          </div>
           
-          <div className={classes.tasksep}></div>
-          
-          {buttons.map((button,i) => (
-            <Tooltip key={i} title={button.title}>
-              <Button aria-label={button.ariaLabel} onClick={button.action}>
-                <BadgeIcon count={button.count}>
-                  {button.icon}
-                </BadgeIcon>
-              </Button>
-            </Tooltip>
-          ))}
-          
-          <Tooltip title="More tasks...">
+          <Tooltip title="Client utilities...">
             <Button aria-owns={menuAnchor ? 'taskbar.menu' : null} aria-label="open-menu" aria-haspopup="true" onClick={this.showMenu}>
               <MenuIcon />
             </Button>
           </Tooltip>
+          
+          {sidebarAnchor === "right" && (
+            <div className={classes.sectionMobile}>
+              <Tooltip title={sidebarOpen ? "Open sidebar." : "Close sidebar."}>
+                <Button aria-label="open-right-sidebar" onClick={this.toggleSidebar}>
+                  {sidebarOpen ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+                </Button>
+              </Tooltip>
+            </div>
+          )}
           
           <SwipeableDrawer
             variant="temporary"
@@ -482,6 +554,19 @@ class Taskbar extends React.Component {
               Clear History
             </Button>
           </Popover>
+          
+          <Menu disableEnforceFocus id="taskbar.mobile" anchorEl={mobileAnchor} open={Boolean(mobileAnchor)} onClick={this.closeMobileMenu} onClose={this.closeMobileMenu}>
+            {renderButtons.slice(0).reverse().map((button, i) => (
+              <MenuItem key={i} onClick={this.closeMobileMenu}>
+                {button}
+              </MenuItem>
+            ))}
+            {renderTasks.slice(0).reverse().map((task, i) => (
+              <MenuItem key={i} onClick={this.closeMobileMenu}>
+                {task}
+              </MenuItem>
+            ))}
+          </Menu>
           
           <Menu disableEnforceFocus id="taskbar.menu" anchorEl={menuAnchor} open={Boolean(menuAnchor)} onClick={this.closeMenu} onClose={this.closeMenu}>
             <MenuItem onClick={this.closeMenu}>

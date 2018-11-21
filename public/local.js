@@ -179,31 +179,37 @@ client.events.on('move', function(obj) {
 
 // exit list
 client.events.on('listexits', function(obj) {
+  if (!client.react.sidebar) return;
   client.react.sidebar.updateExits(obj.exits);
 });
 
 // player list
 client.events.on('listplayers', function(obj) {
+  if (!client.react.sidebar) return;
   client.react.sidebar.updatePlayers(obj.players);
 });
 
 // thing list
 client.events.on('listthings', function(obj) {
+  if (!client.react.sidebar) return;
   client.react.sidebar.updateThings(obj.things);
 });
 
 // contents list
 client.events.on('listcontents', function(obj) {
+  if (!client.react.sidebar) return;
   client.react.sidebar.updateExits(obj.exits);
   client.react.sidebar.updatePlayers(obj.players);
   client.react.sidebar.updateThings(obj.things);
 });
 
 client.events.on('addobject', function(obj) {
+  if (!client.react.sidebar) return;
   client.react.sidebar.addObject(obj);
 });
 
 client.events.on('delobject', function(obj) {
+  if (!client.react.sidebar) return;
   client.react.sidebar.delObject(obj);
 });
 
