@@ -14,7 +14,7 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import Switch from '@material-ui/core/Switch';
 import TextField from '@material-ui/core/TextField';
-import Popover from '@material-ui/core/Popover';
+import Typography from '@material-ui/core/Typography';
 
 import ColorPicker from './colorpicker';
 
@@ -74,6 +74,11 @@ const styles = theme => ({
     display: "flex",
     flexFlow: "row nowrap",
   },
+  leftright: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
 });
 
 
@@ -84,7 +89,6 @@ class Settings extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      colorAnchor: null,
     };
     
     this.color = null;
@@ -113,20 +117,6 @@ class Settings extends React.Component {
     window.client.react.portal.forceUpdate();
   };
   
-  showColor = name => event => {
-    this.color = name;
-    this.setState({ colorAnchor: event.currentTarget });
-  };
-  
-  closeColor = () => {
-    this.setState({ colorAnchor: null });
-  };
-  
-  chooseColor = color => event => {
-    this.setState({ [this.color]: "ansi-"+color });
-    this.closeColor();
-  };
-  
   loadSettings = () => {
     this.setState({ ...window.client.settings });
   }
@@ -152,16 +142,13 @@ class Settings extends React.Component {
     const { classes, closeDrawer } = this.props;
     const { debugEvents, decompileEditor, decompileKey, ansiFG, ansiBG, wrapWidth,
       invertHighlight, debugActions,
-      sidebarOpen, sidebarAnchor, sidebarAlwaysShow, colorAnchor, sidebarShowPlayers,
+      sidebarOpen, sidebarAnchor, sidebarAlwaysShow, sidebarShowPlayers,
       sidebarShowThings, sidebarShowExits, sidebarShowCompass, sidebarWidth } = this.state;
     
     return (
       <div className={classes.frame}>
         <div className={classes.left}>
           <div className={classes.content} tabIndex={0} role="button">
-            <Popover id="settings.color" anchorEl={colorAnchor} open={false} onClose={this.closeColor}>
-            </Popover>
-            
             <List className={classes.list} disablePadding dense subheader={<ListSubheader>Debugging</ListSubheader>}>
               <ListItem dense>
                 <ListItemIcon>
@@ -256,17 +243,17 @@ class Settings extends React.Component {
                 </ListItemSecondaryAction>
               </ListItem>
               
-              <ListItem dense disabled={!sidebarOpen}>
+              <ListItem dense disabled={!sidebarOpen} className={classes.leftright}>
                 <Icon color="action">
                   <BorderLeftIcon />
                 </Icon>
-                <ListItemText primary="Left" />
+                <Typography>Left</Typography>
                 <Switch checked={sidebarAnchor === "right"}
                   color="default" disabled={!sidebarOpen}
                   value={sidebarAnchor === "right" ? "left" : "right"}
                   onChange={this.handleValue('sidebarAnchor')}
                 />
-                <ListItemText primary="Right" />
+                <Typography>Right</Typography>
                 <Icon color="action">
                   <BorderRightIcon />
                 </Icon>

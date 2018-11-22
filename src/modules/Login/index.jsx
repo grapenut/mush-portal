@@ -134,8 +134,10 @@ class Login extends React.Component {
           </DialogContentText>
           <TextField
             className={classes.text}
+            autoComplete="username"
             margin="dense"
             id="username"
+            name="username"
             label="Character Name"
             type="string"
             fullWidth
@@ -143,8 +145,10 @@ class Login extends React.Component {
           />
           <TextField
             className={classes.text}
+            autoComplete="current-password"
             margin="dense"
             id="password"
+            name="password"
             label="Password"
             type="password"
             fullWidth

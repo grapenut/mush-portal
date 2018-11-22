@@ -85,7 +85,7 @@ class Terminal extends React.Component {
   };
 
   componentDidMount() {
-    document.addEventListener('resize', this.onResize);
+    document.body.onresize = this.onResize;
     window.client.react.terminal = this;
     window.client.initOutput(this.output.current, this.terminal.current);
     window.client.initPrompt(this.prompt.current);
@@ -94,10 +94,18 @@ class Terminal extends React.Component {
   }
   
   onResize = event => {
-    window.client.output.calcDimensions();
-    window.client.sendText("SCREENWIDTH " + window.client.settings.wrapWidth);
-    window.client.sendText("SCREENHEIGHT " + Math.floor(window.client.output.root.parentNode.clientHeight / window.client.output.dims.height));
-    window.client.output.scrollDown();
+    clearTimeout(this.doResize);
+    setTimeout(this.doResize, 1000);
+  };
+  
+  doResize = () => {
+    const client = window.client;
+    client.output.calcDimensions();
+    client.sendText("SCREENWIDTH " + Math.min(client.settings.wrapWidth, Math.floor(window.client.output.root.parentNode.clientWidth / window.client.output.dims.width)));
+    client.sendText("SCREENHEIGHT " + Math.floor(client.output.root.parentNode.clientHeight / client.output.dims.height));
+    client.output.scrollDown();
+    
+    //console.log("DEBUG:", this.props.width * client.output.dims.width);
 
     this.onChange();
   };

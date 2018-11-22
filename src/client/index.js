@@ -387,6 +387,11 @@ class Client {
       } else {
         this.unloadStyle('./inverse.css');
       }
+    } else if (key === 'wrapWidth') {
+      // send the screen dimensions
+      this.output.calcDimensions();
+      this.sendText("SCREENWIDTH " + this.settings.wrapWidth);
+      this.sendText("SCREENHEIGHT " + Math.floor(this.output.root.parentNode.clientHeight / this.output.dims.height));
     }
   }
   

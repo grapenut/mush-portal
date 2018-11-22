@@ -489,10 +489,11 @@ class Taskbar extends React.Component {
           
           <SwipeableDrawer
             variant="temporary"
-            anchor="top"
+            anchor="left"
             open={open}
             onClose={this.closeDrawer}
             onOpen={this.openDrawer}
+            
           >
             <Settings closeDrawer={this.closeDrawer} />
           </SwipeableDrawer>
