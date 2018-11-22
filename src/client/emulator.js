@@ -533,13 +533,14 @@ class Emulator {
       return 0.0;
     }
     
-    var txt = "0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789";
+    //var txt = "0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789";
+    var txt = "0123456789";
     
     var temp = document.createElement(element.nodeName);
     temp.setAttribute("style","margin:0px;padding:0px;font-family:"+element.style.fontFamily+";font-size:"+element.style.fontSize);
     temp.innerText = txt;
     temp = element.appendChild(temp);
-    this.dims.width = temp.clientWidth / 100.0;
+    this.dims.width = temp.clientWidth / 10.0;
     this.dims.height = temp.clientHeight;
     temp.parentNode.removeChild(temp);
     

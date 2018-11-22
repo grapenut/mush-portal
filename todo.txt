@@ -1,18 +1,25 @@
 TODO
 ------------------
 
+Settings
+  Server host, port, and SSL.
+  Font size and family
+
+Colormap
+  In CSS editor show color picker when clicking on a color
 
 User-defined Actions
   Setup automatic timers to execute code/macros.
   Bind control keys to execute code/macros.
 
+Spawn windows
+  Spawn output window for triggered text
+  Activity badge on updates
+  Command window with custom chat prefix (so you don't have to type +p, etc)
+
 BBoard
   Navigation icons (back, reload)
   +bbpost front-end
-
-Chat
-  Optional windows for channels and pages.
-  All-in-one or per-player/per-channel (with activity badges).
 
 Google Speech API
   Voice dictated input
