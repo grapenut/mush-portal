@@ -41,8 +41,6 @@ const styles = theme => ({
     "flex-flow": "row nowrap",
   },
   left: {
-    display: "flex",
-    flexFlow: "column nowrap",
     marginRight: 3*theme.spacing.unit,
   },
   right: {
@@ -72,6 +70,21 @@ const styles = theme => ({
     flex: 1,
     overflowX: "hidden",
     overflowY: "auto",
+  },
+  mobileClose: {
+    display: 'none',
+    [theme.breakpoints.up('md')]: {
+      height: "100%",
+      display: 'flex',
+      flexFlow: "column nowrap",
+      justifyContent: "space-between",
+    },
+  },
+  mobileOpen: {
+    height: "100%",
+    display: "flex",
+    flexFlow: "column nowrap",
+    justifyContent: "space-between",
   },
 });
 
@@ -126,13 +139,13 @@ class Customizer extends React.Component {
     
     this.state = {
       tab: 0,
+      edit: false,
       selected: -1,
     };
   }
 
   changeTab = (event, tab) => {
-    this.setState({ tab });
-    this.setState({ selected: -1 });
+    this.setState({ tab, selected: -1, edit: false });
   };
   
   onSelect = (key) => (event) => {
@@ -149,35 +162,46 @@ class Customizer extends React.Component {
   
   render() {
     const { classes, panel } = this.props;
-    const { selected } = this.state;
+    const { selected, edit } = this.state;
     const tab = this.tabs[this.state.tab];
     
     return (
       <div className={classes.frame}>
         <AppBar position="static">
-          <Tabs value={this.state.tab} scrollable scrollButtons="auto" onChange={this.changeTab}>
+          <Tabs value={this.state.tab} scrollable scrollButtons="on" onChange={this.changeTab}>
             {this.tabs.map((t,i) => (<Tab key={i} label={t.listName} />))}
           </Tabs>
         </AppBar>
-        <Typography className={classes.container} component="div" >
+        <Typography className={classes.container} component="div">
           <div className={classes.left}>
-            <div className={classes.overflow}>
-              <List disablePadding dense subheader={<ListSubheader>{tab.listName}</ListSubheader>}>
-                {tab.list.map((item, i) => (
-                  <ListItem key={i} dense button divider selected={selected === i} onClick={this.onSelect(i)} className={i % 2 === 0 ? classes.even : classes.odd} >
-                    <ListItemIcon className={classes.listNum}><span>{i+1}</span></ListItemIcon>
-                    <ListItemText className={classes.listText} primary={item.name} />
-                  </ListItem>
-                ))}
-              </List>
-            </div>
-            <Button classes={{ label: classes.block }} onClick={() => this.setState({ selected: -1 })}>
-              <AddCircleIcon />
-              New {tab.listName.slice(0,-1)}
-            </Button>
+            <span className={edit || selected > -1 ? classes.mobileClose : classes.mobileOpen}>
+              <div className={classes.overflow}>
+                <List disablePadding dense subheader={<ListSubheader>{tab.listName}</ListSubheader>}>
+                  {tab.list.map((item, i) => (
+                    <ListItem key={i} dense button divider selected={selected === i} onClick={this.onSelect(i)} className={i % 2 === 0 ? classes.even : classes.odd}>
+                      <ListItemIcon className={classes.listNum}><span>{i+1}</span></ListItemIcon>
+                      <ListItemText className={classes.listText} primary={item.name} />
+                    </ListItem>
+                  ))}
+                  {tab.list.length < 1 && (
+                    <ListItem key={-1} dense className={classes.even}>
+                      <ListItemText className={classes.listText} secondary={"No "+tab.listName.toLowerCase()} />
+                    </ListItem>
+                  )}
+                </List>
+              </div>
+              {!tab.immutable && (
+                <Button classes={{ label: classes.block }} onClick={() => this.setState({ edit: true, selected: -1 })}>
+                  <AddCircleIcon />
+                  New {tab.listName.slice(0,-1)}
+                </Button>
+              )}
+            </span>
           </div>
           <div className={classes.right}>
-            <FormEditor list={tab.list} listName={tab.listName.toLowerCase()} selected={selected} panel={panel} Form={tab.Form} immutable={tab.immutable} />
+            <span className={edit || selected > -1 ? classes.mobileOpen : classes.mobileClose}>
+              <FormEditor list={tab.list} listName={tab.listName.toLowerCase()} selected={selected} panel={panel} Form={tab.Form} immutable={tab.immutable} />
+            </span>
           </div>
         </Typography>
       </div>

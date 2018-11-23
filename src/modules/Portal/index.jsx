@@ -45,7 +45,7 @@ const styles = theme => ({
     position: "relative",
     height: "100%",
     backgroundColor: theme.palette.background.paper,
-  }
+  },
 });
 
 class Portal extends React.Component {
@@ -88,7 +88,7 @@ class Portal extends React.Component {
     const { sidebarOpen, sidebarAnchor, ansiFG, ansiBG, wrapWidth,
       sidebarAlwaysShow, sidebarShowExits, sidebarShowPlayers,
       sidebarShowThings, sidebarShowCompass, sidebarWidth } = window.client.settings;
-    
+      
     var left = sidebarOpen && sidebarAnchor === "left";
     var right = sidebarOpen && sidebarAnchor === "right";
     

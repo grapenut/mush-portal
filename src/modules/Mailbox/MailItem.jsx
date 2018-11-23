@@ -18,6 +18,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ReplyIcon from '@material-ui/icons/Reply';
 import ForwardIcon from '@material-ui/icons/Forward';
+import CloseIcon from '@material-ui/icons/Close';
 
 import Emulator from '../../client/emulator';
 
@@ -65,6 +66,12 @@ const styles = theme => ({
     "white-space": "pre-wrap",
     "word-wrap": "break-word",
     padding: "0.25em 0.5em",
+  },
+  mobileOnly: {
+    display: 'block',
+    [theme.breakpoints.up('md')]: {
+      display: 'none',
+    },
   },
 });
 
@@ -149,6 +156,12 @@ class MailItem extends React.Component {
           <div ref={this.body} className={classNames(classes.wrap, ansiFG, ansiBG)}></div>
         </CardContent>
         <CardActions className={classes.actions}>
+          <Button className={classes.mobileOnly} onClick={() => window.client.react.mailbox.setState({ mailitem: null })}>
+            <Icon>
+              <CloseIcon />
+            </Icon>
+            Close
+          </Button>
           <Button className={classes.button} onClick={this.replyMail}>
             <Icon>
               <ReplyIcon />

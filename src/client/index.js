@@ -64,7 +64,7 @@ class Client {
       sidebarOpen: true,
       sidebarAnchor: "left",
       sidebarWidth: "192px",
-      sidebarAlwaysShow: true,
+      sidebarAlwaysShow: false,
       sidebarShowPlayers: true,
       sidebarShowThings: true,
       sidebarShowExits: true,
@@ -140,6 +140,7 @@ class Client {
     // Client colors and theme
     this.colors = Colors;
     this.theme = this.createTheme();
+    this.mobile = !window.matchMedia(this.theme.breakpoints.up('md').substring(7)).matches;
     
     // Terminal UI elements
     this.output = null;
@@ -653,6 +654,7 @@ class Client {
   
   // input focus passthrough
   focus(force) {
+    if (this.mobile) return;
     this.input && this.input.focus(force);
   }
   
@@ -724,6 +726,20 @@ class Client {
     if (!config.headerLogo) {
       var icon = config.icon || "tab";
       config.headerLogo = "<i class='material-icons' style='margin-left: "+this.theme.spacing.unit+"px'>"+icon+"</i>";
+    }
+    
+    if (!config.panelSize) {
+      const margin = this.panels.defaults.maximizedMargin;
+      let wstr = 'calc(50% - ' + 1.5*margin + 'px)';
+
+      if (this.mobile) {
+        wstr = 'calc(100% - ' + 2*margin + 'px)';
+      }
+    
+      config.panelSize = {
+        width: wstr,
+        height: 'calc(100% - ' + 2*margin + 'px)',
+      };
     }
     
     config.callback = (container) => {

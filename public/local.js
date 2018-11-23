@@ -8,6 +8,9 @@
 //}
 
 client.theme = client.createTheme({
+  typography: {
+    useNextVariants: true,
+  },
   palette: {
     primary: client.colors.indigo,
     secondary: client.colors.blueGrey,
@@ -115,13 +118,6 @@ client.react.taskbar.addButton({
 /////////////////////////////////////////////////////////////////////
 // spawn windows
 /////////////////////////////////////////////////////////////////////
-function openFullHeight(which, obj) {
-  obj.panelSize = {
-    width: 'calc(50% - ' + 1.5*panelConfig.maximizedMargin + 'px)',
-    height: 'calc(100% - ' + 2*panelConfig.maximizedMargin + 'px)',
-  };
-  client.addReactPanel(which, obj);
-}
 
 // open generic spawn window
 client.events.on('spawn', function(obj) {
@@ -131,14 +127,14 @@ client.events.on('spawn', function(obj) {
 // open the bboard reader window
 client.events.on('boardlist', function(obj) {
   obj.icon = "forum";
-  openFullHeight("BBoard", obj);
+  client.addReactPanel("BBoard", obj);
   client.react.bboard.updateBoardList(obj.boardlist);
 });
 
 // open the bboard reader window
 client.events.on('bbmsglist', function(obj) {
   obj.icon = "forum";
-  openFullHeight("BBoard", obj);
+  client.addReactPanel("BBoard", obj);
   obj.messages.reverse();
   client.react.bboard.updateBoard(obj);
 });
@@ -146,14 +142,14 @@ client.events.on('bbmsglist', function(obj) {
 // open the bboard reader window
 client.events.on('bbmsg', function(obj) {
   obj.icon = "forum";
-  openFullHeight("BBoard", obj);
+  client.addReactPanel("BBoard", obj);
   client.react.bboard.openMessage(obj);
 });
 
 // open the mail reader window
 client.events.on('maillist', function(obj) {
   obj.icon = "mail";
-  openFullHeight("Mailbox", obj);
+  client.addReactPanel("Mailbox", obj);
   obj.maillist.reverse();
   client.react.mailbox.updateMailList(obj.folder, obj.maillist, obj.unread);
 });
@@ -161,7 +157,7 @@ client.events.on('maillist', function(obj) {
 // open a single mail item
 client.events.on('mailitem', function(obj) {
   obj.icon = "mail";
-  openFullHeight("Mailbox", obj);
+  client.addReactPanel("Mailbox", obj);
   client.react.mailbox.openMailItem(obj);
 });
 

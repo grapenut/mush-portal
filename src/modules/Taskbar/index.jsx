@@ -28,6 +28,7 @@ import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import KeyboardIcon from '@material-ui/icons/Keyboard';
 import WifiIcon from '@material-ui/icons/Wifi';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 
@@ -340,13 +341,7 @@ class Taskbar extends React.Component {
   };
 
   openCustomizer = () => {
-    window.client.addReactPanel("Customizer", {
-      panelSize: {
-        width: 'calc(50% - ' + 1.5*window.client.panels.defaults.maximizedMargin + 'px)',
-        height: 'calc(100% - ' + 2*window.client.panels.defaults.maximizedMargin + 'px)',
-      },
-      icon: 'build',
-    });
+    window.client.addReactPanel("Customizer", { icon: 'build' });
   };
   
   previewUpload = () => {
@@ -421,7 +416,7 @@ class Taskbar extends React.Component {
       <Tooltip key={i} title={task.headertitle.innerText}>
         <Button key={task.id} classes={{ label: classes.tasklabel }} className={classes.taskbutton} aria-label="open-task" onClick={() => this.popTask(task)}>
           <Icon className={classes.taskicon}>{task.headerlogo.innerText}</Icon>
-          {task.headertitle.innerText}
+          {!window.client.mobile && task.headertitle.innerText}
         </Button>
       </Tooltip>
     ));
@@ -557,6 +552,11 @@ class Taskbar extends React.Component {
           </Popover>
           
           <Menu disableEnforceFocus id="taskbar.mobile" anchorEl={mobileAnchor} open={Boolean(mobileAnchor)} onClick={this.closeMobileMenu} onClose={this.closeMobileMenu}>
+            <MenuItem onClick={this.closeMobileMenu}>
+              <Tooltip title="Close menu.">
+                <Button><Icon><ExpandLessIcon /></Icon></Button>
+              </Tooltip>
+            </MenuItem>
             {renderButtons.slice(0).reverse().map((button, i) => (
               <MenuItem key={i} onClick={this.closeMobileMenu}>
                 {button}
@@ -572,7 +572,7 @@ class Taskbar extends React.Component {
           <Menu disableEnforceFocus id="taskbar.menu" anchorEl={menuAnchor} open={Boolean(menuAnchor)} onClick={this.closeMenu} onClose={this.closeMenu}>
             <MenuItem onClick={this.closeMenu}>
               <Tooltip title="Close menu.">
-                <MenuIcon />
+                <ExpandLessIcon />
               </Tooltip>
             </MenuItem>
             <MenuItem onClick={this.openDrawer}>
@@ -625,4 +625,5 @@ Taskbar.propTypes = {
 };
 
 export default withStyles(styles, { withTheme: true })(Taskbar);
+
 

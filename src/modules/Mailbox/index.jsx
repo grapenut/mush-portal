@@ -20,11 +20,22 @@ const styles = theme => ({
   left: {
     position: "relative",
     maxHeight: "100%",
+    overflowY: "auto",
+    overflowX: "hidden",
   },
   right: {
     flex: 1,
     maxHeight: "100%",
     position: "relative",
+  },
+  mobileClose: {
+    display: 'none',
+    [theme.breakpoints.up('md')]: {
+      display: 'flex',
+    },
+  },
+  mobileOpen: {
+    display: 'flex',
   },
 });
 
@@ -136,7 +147,7 @@ class Mailbox extends React.Component {
         window.client.react.sendmail.setFields(to, subject, body);
       }
     } else {
-      window.client.addReactPanel("Sendmail", { panelSize: "30em 30em", icon: "mail" });
+      window.client.addReactPanel("Sendmail", { icon: "mail" });
       window.client.react.sendmail.setFields(to, subject, body);
     }  
   }
@@ -174,9 +185,11 @@ class Mailbox extends React.Component {
     return (
       <div className={classes.frame}>
         <div className={classes.left}>
-          { maillist && (
-            <MailList maillist={maillist} unread={unreadMail} openMail={this.openMail} handleMark={this.handleMark} />
-          )}
+          <span className={mailitem ? classes.mobileClose : classes.mobileOpen}>
+            { maillist && (
+              <MailList maillist={maillist} unread={unreadMail} openMail={this.openMail} handleMark={this.handleMark} />
+            )}
+          </span>
         </div>
         <div className={classes.right}>
           { mailitem && (

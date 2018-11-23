@@ -79,22 +79,24 @@ class MailList extends React.Component {
         <div className={classes.header}>
           <Typography variant="subtitle1" className={classes.title}>
             <span className={classes.container}>
-              {maillist.length} Messages ({unread} unread)
-              <Tooltip title="Move multiple files to trash.">
-                <IconButton onClick={this.toggleDelete}>
-                  <DeleteSweepIcon />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Purge deleted mail.">
-                <IconButton onClick={this.purgeMail}>
-                  <DeleteForeverIcon />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Send a new message.">
-                <IconButton onClick={this.sendMail} disabled={quickDelete}>
-                  <CreateIcon />
-                </IconButton>
-              </Tooltip>
+              <div>{maillist.length} Messages ({unread} unread)</div>
+              <span>
+                <Tooltip title="Move multiple files to trash.">
+                  <IconButton onClick={this.toggleDelete}>
+                    <DeleteSweepIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Purge deleted mail.">
+                  <IconButton onClick={this.purgeMail}>
+                    <DeleteForeverIcon />
+                  </IconButton>
+                </Tooltip>
+                <Tooltip title="Send a new message.">
+                  <IconButton onClick={this.sendMail} disabled={quickDelete}>
+                    <CreateIcon />
+                  </IconButton>
+                </Tooltip>
+              </span>
             </span>
           </Typography>
         </div>

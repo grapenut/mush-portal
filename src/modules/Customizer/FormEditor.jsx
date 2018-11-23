@@ -14,6 +14,7 @@ import Typography from '@material-ui/core/Typography';
 import SaveIcon from '@material-ui/icons/Save';
 import UndoIcon from '@material-ui/icons/Undo';
 import DeleteIcon from '@material-ui/icons/Delete';
+import CloseIcon from '@material-ui/icons/Close';
 
 import AceEditor from 'react-ace';
 import 'brace/mode/mushcode';
@@ -41,7 +42,7 @@ const styles = theme => ({
   },
   top: {
     display: "flex",
-    flexFlow: "row nowrap",
+    flexFlow: "row wrap",
     width: "100%",
   },
   bottom: {
@@ -52,10 +53,13 @@ const styles = theme => ({
     width: "100%",
   },
   middle: {
-    display: "flex",
-    flexFlow: "row nowrap",
-    flex: 1,
-    alignItems: "center",
+    display: 'none',
+    [theme.breakpoints.up('md')]: {
+      display: "flex",
+      flexFlow: "row nowrap",
+      flex: 1,
+      alignItems: "center",
+    },
   },
   align: {
     width: "100%",
@@ -64,10 +68,17 @@ const styles = theme => ({
   },
   flex: {
     flex: 1,
+    minWidth: "10em",
   },
   block: {
     display: "flex",
     "flex-direction": "column",
+  },
+  mobileOnly: {
+    display: 'flex',
+    [theme.breakpoints.up('md')]: {
+      display: 'none',
+    },
   },
 });
 
@@ -294,6 +305,8 @@ class FormEditor extends React.Component {
         template.name = list[selected].name;
         if (item.text === "") {
           template.text = this.defaultText();
+        } else {
+          template.text = list[selected].text;
         }
       } else {
         template = list[selected];
@@ -353,6 +366,7 @@ class FormEditor extends React.Component {
             ref={this.editor}
             mode={mode ? rtype.toLowerCase() : ltype.toLowerCase()}
             width="100%"
+            minHeight="1em"
             theme="tomorrow_night_bright"
             value={item.text}
             onChange={this.changeText}
@@ -362,6 +376,9 @@ class FormEditor extends React.Component {
           />
           
           <div className={classes.bottom}>
+            <Button className={classes.mobileOnly} classes={{ label: classes.block }} onClick={() => window.client.react.customizer.setState({ edit: false, selected: -1 })}>
+              <CloseIcon /> Close
+            </Button>
             <Button onClick={this.onDelete} classes={{ label: classes.block }} disabled={selected === -1}>
               <DeleteIcon /> Delete
             </Button>
@@ -374,7 +391,7 @@ class FormEditor extends React.Component {
               <SaveIcon /> Save
             </Button>
             <Button onClick={this.onReset} classes={{ label: classes.block }} disabled={immutable && selected === -1}>
-              <UndoIcon /> {immutable && item.text === "" ? "Reset from Source" : "Reset"}
+              <UndoIcon /> {immutable && item.text === "" ? "Get Source" : "Reset"}
             </Button>
           </div>
           
