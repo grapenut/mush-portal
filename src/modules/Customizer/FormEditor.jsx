@@ -15,6 +15,7 @@ import SaveIcon from '@material-ui/icons/Save';
 import UndoIcon from '@material-ui/icons/Undo';
 import DeleteIcon from '@material-ui/icons/Delete';
 import CloseIcon from '@material-ui/icons/Close';
+import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 
 import AceEditor from 'react-ace';
 import 'brace/mode/mushcode';
@@ -391,7 +392,8 @@ class FormEditor extends React.Component {
               <SaveIcon /> Save
             </Button>
             <Button onClick={this.onReset} classes={{ label: classes.block }} disabled={immutable && selected === -1}>
-              <UndoIcon /> {immutable && item.text === "" ? "Get Source" : "Reset"}
+              {immutable && item.text === "" ? (<CloudDownloadIcon />) : (<UndoIcon />)}
+              {immutable && item.text === "" ? "Source" : "Reset"}
             </Button>
           </div>
           
