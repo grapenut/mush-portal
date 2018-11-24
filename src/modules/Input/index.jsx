@@ -37,8 +37,7 @@ const styles = theme => ({
 class Input extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-    };
+    this.state = {};
     this.input = React.createRef();
   }
   
@@ -50,10 +49,12 @@ class Input extends React.Component {
   render() {
     const { classes, ansiFG, ansiBG } = this.props;
     const { fontFamily, fontSize } = window.client.settings;
+    
+    const size = 1.5*fontSize;
 
     const font = {
       fontFamily: "'" + fontFamily + "', monospace",
-      fontSize: (window.client.mobile ? fontSize/2 : fontSize) + "pt",
+      fontSize: (window.client.mobile ? size/2 : size) + "pt",
     };
     
     return (

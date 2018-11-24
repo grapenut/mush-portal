@@ -69,6 +69,12 @@ const styles = theme => ({
     flex: 1,
     minWidth: "10em",
   },
+  editor: {
+    flex: 1,
+    minWidth: "10em",
+    minHeight: "4em",
+    marginTop: theme.spacing.unit,
+  },
   block: {
     display: "flex",
     "flex-direction": "column",
@@ -367,11 +373,10 @@ class FormEditor extends React.Component {
           {Form && (<Form className={classes.top} item={item} handleNumber={this.handleNumber} handleChange={this.handleChange} handleSwitch={this.handleSwitch} />)}
           
           <AceEditor
-            className={classes.flex}
+            className={classes.editor}
             ref={this.editor}
             mode={mode ? rtype.toLowerCase() : ltype.toLowerCase()}
             width="100%"
-            minHeight="1em"
             theme="tomorrow_night_bright"
             value={item.text}
             onChange={this.changeText}

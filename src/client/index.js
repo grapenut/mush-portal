@@ -171,6 +171,7 @@ class Client {
       bboard: null,
       upload: null,
       customizer: null,
+      spawns: [],
     };
     
     // client variables
@@ -679,6 +680,14 @@ class Client {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // spawn, focus and close window panels
+  addSpawn(spawn) {
+    this.react.spawns.push(spawn);
+  }
+  
+  delSpawn(spawn) {
+    const i = this.react.spawns.indexOf(spawn);
+    this.react.spawns.splice(i, 1);
+  }
   
   // spawn a window using a react components
   addReactPanel(name, cfg) {
