@@ -121,6 +121,12 @@ class Terminal extends React.Component {
   render() {
     const { classes, width, ansiFG, ansiBG, containerRef } = this.props;
     const { lines } = this.state;
+    const { fontFamily, fontSize } = window.client.settings;
+    
+    const font = {
+      fontFamily: "'" + fontFamily + "', monospace",
+      fontSize: (window.client.mobile ? fontSize/2 : fontSize) + "pt",
+    };
     
     var dim;
     if (this.init) {
@@ -130,7 +136,7 @@ class Terminal extends React.Component {
     }
     
     return (
-      <div id="terminal-container" className={classes.frame} onClick={this.focusInput} ref={containerRef}>
+      <div id="terminal-container" className={classNames(classes.frame)} style={font} onClick={this.focusInput} ref={containerRef}>
         <div ref={this.terminal} className={classNames(classes.terminal, ansiFG, ansiBG)} onScroll={this.onChange}>
           <div ref={this.output} className={classNames(classes.output, ansiFG, ansiBG)} style={{ maxWidth: dim }}></div>
         </div>

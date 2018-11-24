@@ -6,17 +6,6 @@ Sidebar
 TODO
 ------------------
 
-Settings
-  Server host, port, and SSL.
-  Font size and family
-
-Colormap
-  In CSS editor show color picker when clicking on a color
-
-User-defined Actions
-  Setup automatic timers to execute code/macros.
-  Bind control keys to execute code/macros.
-
 Spawn windows
   Spawn output window for triggered text
   Activity badge on updates
@@ -25,6 +14,13 @@ Spawn windows
 BBoard
   Navigation icons (back, reload)
   +bbpost front-end
+
+Colormap
+  In CSS editor show color picker when clicking on a color
+
+User-defined Actions
+  Setup automatic timers to execute code/macros.
+  Bind control keys to execute code/macros.
 
 Google Speech API
   Voice dictated input
@@ -79,6 +75,10 @@ Taskbar
 User-defined Actions
   Macros execute a block of commands at once, with some string insertion tokens.
   Match incoming lines against wildcard/regexp and execute code/macros.
+
+Settings
+  Server host, port, and SSL.
+  Font size and family
 
 
 

@@ -34,6 +34,8 @@ import FormatIndentIncreaseIcon from '@material-ui/icons/FormatIndentIncrease';
 import PublicIcon from '@material-ui/icons/Public';
 import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
 import SecurityIcon from '@material-ui/icons/Security';
+import FontDownloadIcon from '@material-ui/icons/FontDownload';
+import FormatSizeIcon from '@material-ui/icons/FormatSize';
 
 
 //////////////////////////////////////////////////////////////////////
@@ -60,10 +62,11 @@ const styles = theme => ({
   content: {
     display: 'flex',
     flexFlow: "row wrap",
-    justifyContent: 'flex-start',
+    justifyContent: 'space-evenly',
   },
   list: {
-    flex: 1,
+    flexGrow: 0,
+    flexBasis: 'auto',
   },
   switchText: {
     paddingLeft: 0,
@@ -143,7 +146,7 @@ class Settings extends React.Component {
     const { classes, closeDrawer } = this.props;
     const { debugEvents, decompileEditor, decompileKey, ansiFG, ansiBG, wrapWidth,
       invertHighlight, debugActions, serverAddress, serverPort, serverSSL,
-      sidebarOpen, sidebarAnchor, sidebarAlwaysShow, sidebarShowPlayers,
+      sidebarOpen, sidebarAnchor, sidebarAlwaysShow, sidebarShowPlayers, fontFamily, fontSize,
       sidebarShowThings, sidebarShowExits, sidebarShowCompass, sidebarWidth } = this.state;
     
     return (
@@ -203,6 +206,22 @@ class Settings extends React.Component {
                 <TextField label="Terminal Width" value={wrapWidth} onChange={this.handleValue('wrapWidth')} type="number" />
               </ListItem>
               
+              <ListItem dense>
+                <ListItemIcon>
+                  <FontDownloadIcon />
+                </ListItemIcon>
+                <TextField label="Font" value={fontFamily} onChange={this.handleValue('fontFamily')} />
+              </ListItem>
+              
+              <ListItem dense>
+                <ListItemIcon>
+                  <FormatSizeIcon />
+                </ListItemIcon>
+                <TextField label="Size" value={fontSize} onChange={this.handleValue('fontSize')} type="number" />
+              </ListItem>
+            </List>
+              
+            <List className={classes.list} disablePadding dense subheader={<ListSubheader>Color Settings</ListSubheader>}>
               <ListItem dense>
                 <ListItemIcon>
                   <PaletteIcon />

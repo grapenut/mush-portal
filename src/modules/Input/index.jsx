@@ -49,10 +49,16 @@ class Input extends React.Component {
   
   render() {
     const { classes, ansiFG, ansiBG } = this.props;
+    const { fontFamily, fontSize } = window.client.settings;
+
+    const font = {
+      fontFamily: "'" + fontFamily + "', monospace",
+      fontSize: (window.client.mobile ? fontSize/2 : fontSize) + "pt",
+    };
     
     return (
       <div className={classes.frame}>
-        <textarea ref={this.input} className={classNames(classes.text, ansiFG, ansiBG)}  autoComplete="off" autoFocus={!window.client.mobile}></textarea>
+        <textarea ref={this.input} className={classNames(classes.text, ansiFG, ansiBG)} style={font}  autoComplete="off" autoFocus={!window.client.mobile}></textarea>
       </div>
     );
   }

@@ -52,7 +52,9 @@ class Client {
   constructor() {
     // client settings
     this.defaultSettings = {
-      // default emulator fg/bg
+      // display settings
+      fontFamily: "Courier New",
+      fontSize: 10,
       ansiFG: 'ansi-37',
       ansiBG: 'ansi-40',
       wrapWidth: 100,

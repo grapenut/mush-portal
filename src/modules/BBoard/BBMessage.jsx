@@ -91,6 +91,9 @@ class BBMessage extends React.Component {
   render() {
     const { classes, message } = this.props;
     const { ansiFG, ansiBG } = window.client.settings;
+    const { fontFamily, fontSize } = window.client.settings;
+
+    const font = "font-family: '" + fontFamily + "', monospace; font-size: " + (window.client.mobile ? fontSize/2 : fontSize) + "pt;";
     
     this.emulator && this.emulator.clear();
     this.emulator && this.emulator.appendText(message.body);
@@ -111,7 +114,7 @@ class BBMessage extends React.Component {
           }
         />
         <CardContent className={classes.body}>
-          <div ref={this.body} className={classNames(classes.output, ansiFG, ansiBG)}></div>
+          <div ref={this.body} className={classNames(classes.output, ansiFG, ansiBG)} style={font}></div>
         </CardContent>
         <CardActions className={classes.actions}>
         </CardActions>

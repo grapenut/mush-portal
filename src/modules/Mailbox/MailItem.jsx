@@ -133,6 +133,12 @@ class MailItem extends React.Component {
     const { classes, mail } = this.props;
     const { anchorEl } = this.state;
     const { ansiFG, ansiBG } = window.client.settings;    
+    const { fontFamily, fontSize } = window.client.settings;
+
+    const font = {
+      fontFamily: "'" + fontFamily + "', monospace",
+      fontSize: (window.client.mobile ? fontSize/2 : fontSize) + "pt",
+    };
 
     this.emulator && this.emulator.clear();
     this.emulator && this.emulator.appendText(mail.body);
@@ -153,7 +159,7 @@ class MailItem extends React.Component {
           }
         />
         <CardContent className={classes.body}>
-          <div ref={this.body} className={classNames(classes.wrap, ansiFG, ansiBG)}></div>
+          <div ref={this.body} className={classNames(classes.wrap, ansiFG, ansiBG)} style={font}></div>
         </CardContent>
         <CardActions className={classes.actions}>
           <Button className={classes.mobileOnly} onClick={() => window.client.react.mailbox.setState({ mailitem: null })}>
