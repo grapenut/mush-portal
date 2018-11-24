@@ -40,7 +40,6 @@ class ColorPicker extends React.Component {
     super(props);
     this.state = {
       anchor: null,
-      value: props.value,
     };
 
     var offset = props.background ? 40 : 30;
@@ -76,7 +75,6 @@ class ColorPicker extends React.Component {
   
   choose = (color) => (event) => {
     this.hide();
-    this.setState({ value: color });
     this.props.onChange(color);
   };
 
@@ -88,7 +86,7 @@ class ColorPicker extends React.Component {
 
   render() {
     const { classes, background, label } = this.props;
-    const { anchor, value } = this.state;
+    const { anchor } = this.state;
     
     var bgfix;
     if (background) {
@@ -98,7 +96,7 @@ class ColorPicker extends React.Component {
     return (
       <div>
         <Button aria-haspopup="true" aria-owns={anchor ? 'colorpicker' : null} onClick={this.show}>
-          <div className={value}>
+          <div className={classNames(window.client.settings.ansiFG, window.client.settings.ansiBG)}>
             {label}
           </div>
         </Button>
@@ -123,7 +121,6 @@ ColorPicker.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
   label: PropTypes.string.isRequired,
-  value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   background: PropTypes.bool,
 };

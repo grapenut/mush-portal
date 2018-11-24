@@ -19,6 +19,7 @@ client.theme = client.createTheme({
 });
 client.react.portal.updateTheme(client.theme);
 
+
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 // connection settings
@@ -33,7 +34,7 @@ var urlSSL = window.location.protocol === "https:";
 var defaultAddress = "node.grapenut.org";
 var defaultPort = urlSSL ? '2001' : '2000';
 
-client.defaultSettings.serverSSL = urlSSL || client.settings.serverSSL;
+client.defaultSettings.serverSSL = urlSSL;
 client.defaultSettings.serverAddress = urlAddress ? urlAddress.split(":")[0] : defaultAddress;
 client.defaultSettings.serverPort = urlAddress ? urlAddress.split(":")[1] : defaultPort;
 client.loadSettings();
@@ -213,6 +214,7 @@ client.events.on('delobject', function(obj) {
   if (!client.settings.sidebarOpen) return;
   client.react.sidebar.delObject(obj);
 });
+
 
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////

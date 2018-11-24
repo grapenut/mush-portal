@@ -81,6 +81,11 @@ const styles = theme => ({
       display: 'none',
     },
   },
+  switchText: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
 });
 
 
@@ -351,12 +356,13 @@ class FormEditor extends React.Component {
         
           <div className={classes.top}>
             <TextField label="Name" className={classes.flex} value={item.name} onChange={this.handleChange('name')} disabled={immutable} />
-            <span>
-              <ListItem dense>
-                <ListItemText primary={ltype} />
-                <Switch color="default" checked={mode} onChange={this.handleSwitch('javascript')} />
-                <ListItemText primary={rtype} />
-              </ListItem>
+            <span className={classes.switchText}>
+              <Typography>{ltype}</Typography>
+              <Switch checked={mode}
+                color="default"
+                onChange={this.handleSwitch('javascript')}
+              />
+              <Typography>{rtype}</Typography>
             </span>
           </div>
           

@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
-
+import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Switch from '@material-ui/core/Switch';
 import ListItem from '@material-ui/core/ListItem';
@@ -23,6 +23,11 @@ const styles = theme => ({
     display: "flex",
     flexFlow: "row wrap",
     justifyContent: "space-between",
+  },
+  switchText: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 });
 
@@ -51,18 +56,14 @@ class TriggerForm extends React.Component {
       <div className={classes.frame}>
         <TextField label="Matching pattern" fullWidth value={item.pattern} onChange={handleChange('pattern')} />
         <div className={classes.row}>
-          <span>
-            <ListItem dense>
-              <ListItemText primary="Wildcard" />
-              <Switch color="default" checked={item.regex} onChange={handleSwitch('regex')} />
-              <ListItemText primary="RegExp" />
-            </ListItem>
+          <span className={classes.switchText}>
+            <Typography>Wildcard</Typography>
+            <Switch checked={item.regex} color="default" onChange={handleSwitch('regex')} />
+            <Typography>RegExp</Typography>
           </span>
-          <span>
-            <ListItem dense>
-              <ListItemText primary="Suppress terminal output?" />
-              <Switch checked={item.suppress} onChange={handleSwitch('suppress')} />
-            </ListItem>
+          <span className={classes.switchText}>
+            <Typography>Suppress terminal output?</Typography>
+            <Switch checked={item.suppress} onChange={handleSwitch('suppress')} />
           </span>
         </div>
       </div>

@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
-
+import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Switch from '@material-ui/core/Switch';
 import ListItem from '@material-ui/core/ListItem';
@@ -20,6 +20,11 @@ const styles = theme => ({
   },
   flex: {
     flex: 1,
+  },
+  switchText: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 });
 
@@ -47,11 +52,9 @@ class TimerForm extends React.Component {
     return (
       <div className={classes.frame}>
         <TextField type="number" label="Delay seconds" className={classes.flex} value={String(item.delay)} onChange={handleNumber('delay')} />
-        <span>
-          <ListItem dense>
-            <ListItemText primary="Repeat this timer?" />
-            <Switch checked={item.repeat} onChange={handleSwitch('repeat')} />
-          </ListItem>
+        <span className={classes.switchText}>
+          <Typography>Repeat this timer?</Typography>
+          <Switch checked={item.repeat} onChange={handleSwitch('repeat')} />
         </span>
         <TextField type="number" disabled={!item.repeat} label="Number of times" className={classes.flex} value={String(item.times)} onChange={handleNumber('times')} />
       </div>

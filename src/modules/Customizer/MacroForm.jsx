@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
-
+import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Switch from '@material-ui/core/Switch';
 import ListItem from '@material-ui/core/ListItem';
@@ -20,6 +20,11 @@ const styles = theme => ({
   },
   flex: {
     flex: 1,
+  },
+  switchText: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 });
 
@@ -47,12 +52,10 @@ class MacroForm extends React.Component {
     return (
       <div className={classes.frame}>
         <TextField label="Matching pattern" className={classes.flex} value={item.pattern} onChange={handleChange('pattern')} />
-        <span>
-          <ListItem dense>
-            <ListItemText primary="Wildcard" />
-            <Switch color="default" checked={item.regex} onChange={handleSwitch('regex')} />
-            <ListItemText primary="RegExp" />
-          </ListItem>
+        <span className={classes.switchText}>
+          <Typography>Wildcard</Typography>
+          <Switch checked={item.regex} color="default" onChange={handleSwitch('regex')} />
+          <Typography>RegExp</Typography>
         </span>
       </div>
     );

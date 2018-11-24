@@ -11,11 +11,13 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import withMobileDialog from '@material-ui/core/withMobileDialog';
 import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
 
 import PersonIcon from '@material-ui/icons/Person';
 import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
 import PersonAddIcon from '@material-ui/icons/PersonAdd';
 import SettingsIcon from '@material-ui/icons/Settings';
+import WifiIcon from '@material-ui/icons/Wifi';
 
 const styles = theme => ({
   frame: {
@@ -102,6 +104,12 @@ class Login extends React.Component {
     var input = document.getElementById(id);
     input && input.focus();
   }
+  
+  reconnect() {
+    if (window.confirm("Do you want to reconnect?")) {
+      window.client.reconnect(true);
+    }
+  }
 
   componentDidMount() {
     window.client.react.login = this;
@@ -124,9 +132,18 @@ class Login extends React.Component {
       >
         <DialogTitle className={classes.title} id="responsive-dialog-title">
           Character Login
-          <IconButton className={classes.right} onClick={() => window.client.react.taskbar.openDrawer()}>
-            <SettingsIcon />
-          </IconButton>
+          <span className={classes.right}>
+            <Tooltip title="Reconnect.">
+              <IconButton onClick={this.reconnect}>
+                <WifiIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Change settings.">
+              <IconButton onClick={() => window.client.react.taskbar.openDrawer()}>
+                <SettingsIcon />
+              </IconButton>
+            </Tooltip>
+          </span>
         </DialogTitle>
         <DialogContent>
           <DialogContentText>

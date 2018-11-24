@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
-
+import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Checkbox from '@material-ui/core/Checkbox';
 import ListItem from '@material-ui/core/ListItem';
@@ -20,6 +20,11 @@ const styles = theme => ({
   },
   flex: {
     flex: 1,
+  },
+  switchText: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 });
 
@@ -49,23 +54,17 @@ class KeyForm extends React.Component {
         <span className={classes.flex}>
           <TextField label="Key code" value={item.keycode ? item.keycode : ""} onChange={handleChange('keycode')} />
         </span>
-        <span>
-          <ListItem dense>
-            <ListItemText primary="Ctrl" />
-            <Checkbox checked={item.ctrl} onChange={handleSwitch('ctrl')} />
-          </ListItem>
+        <span className={classes.switchText}>
+          <Typography>Ctrl</Typography>
+          <Checkbox checked={item.ctrl} onChange={handleSwitch('ctrl')} />
         </span>
-        <span>
-          <ListItem dense>
-            <ListItemText primary="Alt" />
-            <Checkbox checked={item.alt} onChange={handleSwitch('alt')} />
-          </ListItem>
+        <span className={classes.switchText}>
+          <Typography>Alt</Typography>
+          <Checkbox checked={item.alt} onChange={handleSwitch('alt')} />
         </span>
-        <span>
-          <ListItem dense>
-            <ListItemText primary="Shift" />
-            <Checkbox checked={item.Shift} onChange={handleSwitch('Shift')} />
-          </ListItem>
+        <span className={classes.switchText}>
+          <Typography>Shift</Typography>
+          <Checkbox checked={item.shift} onChange={handleSwitch('shift')} />
         </span>
       </div>
     );
