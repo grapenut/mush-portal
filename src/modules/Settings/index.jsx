@@ -16,7 +16,7 @@ import Switch from '@material-ui/core/Switch';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 
-import ColorPicker from './colorpicker';
+import ColorPicker from './ColorPicker';
 
 import BugReportIcon from '@material-ui/icons/BugReport';
 import PaletteIcon from '@material-ui/icons/Palette';
@@ -31,6 +31,9 @@ import GroupWorkIcon from '@material-ui/icons/GroupWork';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ExploreIcon from '@material-ui/icons/Explore';
 import FormatIndentIncreaseIcon from '@material-ui/icons/FormatIndentIncrease';
+import PublicIcon from '@material-ui/icons/Public';
+import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
+import SecurityIcon from '@material-ui/icons/Security';
 
 
 //////////////////////////////////////////////////////////////////////
@@ -91,8 +94,6 @@ class Settings extends React.Component {
     this.state = {
     };
     
-    this.color = null;
-    
     this.state = Object.assign(this.state, window.client.settings);
   }
   
@@ -141,7 +142,7 @@ class Settings extends React.Component {
   render() {
     const { classes, closeDrawer } = this.props;
     const { debugEvents, decompileEditor, decompileKey, ansiFG, ansiBG, wrapWidth,
-      invertHighlight, debugActions,
+      invertHighlight, debugActions, serverAddress, serverPort, serverSSL,
       sidebarOpen, sidebarAnchor, sidebarAlwaysShow, sidebarShowPlayers,
       sidebarShowThings, sidebarShowExits, sidebarShowCompass, sidebarWidth } = this.state;
     
@@ -169,6 +170,30 @@ class Settings extends React.Component {
                 </ListItemSecondaryAction>
               </ListItem>
             </List>
+            
+            <List className={classes.list} disablePadding dense subheader={<ListSubheader>Connection Settings</ListSubheader>}>
+              <ListItem dense>
+                <ListItemIcon>
+                  <PublicIcon />
+                </ListItemIcon>
+                <TextField label="Server address" value={serverAddress} onChange={this.handleValue('serverAddress')} />
+              </ListItem>
+              <ListItem dense>
+                <ListItemIcon>
+                  <SettingsEthernetIcon />
+                </ListItemIcon>
+                <TextField label="Server port" value={serverPort} onChange={this.handleValue('serverPort')} type="number" />
+              </ListItem>
+              <ListItem dense>
+                <ListItemIcon>
+                  <SecurityIcon />
+                </ListItemIcon>
+                <ListItemText className={classes.switchText} primary="Encrypt connection with SSL?" />
+                <ListItemSecondaryAction>
+                  <Switch checked={serverSSL} value="serverSSL" onChange={this.handleSwitch('serverSSL')} />
+                </ListItemSecondaryAction>
+              </ListItem>
+            </List>
 
             <List className={classes.list} disablePadding dense subheader={<ListSubheader>Display Settings</ListSubheader>}>
               <ListItem dense>
@@ -182,14 +207,14 @@ class Settings extends React.Component {
                 <ListItemIcon>
                   <PaletteIcon />
                 </ListItemIcon>
-                <ColorPicker label="Background Color" value={ansiBG} onChange={this.handleColor('ansiBG')} background />
+                <ColorPicker label="Background" value={ansiBG} onChange={this.handleColor('ansiBG')} background />
               </ListItem>
 
               <ListItem dense>
                 <ListItemIcon>
                   <PaletteIcon />
                 </ListItemIcon>
-                <ColorPicker label="Foreground Color" value={ansiFG} onChange={this.handleColor('ansiFG')} />
+                <ColorPicker label="Foreground" value={ansiFG} onChange={this.handleColor('ansiFG')} />
               </ListItem>
               
               <ListItem dense>

@@ -495,7 +495,7 @@ class Taskbar extends React.Component {
 
           <Popover id="taskbar.help" anchorEl={helpAnchor} open={Boolean(helpAnchor)} onClose={this.closeHelp}>
             <form onSubmit={this.searchHelp}>
-              <TextField label="Help topic" className={classes.padded} autoComplete="false" autoFocus variant="outlined" onChange={this.typeHelp} />
+              <TextField label="Help topic" className={classes.padded} autoComplete="off" autoFocus variant="outlined" onChange={this.typeHelp} />
             </form>
             <Button fullWidth onClick={this.searchHelp}>
               Get Help

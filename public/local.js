@@ -30,9 +30,9 @@ var defaultPort = serverSSL ? '2001' : '2000';
 
 // you can override the default address
 // www.mysite.com/app?address:port
-client.serverSSL = serverSSL;
-client.serverAddress = window.location.search.substring(1) ? window.location.search.substring(1).split(":")[0] : defaultAddress;
-client.serverPort = window.location.search.substring(1) ? window.location.search.substring(1).split(":")[1] : defaultPort;
+client.defaultSettings.serverSSL = serverSSL;
+client.defaultSettings.serverAddress = window.location.search.substring(1) ? window.location.search.substring(1).split(":")[0] : defaultAddress;
+client.defaultSettings.serverPort = window.location.search.substring(1) ? window.location.search.substring(1).split(":")[1] : defaultPort;
 client.connect();
 
 

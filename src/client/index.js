@@ -72,6 +72,10 @@ class Client {
       // debugging
       debugEvents: false,
       debugActions: false,
+      // default connection settings, can override in public/local.js
+      serverAddress: "node.grapenut.org",
+      serverSSL: window.location.protocol === "https:",
+      serverPort: window.location.protocol === "https:" ? 2001 : 2000,
     };
     this.defaultSettings = Object.assign({}, this.settings);
     
@@ -171,11 +175,6 @@ class Client {
     this.conn = null;
     this.container = null;
     
-    // default connection settings, can override in public/local.js
-    this.serverAddress = "node.grapenut.org";
-    this.serverPort = 2001;
-    this.serverSSL = true;
-
     // app instance toggles
     this.loggedIn = false;
     this.jsonapi = false;
@@ -787,10 +786,10 @@ class Client {
   connect() {
     var client = this;
 
-    let serverProto = this.serverSSL ? "wss://" : "ws://";
+    let serverProto = this.settings.serverSSL ? "wss://" : "ws://";
 
     // The connection URL is ws://host:port/wsclient (or wss:// for SSL connections)
-    let serverUrl = serverProto + this.serverAddress + ":" + this.serverPort + '/wsclient'
+    let serverUrl = serverProto + this.settings.serverAddress + ":" + this.settings.serverPort + '/wsclient'
     
     this.close();
     this.conn = new Connection(serverUrl);

@@ -52,7 +52,7 @@ class Input extends React.Component {
     
     return (
       <div className={classes.frame}>
-        <textarea ref={this.input} className={classNames(classes.text, ansiFG, ansiBG)}  autoComplete="off" autoFocus></textarea>
+        <textarea ref={this.input} className={classNames(classes.text, ansiFG, ansiBG)}  autoComplete="off" autoFocus={!window.client.mobile}></textarea>
       </div>
     );
   }

@@ -3,9 +3,6 @@ BUGS
 Sidebar
   Contents overflow and push out exits.
 
-CSS
-  Reset unsaved changes to the saved version.
-
 TODO
 ------------------
 
