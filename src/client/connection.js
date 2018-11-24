@@ -8,8 +8,6 @@ class Connection {
   static get CHANNEL_PROMPT() { return '>'; }
 
   constructor(url) {
-    var that = this;
-    
     this.url = url;
     this.socket = null;
     this.isOpen = false;
@@ -27,11 +25,7 @@ class Connection {
     
     this.hasData = false;
     
-    this.reconnect(that);
-  }
-  
-  static reconnect(that) {
-    that.reconnect();
+    this.reconnect();
   }
   
   static onopen(that, evt) {
@@ -53,14 +47,16 @@ class Connection {
     that.onMessage && that.onMessage(evt.data[0], evt.data.substring(1));
   }
 
-  reconnect() {
+  reconnect(url=null) {
     var that = this;
     
     // quit the old connection, if we have one
     if (this.isConnected()) {
       this.sendText('QUIT');
     }
-
+    
+    this.url = url || this.url;
+    
     this.socket = new window.WebSocket(this.url);
     this.isOpen = false;
 

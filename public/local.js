@@ -23,16 +23,21 @@ client.react.portal.updateTheme(client.theme);
 /////////////////////////////////////////////////////////////////////
 // connection settings
 /////////////////////////////////////////////////////////////////////
-// server address, port and protocol
-var serverSSL = window.location.protocol === "https:";
-var defaultAddress = "node.grapenut.org";
-var defaultPort = serverSSL ? '2001' : '2000';
 
+// server address, port and protocol
 // you can override the default address
 // www.mysite.com/app?address:port
-client.defaultSettings.serverSSL = serverSSL;
-client.defaultSettings.serverAddress = window.location.search.substring(1) ? window.location.search.substring(1).split(":")[0] : defaultAddress;
-client.defaultSettings.serverPort = window.location.search.substring(1) ? window.location.search.substring(1).split(":")[1] : defaultPort;
+var urlAddress = window.location.search.substring(1);
+var urlSSL = window.location.protocol === "https:";
+
+var defaultAddress = "node.grapenut.org";
+var defaultPort = urlSSL ? '2001' : '2000';
+
+client.defaultSettings.serverSSL = urlSSL || client.settings.serverSSL;
+client.defaultSettings.serverAddress = urlAddress ? urlAddress.split(":")[0] : defaultAddress;
+client.defaultSettings.serverPort = urlAddress ? urlAddress.split(":")[1] : defaultPort;
+client.loadSettings();
+
 client.connect();
 
 

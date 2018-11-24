@@ -51,7 +51,7 @@ class Client {
 
   constructor() {
     // client settings
-    this.settings = {
+    this.defaultSettings = {
       // default emulator fg/bg
       ansiFG: 'ansi-37',
       ansiBG: 'ansi-40',
@@ -77,7 +77,7 @@ class Client {
       serverSSL: window.location.protocol === "https:",
       serverPort: window.location.protocol === "https:" ? 2001 : 2000,
     };
-    this.defaultSettings = Object.assign({}, this.settings);
+    this.settings = Object.assign({}, this.defaultSettings);
     
     // triggers, timers, macros, and keybindings
     this.actionTemplates = {
@@ -948,14 +948,18 @@ class Client {
     };
   }
 
-  reconnect() {
-    if (this.isConnected()) {
+  reconnect(force=false) {
+    if (!force && this.isConnected()) {
       return;
     }
     
-    if (this.reconnectCount < this.reconnectMaxCount) {
+    if (force || this.reconnectCount < this.reconnectMaxCount) {
+      // The connection URL is ws://host:port/wsclient (or wss:// for SSL connections)
+      let serverProto = window.location.protocol === "https:" || this.settings.serverSSL ? "wss://" : "ws://";
+      let serverUrl = serverProto + this.settings.serverAddress + ":" + this.settings.serverPort + '/wsclient';
+      
       this.reconnectCount++;
-      this.conn && this.conn.reconnect();
+      this.conn && this.conn.reconnect(serverUrl);
     } else {
       this.appendMessage('logMessage', '%% Auto-reconnect aborted.');
     }

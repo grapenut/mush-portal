@@ -391,7 +391,7 @@ class Taskbar extends React.Component {
   
   reconnect() {
     if (window.confirm("Do you want to reconnect?")) {
-      window.client.conn.reconnect();
+      window.client.reconnect();
     }
   }
   
