@@ -31,13 +31,16 @@ client.react.portal.updateTheme(client.theme);
 var urlAddress = window.location.search.substring(1);
 var urlSSL = window.location.protocol === "https:";
 
-var defaultAddress = "node.grapenut.org";
-var defaultPort = urlSSL ? '2001' : '2000';
-
 client.defaultSettings.serverSSL = urlSSL;
-client.defaultSettings.serverAddress = urlAddress ? urlAddress.split(":")[0] : defaultAddress;
-client.defaultSettings.serverPort = urlAddress ? urlAddress.split(":")[1] : defaultPort;
+client.defaultSettings.serverAddress = "node.grapenut.org";
+client.defaultSettings.serverPort = urlSSL ? '2001' : '2000';
 client.loadSettings();
+
+if (urlAddress) {
+  client.settings.serverSSL = urlSSL;
+  client.settings.serverAddress = urlAddress.split(":")[0];
+  client.settings.serverPort = urlAddress.split(":")[1];
+}
 
 client.connect();
 

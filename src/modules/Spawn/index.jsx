@@ -4,8 +4,10 @@ import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
-import Emulator from '../../client/emulator';
+import TextField from '@material-ui/core/TextField';
 
+import Emulator from '../../client/emulator';
+import UserInput from '../../client/userinput';
 
 //////////////////////////////////////////////////////////////////////
 
@@ -16,7 +18,11 @@ const styles = theme => ({
     height: "100%",
     width: "100%",
     display: "flex",
-    "flex-flow": "row nowrap",
+    "flex-flow": "column nowrap",
+  },
+  top: {
+    flex: 1,
+    display: "flex",
   },
   output: {
     margin: '0.25em 0.5em',
@@ -31,6 +37,23 @@ const styles = theme => ({
     "word-wrap": "break-word",
     padding: "0.25em 0.5em",
   },
+  bottom: {
+    "background-color": theme.palette.primary.main,
+    display: "flex",
+  },
+  input: {
+    flex: 1,
+    margin: "1px 0 0 0",
+    border: "none",
+    outline: "none",
+    "vertical-align": "middle",
+    padding: "0.25em",
+    resize: "none",
+    height: "3em",
+    "font-family": "'Courier New', monospace",
+    "font-weight": "normal",
+    "font-size": "16pt",
+  },
 });
 
 
@@ -40,29 +63,71 @@ const styles = theme => ({
 class Spawn extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
-    this.output = React.createRef();
-    this.emulator = null;
+    this.state = {
+      prefix: props.prefix ? props.prefix : "",
+    };
+
+    this.refoutput = React.createRef();
+    this.refinput = React.createRef();
+
+    this.output = null;
+    this.input = null;
   }
   
   componentDidMount() {
-    this.emulator = new Emulator(this.output.current);
+    this.output = new Emulator(this.refoutput.current);
+    
+    this.input = new UserInput(this.refinput.current);
+    this.input.onEnter = (cmd) => { this.sendCommand(cmd); };
+    this.input.onEscape = () => { this.input.clear(); };
+    this.input.onPageUp = () => { this.output.scrollPageUp(); };
+    this.input.onPageDown = () => { this.output.scrollPageDown(); };
   }
   
   componentWillUnmount() {
-    this.emulator = null;
+    this.output = null;
+    this.input = null;
   }
   
+  sendCommand(cmd) {
+    const { prefix } = this.state;
+    window.client.sendMacro(prefix + cmd);
+  }
+  
+  changePrefix = event => {
+    this.setState({ prefix: event.target.value });
+  }
+  
+  // wrapper that scrolls the output if needed
+  scrollIfNeeded(fun) {
+    var scroll = false;
+    
+    if (this.output.nearBottom(window.client.scrollThreshold)) {
+      scroll = true;
+    }
+    
+    fun();
+    
+    scroll && this.output.scrollDown();
+    
+    this.onChange();
+  }
+
+  onChange = () => {
+    this.setState({ lines: this.output.linesOfScroll() });
+  };
+  
   appendText(text) {
-    this.emulator.appendText(text);
+    this.scrollIfNeeded(() => this.output.appendText(text));
   }
   
   append(text) {
-    this.emulator.appendText(text+"\n");
+    this.scrollIfNeeded(() => this.output.appendText(text+"\n"));
   }
   
   render() {
     const { classes } = this.props;
+    const { prefix } = this.state;
     const { ansiFG, ansiBG, fontFamily, fontSize } = window.client.settings;
 
     const font = {
@@ -70,13 +135,15 @@ class Spawn extends React.Component {
       fontSize: (window.client.mobile ? fontSize/2 : fontSize) + "pt",
     };
 
-    //this.emulator && this.emulator.clear();
-    //this.emulator && this.emulator.appendText();
-    
-
     return (
       <div className={classes.frame}>
-        <div ref={this.output} className={classNames(classes.output, ansiFG, ansiBG)} style={font}></div>
+        <div className={classes.top}>
+          <div ref={this.refoutput} className={classNames(classes.output, ansiFG, ansiBG)} style={font}></div>
+        </div>
+        <div className={classes.bottom}>
+          <TextField label="Command Prefix" value={prefix} onChange={this.changePrefix} />
+          <textarea ref={this.refinput} className={classNames(classes.input, ansiFG, ansiBG)} style={font}  autoComplete="off" autoFocus={!window.client.mobile}></textarea>
+        </div>
       </div>
     );
   }
@@ -87,6 +154,7 @@ Spawn.propTypes = {
   theme: PropTypes.object.isRequired,
   id: PropTypes.string.isRequired,
   panel: PropTypes.object.isRequired,
+  prefix: PropTypes.string,
 };
 
 export default withStyles(styles, { withTheme: true })(Spawn);

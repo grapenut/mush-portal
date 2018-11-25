@@ -156,23 +156,11 @@ class FormEditor extends React.Component {
     const { list, listName, selected, immutable } = this.props;
     const { item } = this.state;
     const name = item.name;
-    const filetype = name.endsWith('.css') ? 'css' : 'js';
     
     if (!immutable) return "";
     
     if (list && selected > -1 && list[selected].text !== "") {
       return list[selected].text.slice();
-    } else if (filetype === 'css') {
-      const sheets = document.styleSheets;
-      
-      for (let i = 0; i < sheets.length; i++) {
-        if (sheets[i].href) {
-          let href = sheets[i].href.split('/').slice(-1)[0];
-          if (href === name) {
-            return Array(...sheets[i].cssRules).map((rule) => rule.cssText).join('\n');
-          }
-        }
-      }
     }
     
     var req = new window.XMLHttpRequest();

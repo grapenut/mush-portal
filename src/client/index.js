@@ -80,7 +80,7 @@ class Client {
       serverSSL: window.location.protocol === "https:",
       serverPort: window.location.protocol === "https:" ? 2001 : 2000,
     };
-    this.settings = Object.assign({}, this.defaultSettings);
+    this.settings = null;
     
     // map react components to strings
     this.components = {
@@ -465,6 +465,7 @@ class Client {
   
   // load client settings
   loadSettings() {
+    this.settings = Object.assign({}, this.defaultSettings);
     this.loadLocalStorage(this.settings, "settings");
     
     if (this.settings['invertHighlight']) {
@@ -775,7 +776,7 @@ class Client {
     let ref = React.createRef();
     config.callback = (container) => {
       container.content.style.backgroundColor = this.theme.palette.background.paper;
-      let child = React.createElement(el, { innerRef: ref, id: id, panel: container }, null);
+      let child = React.createElement(el, { innerRef: ref, id: id, panel: container, ...config.props }, null);
       ReactDOM.render(React.createElement(MuiThemeProvider, { theme: this.theme }, child), container.content, () => {
         // add the helpText() controlbar icon
         let obj = ref.current;
@@ -1061,6 +1062,7 @@ class Client {
 
   // function to send a user input command string to the server
   sendCommand(cmd) {
+  
     if (!this.isConnected()) {
       // connection was broken, let's force a reconnect
       this.conn && this.conn.reconnect();
@@ -1070,27 +1072,33 @@ class Client {
     
     if (cmd === '') return;
     
+    this.sendMacro(cmd);
+    this.scrollIfNeeded(() => this.appendMessage('localEcho', cmd));
+  }
+    
+  sendMacro(cmds) {
     let matched = false;
     this.macros.forEach((m) => {
       let re = this.createPattern(m.regex, m.pattern);
-      let args = cmd.match(re);
       
-      if (args) {
-        matched = true;
-        let text = this.replaceArgs(args, m.text);
-        if (m.javascript) {
-          this.execActionScript(text);
-        } else {
-          this.sendText(text);
+      cmds.split('\n').forEach((cmd) => {
+        let args = cmd.match(re);
+      
+        if (args) {
+          matched = true;
+          let text = this.replaceArgs(args, m.text);
+          if (m.javascript) {
+            this.execActionScript(text);
+          } else {
+            this.sendMacro(text);
+          }
         }
-      }
+      });
     });
     
     if (!matched) {
-      this.sendText(cmd);
+      this.sendText(cmds);
     }
-    
-    this.scrollIfNeeded(() => this.appendMessage('localEcho', cmd));
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
