@@ -19,20 +19,26 @@ client.theme = client.createTheme({
 });
 client.react.portal.updateTheme(client.theme);
 
+
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
 // connection settings
 /////////////////////////////////////////////////////////////////////
-// server address, port and protocol
-var serverSSL = window.location.protocol === "https:";
-var defaultAddress = "node.grapenut.org";
-var defaultPort = serverSSL ? '2001' : '2000';
 
+// server address, port and protocol
 // you can override the default address
 // www.mysite.com/app?address:port
-client.serverSSL = serverSSL;
-client.serverAddress = window.location.search.substring(1) ? window.location.search.substring(1).split(":")[0] : defaultAddress;
-client.serverPort = window.location.search.substring(1) ? window.location.search.substring(1).split(":")[1] : defaultPort;
+var urlAddress = window.location.search.substring(1);
+var urlSSL = window.location.protocol === "https:";
+
+var defaultAddress = "node.grapenut.org";
+var defaultPort = urlSSL ? '2001' : '2000';
+
+client.defaultSettings.serverSSL = urlSSL;
+client.defaultSettings.serverAddress = urlAddress ? urlAddress.split(":")[0] : defaultAddress;
+client.defaultSettings.serverPort = urlAddress ? urlAddress.split(":")[1] : defaultPort;
+client.loadSettings();
+
 client.connect();
 
 
@@ -127,14 +133,14 @@ client.events.on('spawn', function(obj) {
 // open the bboard reader window
 client.events.on('boardlist', function(obj) {
   obj.icon = "forum";
-  client.addReactPanel("BBoard", obj);
+  client.addPanel("BBoard", obj);
   client.react.bboard.updateBoardList(obj.boardlist);
 });
 
 // open the bboard reader window
 client.events.on('bbmsglist', function(obj) {
   obj.icon = "forum";
-  client.addReactPanel("BBoard", obj);
+  client.addPanel("BBoard", obj);
   obj.messages.reverse();
   client.react.bboard.updateBoard(obj);
 });
@@ -142,14 +148,14 @@ client.events.on('bbmsglist', function(obj) {
 // open the bboard reader window
 client.events.on('bbmsg', function(obj) {
   obj.icon = "forum";
-  client.addReactPanel("BBoard", obj);
+  client.addPanel("BBoard", obj);
   client.react.bboard.openMessage(obj);
 });
 
 // open the mail reader window
 client.events.on('maillist', function(obj) {
   obj.icon = "mail";
-  client.addReactPanel("Mailbox", obj);
+  client.addPanel("Mailbox", obj);
   obj.maillist.reverse();
   client.react.mailbox.updateMailList(obj.folder, obj.maillist, obj.unread);
 });
@@ -157,7 +163,7 @@ client.events.on('maillist', function(obj) {
 // open a single mail item
 client.events.on('mailitem', function(obj) {
   obj.icon = "mail";
-  client.addReactPanel("Mailbox", obj);
+  client.addPanel("Mailbox", obj);
   client.react.mailbox.openMailItem(obj);
 });
 
@@ -165,7 +171,7 @@ client.events.on('mailitem', function(obj) {
 client.events.on('sendmail', function(obj) {
   obj.icon = "mail";
   obj.panelSize = "30em 30em";
-  client.addReactPanel("Sendmail", obj);
+  client.addPanel("Sendmail", obj);
   client.react.sendmail.setFields(obj.to, obj.subject, obj.body);
 });
 
@@ -175,39 +181,40 @@ client.events.on('move', function(obj) {
 
 // exit list
 client.events.on('listexits', function(obj) {
-  if (!client.react.sidebar) return;
+  if (!client.settings.sidebarOpen) return;
   client.react.sidebar.updateExits(obj.exits);
 });
 
 // player list
 client.events.on('listplayers', function(obj) {
-  if (!client.react.sidebar) return;
+  if (!client.settings.sidebarOpen) return;
   client.react.sidebar.updatePlayers(obj.players);
 });
 
 // thing list
 client.events.on('listthings', function(obj) {
-  if (!client.react.sidebar) return;
+  if (!client.settings.sidebarOpen) return;
   client.react.sidebar.updateThings(obj.things);
 });
 
 // contents list
 client.events.on('listcontents', function(obj) {
-  if (!client.react.sidebar) return;
+  if (!client.settings.sidebarOpen) return;
   client.react.sidebar.updateExits(obj.exits);
   client.react.sidebar.updatePlayers(obj.players);
   client.react.sidebar.updateThings(obj.things);
 });
 
 client.events.on('addobject', function(obj) {
-  if (!client.react.sidebar) return;
+  if (!client.settings.sidebarOpen) return;
   client.react.sidebar.addObject(obj);
 });
 
 client.events.on('delobject', function(obj) {
-  if (!client.react.sidebar) return;
+  if (!client.settings.sidebarOpen) return;
   client.react.sidebar.delObject(obj);
 });
+
 
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
