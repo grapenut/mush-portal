@@ -1,5 +1,6 @@
 
 import React from 'react';
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
@@ -18,6 +19,7 @@ const styles = theme => ({
     "flex-flow": "row nowrap",
   },
   output: {
+    margin: '0.25em 0.5em',
     "font-family": "'Courier New', monospace",
     "font-weight": "normal",
     "font-size": "10pt",
@@ -44,12 +46,10 @@ class Spawn extends React.Component {
   }
   
   componentDidMount() {
-    window.client.addSpawn(this);
     this.emulator = new Emulator(this.output.current);
   }
   
   componentWillUnmount() {
-    window.client.delSpawn(this);
     this.emulator = null;
   }
   
@@ -57,9 +57,13 @@ class Spawn extends React.Component {
     this.emulator.appendText(text);
   }
   
+  append(text) {
+    this.emulator.appendText(text+"\n");
+  }
+  
   render() {
     const { classes } = this.props;
-    const { fontFamily, fontSize } = window.client.settings;
+    const { ansiFG, ansiBG, fontFamily, fontSize } = window.client.settings;
 
     const font = {
       fontFamily: "'" + fontFamily + "', monospace",
@@ -72,7 +76,7 @@ class Spawn extends React.Component {
 
     return (
       <div className={classes.frame}>
-        <div ref={this.output} className={classNames(classes.wrap, ansiFG, ansiBG)} style={font}></div>
+        <div ref={this.output} className={classNames(classes.output, ansiFG, ansiBG)} style={font}></div>
       </div>
     );
   }
@@ -81,6 +85,8 @@ class Spawn extends React.Component {
 Spawn.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
+  id: PropTypes.string.isRequired,
+  panel: PropTypes.object.isRequired,
 };
 
 export default withStyles(styles, { withTheme: true })(Spawn);

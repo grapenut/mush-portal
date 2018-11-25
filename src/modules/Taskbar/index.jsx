@@ -341,11 +341,11 @@ class Taskbar extends React.Component {
   };
 
   openCustomizer = () => {
-    window.client.addReactPanel("Customizer", { icon: 'build' });
+    window.client.addPanel("Customizer", { icon: 'build' });
   };
   
   previewUpload = () => {
-    window.client.addReactPanel("Upload", { icon: 'cloud_upload' });
+    window.client.addPanel("Upload", { icon: 'cloud_upload' });
 
     if (this.file && this.file.length > 0) {
       window.client.react.upload.setText(this.file);

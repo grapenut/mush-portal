@@ -93,7 +93,7 @@ class MailItem extends React.Component {
   componentDidMount() {
     const { mail } = this.props;
     this.emulator = new Emulator(this.body.current);
-    this.emulator.appendText(mail.body);
+    this.emulator.appendText(mail.body+'\n');
   }
   
   showMenu = event => {
@@ -141,7 +141,7 @@ class MailItem extends React.Component {
     };
 
     this.emulator && this.emulator.clear();
-    this.emulator && this.emulator.appendText(mail.body);
+    this.emulator && this.emulator.appendText(mail.body+'\n');
     
     return (
       <Card className={classes.card}>

@@ -13,6 +13,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
+import Popover from '@material-ui/core/Popover';
 
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 
@@ -141,6 +142,7 @@ class Customizer extends React.Component {
       tab: 0,
       edit: false,
       selected: -1,
+      helpText: null,
     };
   }
 
@@ -160,9 +162,13 @@ class Customizer extends React.Component {
     window.client.react.customizer = null;
   }
   
+  helpText(anchor) {
+    this.setState({ helpText: anchor });
+  }
+  
   render() {
     const { classes, panel } = this.props;
-    const { selected, edit } = this.state;
+    const { selected, edit, helpText } = this.state;
     const tab = this.tabs[this.state.tab];
     
     return (
@@ -204,6 +210,11 @@ class Customizer extends React.Component {
             </span>
           </div>
         </Typography>
+        <Popover anchorEl={helpText} open={Boolean(helpText)} onClose={() => this.setState({ helpText: null })}>
+          <Typography>
+            This is where help text goes.
+          </Typography>
+        </Popover>
       </div>
     );
   }

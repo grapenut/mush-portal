@@ -1,4 +1,5 @@
 /* eslint no-eval: 0 */
+/* eslint no-unused-vars: 0 */
 
 import React from 'react';
 import ReactDOM from 'react-dom';
@@ -13,11 +14,11 @@ import Sendmail from '../modules/Sendmail';
 import BBoard from '../modules/BBoard';
 import Upload from '../modules/Upload';
 import Customizer from '../modules/Customizer';
+import Spawn from '../modules/Spawn';
 
 import Connection from './connection';
 import Emulator from './emulator';
 import UserInput from './userinput';
-import Utils from './utils';
 import JSONAPI from './jsonapi';
 
 import 'jspanel4/dist/jspanel.min.css';
@@ -81,6 +82,16 @@ class Client {
     };
     this.settings = Object.assign({}, this.defaultSettings);
     
+    // map react components to strings
+    this.components = {
+      "Mailbox": Mailbox,
+      "Sendmail": Sendmail,
+      "BBoard": BBoard,
+      "Upload": Upload,
+      "Customizer": Customizer,
+      "Spawn": Spawn,
+    };
+
     // triggers, timers, macros, and keybindings
     this.actionTemplates = {
       triggers: {
@@ -225,19 +236,33 @@ class Client {
   execUserScript(name) {
     // load user customization file
     const client = this;
-    try {
-      var script = null;
-      for (let i=0; i < client.scripts.length; i++) {
-        if (client.scripts[i].name === name) {
-          script = client.scripts[i];
-          break;
-        }
+    const Window = (w,c,e) => this.getSpawn(w,c,e);
+    
+    var script = null;
+    for (let i=0; i < client.scripts.length; i++) {
+      if (client.scripts[i].name === name) {
+        script = client.scripts[i];
+        break;
       }
-      if (script && script.text !== "") {
+    }
+    if (script && script.text !== "") {
+      try {
         eval(script.text);
+      } catch (e) {
+        client.debugActions && console.log("Error executing `" + name + "'.");
       }
+    }
+  }
+  
+  // evaluate an action javascript with a limited context
+  execActionScript(txt) {
+    const client = this;
+    const Window = (w,c,e) => this.getSpawn(w,c,e);
+    
+    try {
+      eval(txt);
     } catch (e) {
-      client.debugActions && console.log("Error executing `" + name + "'.");
+      client.settings.debugActions && console.log("Error executing action:", e);
     }
   }
   
@@ -526,10 +551,31 @@ class Client {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // miscellaneous logging and command links
+
+  // detect if more user input is required for a pueblo command
+  parseCommand(command) {
+    var cmd = command;
+    var regex = new RegExp('\\?\\?');
+    
+    // check for the search token '??'
+    if (cmd.search(regex) !== -1) {
+      var val = prompt(command);
+      
+      if (val === null) {
+        // user cancelled the prompt, don't send any command
+        cmd = '';
+      } else {
+        // replace the ?? token with the prompt value
+        cmd = cmd.replace(regex, val);
+      }
+    }
+    
+    return cmd;
+  }
   
   // pueblo command links, prompt for user input and replace ?? token if present
   onCommand(cmd) {
-    this.sendCommand && this.sendCommand(Utils.parseCommand(cmd));
+    this.sendCommand && this.sendCommand(this.parseCommand(cmd));
   }
 
   // log messages to the output terminal
@@ -563,7 +609,9 @@ class Client {
     let newText = text.slice();
     for (let i = args.length-1; i > -1; i--) {
       let re = new RegExp('(^|[^\\%])%'+i, 'g');
-      newText = newText.replace(re, '$1'+args[i]);
+      let escre = new RegExp('["\'`]', 'g');
+      let esc = args[i].replace(escre, '\\$&');
+      newText = newText.replace(re, '$1'+esc);
     }
     return newText;
   }
@@ -669,7 +717,7 @@ class Client {
         scroll = true;
       }
       
-      fun()
+      fun();
       
       scroll && this.output.scrollDown();
       
@@ -680,57 +728,29 @@ class Client {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // spawn, focus and close window panels
-  addSpawn(spawn) {
-    this.react.spawns.push(spawn);
-  }
-  
-  delSpawn(spawn) {
-    const i = this.react.spawns.indexOf(spawn);
-    this.react.spawns.splice(i, 1);
-  }
-  
-  // spawn a window using a react components
-  addReactPanel(name, cfg) {
-    var el = null;
-    var obj = null;
-    switch (name) {
-      case 'Mailbox':
-        el = Mailbox;
-        obj = this.react.mailbox;
-        break;
-      case 'Upload':
-        el = Upload;
-        obj = this.react.upload;
-        break;
-      case 'Sendmail':
-        el = Sendmail;
-        obj = this.react.sendmail;
-        break;
-      case 'BBoard':
-        el = BBoard;
-        obj = this.react.bboard;
-        break;
-      case 'Customizer':
-        el = Customizer;
-        obj = this.react.customizer;
-        break;
-      default:
-        break;
+  addPanel(id, cfg, component) {
+    var spawn = this.findSpawn(id);
+    
+    if (spawn) {
+      this.focusPanel(id);
+      return spawn;
     }
+    
+    var comp = component || id;
+    var el = this.components[comp];
     
     if (!el) {
-      return;
-    }
-    
-    if (obj) {
-      this.focusPanel(name);
-      return;
+      el = Spawn;
     }
     
     var config = cfg || {};
     
+    if (!config.id) {
+      config.id = id;
+    }
+    
     if (!config.headerTitle) {
-      config.headerTitle = name;
+      config.headerTitle = id;
     }
     
     if (!config.headerLogo) {
@@ -752,20 +772,72 @@ class Client {
       };
     }
     
+    let ref = React.createRef();
     config.callback = (container) => {
       container.content.style.backgroundColor = this.theme.palette.background.paper;
-      var child = React.createElement(el, { panel: container }, null);
-      ReactDOM.render(React.createElement(MuiThemeProvider, { theme: this.theme }, child), container.content);
+      let child = React.createElement(el, { innerRef: ref, id: id, panel: container }, null);
+      ReactDOM.render(React.createElement(MuiThemeProvider, { theme: this.theme }, child), container.content, () => {
+        // add the helpText() controlbar icon
+        let obj = ref.current;
+        if (obj && obj.helpText) {
+          let helpButton = document.createElement('div');
+          helpButton.classList.add("jsPanel-btn","jsPanel-btn-help");
+          helpButton.innerHTML = `<svg class="jsPanel-icon" version="1.1" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 512 512"><circle fill="currentColor" cx="255.984" cy="492" r="20"/><path fill="currentColor" d="M412.979,155.775C412.321,69.765,342.147,0,255.984,0c-86.57,0-157,70.43-157,157c0,11.046,8.954,20,20,20 s20-8.954,20-20c0-64.514,52.486-117,117-117s117,52.486,117,117c0,0.356,0.009,0.71,0.028,1.062 c-0.405,46.562-28.227,88.348-71.12,106.661c-40.038,17.094-65.908,56.675-65.908,100.839V412c0,11.046,8.954,20,20,20 c11.046,0,20-8.954,20-20v-46.438c0-28.117,16.334-53.258,41.614-64.051c57.979-24.754,95.433-81.479,95.418-144.516 C413.016,156.585,413.003,156.179,412.979,155.775z"/></svg>`;
+          helpButton.style.color = this.panels.calcColors(this.panels.defaults.theme)[3];
+          container.controlbar.insertBefore(helpButton, container.controlbar.firstChild);
+          
+          jsPanel.pointerup.forEach((which) => {
+            helpButton.addEventListener(which, (evt) => {
+              obj.helpText(evt.currentTarget);
+            });
+          });
+        }
+        
+        window.client.react.spawns.push(obj);
+      });
+      
     };
     
     config.container = this.container;
     
     this.panels.create(config);
+    return ref.current;
   }
   
-  closePanel(name) {
+  // create a Spawn window
+  // don't focus if it already exists
+  getSpawn(id, cfg, el) {
+    let spawn = this.findSpawn(id);
+    if (spawn) return spawn;
+    
+    return this.addPanel(id, cfg, el);
+  }
+  
+  // delete spawn window from internal list
+  delSpawn(id) {
+    const spawns = this.react.spawns;
+    for (let i=0; i < spawns.length; i++) {
+      if (spawns[i] && spawns[i].props.id === id) {
+        spawns.splice(i, 1);
+      }
+    }
+  }
+  
+  // find spawn window in internal list
+  findSpawn(id) {
+    const spawns = this.react.spawns;
+    for (let i=0; i < spawns.length; i++) {
+      if (spawns[i] && spawns[i].props.id === id) {
+        return spawns[i];
+      }
+    }
+    return null;
+  }
+  
+  // find and close a panel
+  closePanel(id) {
     var panels = this.panels.getPanels(function() {
-      return (this.id === name || this.headertitle.innerText === name);
+      return (this.id === id || this.headertitle.innerText === id);
     });
     
     if (panels.length > 0) {
@@ -776,9 +848,10 @@ class Client {
     }
   }
   
-  focusPanel(name) {
+  // bring a panel into focus
+  focusPanel(id) {
     var panels = this.panels.getPanels(function() {
-      return (this.id === name || this.headertitle.innerText === name);
+      return (this.id === id || this.headertitle.innerText === id);
     });
     
     if (panels.length > 0) {
@@ -873,7 +946,7 @@ class Client {
         
         // send @dec/tf to the upload editor, or the command window
         if (client.settings.decompileEditor) {
-          client.addReactPanel("Upload", { icon: 'cloud_upload' });
+          client.addPanel("Upload", { icon: 'cloud_upload' });
           client.react.upload.editor.current.editor.insert(str+"\n");
         } else {
           client.input.root.value = str;
@@ -884,25 +957,21 @@ class Client {
       // handle text triggers
       let suppress = false;
       client.triggers.forEach((trigger, i) => {
-        try {
-          let re = client.createPattern(trigger.regex, trigger.pattern);
-          let args = text.match(re);
-          
-          if (args) {
-            if (trigger.javascript) {
-              eval(trigger.text);
-            } else {
-              let txt = client.replaceArgs(args, trigger.text);
-              client.sendText(txt);
-            }
-          
-            if (trigger.suppress) {
-              client.eatNewline = true;
-              suppress = true;
-            }
+        let re = client.createPattern(trigger.regex, trigger.pattern);
+        let args = text.match(re);
+        
+        if (args) {
+          let txt = client.replaceArgs(args, trigger.text);
+          if (trigger.javascript) {
+            client.execActionScript(txt);
+          } else {
+            client.sendText(txt);
           }
-        } catch (e) {
-          client.settings.debugActions && console.log("Trigger error:", e);
+        
+          if (trigger.suppress) {
+            client.eatNewline = true;
+            suppress = true;
+          }
         }
       });
       
@@ -1003,21 +1072,17 @@ class Client {
     
     let matched = false;
     this.macros.forEach((m) => {
-      try {
-        let re = this.createPattern(m.regex, m.pattern);
-        let args = cmd.match(re);
-        
-        if (args) {
-          matched = true;
-          if (m.javascript) {
-            eval(m.text);
-          } else {
-            let text = this.replaceArgs(args, m.text);
-            this.sendText(text);
-          }
+      let re = this.createPattern(m.regex, m.pattern);
+      let args = cmd.match(re);
+      
+      if (args) {
+        matched = true;
+        let text = this.replaceArgs(args, m.text);
+        if (m.javascript) {
+          this.execActionScript(text);
+        } else {
+          this.sendText(text);
         }
-      } catch (e) {
-        this.settings.debugActions && console.log("Macro error:", e);
       }
     });
     
@@ -1149,7 +1214,8 @@ class Client {
     };
     
     this.panels.defaults.onclosed = function(container) {
-      ReactDOM.unmountComponentAtNode(container.content)
+      ReactDOM.unmountComponentAtNode(container.content);
+      window.client.delSpawn(this.id);
       window.client.focus();
     };
     
@@ -1176,5 +1242,5 @@ class Client {
 
 
 export default Client;
-export { Connection, Emulator, UserInput, Utils };
+export { Connection, Emulator, UserInput };
 

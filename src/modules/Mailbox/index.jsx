@@ -147,7 +147,7 @@ class Mailbox extends React.Component {
         window.client.react.sendmail.setFields(to, subject, body);
       }
     } else {
-      window.client.addReactPanel("Sendmail", { icon: "mail" });
+      window.client.addPanel("Sendmail", { icon: "mail" });
       window.client.react.sendmail.setFields(to, subject, body);
     }  
   }

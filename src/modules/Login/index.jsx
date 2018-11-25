@@ -9,7 +9,6 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import withMobileDialog from '@material-ui/core/withMobileDialog';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
 
@@ -116,14 +115,14 @@ class Login extends React.Component {
   }
   
   render() {
-    const { classes, fullScreen } = this.props;
+    const { classes } = this.props;
     const { open, msg } = this.state;
     
     return (
       <Dialog
         className={classes.frame}
         open={open}
-        fullScreen={fullScreen}
+        fullScreen={window.client.mobile}
         onEscapeKeyDown={() => window.client.react.taskbar.openDrawer()}
         onClose={this.closeLogin}
         aria-labelledby="responsive-dialog-title"
@@ -194,9 +193,8 @@ class Login extends React.Component {
 Login.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
-  fullScreen: PropTypes.bool.isRequired,
 };
 
-export default withMobileDialog()(withStyles(styles, { withTheme: true })(Login));
+export default withStyles(styles, { withTheme: true })(Login);
 
 
