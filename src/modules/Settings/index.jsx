@@ -36,6 +36,7 @@ import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
 import SecurityIcon from '@material-ui/icons/Security';
 import FontDownloadIcon from '@material-ui/icons/FontDownload';
 import FormatSizeIcon from '@material-ui/icons/FormatSize';
+import HistoryIcon from '@material-ui/icons/History';
 
 
 //////////////////////////////////////////////////////////////////////
@@ -146,6 +147,7 @@ class Settings extends React.Component {
     const { classes, closeDrawer } = this.props;
     const { debugEvents, decompileEditor, decompileKey, ansiFG, ansiBG, wrapWidth,
       invertHighlight, debugActions, serverAddress, serverPort, serverSSL,
+      historySize, historySpawnSize,
       sidebarOpen, sidebarAnchor, sidebarAlwaysShow, sidebarShowPlayers, fontFamily, fontSize,
       sidebarShowThings, sidebarShowExits, sidebarShowCompass, sidebarWidth } = this.state;
     
@@ -198,6 +200,22 @@ class Settings extends React.Component {
               </ListItem>
             </List>
 
+            <List className={classes.list} disablePadding dense subheader={<ListSubheader>History Settings</ListSubheader>}>
+              <ListItem dense>
+                <ListItemIcon>
+                  <HistoryIcon />
+                </ListItemIcon>
+                <TextField label="History Size" value={historySize} onChange={this.handleValue('historySize')} type="number" helperText="Lines of terminal output history." />
+              </ListItem>
+              
+              <ListItem dense>
+                <ListItemIcon>
+                  <HistoryIcon />
+                </ListItemIcon>
+                <TextField label="Spawn History Size" value={historySpawnSize} onChange={this.handleValue('historySpawnSize')} type="number" helperText="Lines of spawn window history." />
+              </ListItem>
+            </List>
+            
             <List className={classes.list} disablePadding dense subheader={<ListSubheader>Display Settings</ListSubheader>}>
               <ListItem dense>
                 <ListItemIcon>

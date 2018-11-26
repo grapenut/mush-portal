@@ -11,6 +11,8 @@ import UserInput from '../../client/userinput';
 
 //////////////////////////////////////////////////////////////////////
 
+const MAX_HISTORY_SIZE = 1000;
+const HISTORY_KEY = "output_history_";
 
 const styles = theme => ({
   frame: {
@@ -65,6 +67,8 @@ class Spawn extends React.Component {
     super(props);
     this.state = {
       prefix: props.prefix ? props.prefix : "",
+      saveHistory: props.saveHistory ? props.saveHistory : false,
+      autoHide: props.autoHide ? props.autoHide : false,
     };
 
     this.refoutput = React.createRef();
@@ -72,6 +76,8 @@ class Spawn extends React.Component {
 
     this.output = null;
     this.input = null;
+    
+    this.hasHidden = false;
   }
   
   componentDidMount() {
@@ -82,6 +88,15 @@ class Spawn extends React.Component {
     this.input.onEscape = () => { this.input.clear(); };
     this.input.onPageUp = () => { this.output.scrollPageUp(); };
     this.input.onPageDown = () => { this.output.scrollPageDown(); };
+    
+    if (this.state.saveHistory) {
+      this.LoadHistory();
+      this.output.scrollDown();
+    }
+    
+    if (this.state.autoHide) {
+      this.AutoHide();
+    }
   }
   
   componentWillUnmount() {
@@ -95,7 +110,58 @@ class Spawn extends React.Component {
   }
   
   changePrefix = event => {
-    this.setState({ prefix: event.target.value });
+    this.Prefix(event.target.value);
+  };
+  
+  Prefix = prefix => {
+    if (this.state.prefix !== prefix) {
+      this.setState({ prefix });
+    }
+    
+    return this;
+  };
+
+  LoadHistory = () => {
+    this.output.loadHistory(HISTORY_KEY + this.props.id);
+    this.output.scrollDown();
+  };
+  
+  SaveHistory = saveHistory => {
+    if (typeof(saveHistory) === "undefined") {
+      saveHistory = true;
+    }
+    
+    if (this.state.saveHistory !== saveHistory) {
+      if (saveHistory) {
+        this.LoadHistory();
+        this.output.scrollDown();
+      }
+    
+      this.setState({ saveHistory });
+    }
+    
+    if (this.state.saveHistory) {
+      this.output.saveHistory(HISTORY_KEY + this.props.id, Math.min(MAX_HISTORY_SIZE, window.client.settings.historySpawnSize));
+    }
+    
+    return this;
+  };
+  
+  AutoHide = autoHide => {
+    if (typeof(autoHide) === "undefined") {
+      autoHide = true;
+    }
+    
+    if (this.state.autoHide !== autoHide) {
+      this.setState({ autoHide });
+    }
+    
+    if (this.state.autoHide && !this.hasHidden) {
+      this.props.panel.minimize();
+      this.hasHidden = true;
+    }
+    
+    return this;
   }
   
   // wrapper that scrolls the output if needed
@@ -114,7 +180,16 @@ class Spawn extends React.Component {
   }
 
   onChange = () => {
+    if (this.state.saveHistory) {
+      this.output.saveHistory(HISTORY_KEY + this.props.id, Math.min(MAX_HISTORY_SIZE, window.client.settings.historySpawnSize));
+    }
+    
     this.setState({ lines: this.output.linesOfScroll() });
+    
+    if (this.props.panel.status === "minimized") {
+      this.props.panel.count++;
+      window.client.react.taskbar.forceUpdate();
+    }
   };
   
   appendText(text) {
@@ -142,7 +217,7 @@ class Spawn extends React.Component {
         </div>
         <div className={classes.bottom}>
           <TextField label="Command Prefix" value={prefix} onChange={this.changePrefix} />
-          <textarea ref={this.refinput} className={classNames(classes.input, ansiFG, ansiBG)} style={font}  autoComplete="off" autoFocus={!window.client.mobile}></textarea>
+          <textarea ref={this.refinput} className={classNames(classes.input, ansiFG, ansiBG)} style={font}  autoComplete="off"></textarea>
         </div>
       </div>
     );

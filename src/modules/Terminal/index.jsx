@@ -8,6 +8,8 @@ import Typography from '@material-ui/core/Typography';
 
 //////////////////////////////////////////////////////////////////////
 
+const MAX_HISTORY_SIZE = 10000;
+const HISTORY_KEY = "output_history";
 
 const styles = theme => ({
   frame: {
@@ -57,8 +59,12 @@ const styles = theme => ({
   },
   scrollcount: {
     position: "absolute",
-    right: 0,
+    height: "100%",
     bottom: 0,
+    right: 0,
+  },
+  lineheight: {
+    lineHeight: 1,
   },
 });
 
@@ -90,7 +96,12 @@ class Terminal extends React.Component {
     window.client.initOutput(this.output.current, this.terminal.current);
     window.client.initPrompt(this.prompt.current);
     this.init = true;
-    this.forceUpdate();
+    
+    if (window.client.settings.historySize > 0) {
+      window.client.output.loadHistory(HISTORY_KEY);
+    }
+    
+    this.onResize();
   }
   
   onResize = event => {
@@ -111,6 +122,10 @@ class Terminal extends React.Component {
   };
 
   onChange = () => {
+    if (window.client.settings.historySize > 0) {
+      window.client.output.saveHistory(HISTORY_KEY, Math.min(MAX_HISTORY_SIZE, window.client.settings.historySize));
+    }
+    
     this.setState({ lines: this.linesOfScroll() });
   };
   
@@ -143,7 +158,7 @@ class Terminal extends React.Component {
         <div className={classes.taskbar}>
           <div ref={this.prompt} className={classNames(classes.prompt, ansiFG, ansiBG)}></div>
           <div className={classes.scrollcount}>
-            <Typography color="error" align="right">
+            <Typography color="error" align="right" variant="caption" className={classes.lineheight}>
               {lines > 0 && "...and "+lines+" more lines..."}
             </Typography>
           </div>

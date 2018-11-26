@@ -79,6 +79,9 @@ class Client {
       serverAddress: "node.grapenut.org",
       serverSSL: window.location.protocol === "https:",
       serverPort: window.location.protocol === "https:" ? 2001 : 2000,
+      // history settings
+      historySize: 1000,
+      historySpawnSize: 100,
     };
     this.settings = null;
     
@@ -377,6 +380,19 @@ class Client {
   // save object to localstorage
   saveLocalStorage(obj, key) {
     window.localStorage[key] = JSON.stringify(obj);
+  }
+  
+  // load a string directly from localstorage
+  loadHistoryBuffer(key) {
+    if (window.localStorage.hasOwnProperty(key)) {
+      return window.localStorage[key];
+    }
+    return "";
+  }
+  
+  // save a string directly to localstorage
+  saveHistoryBuffer(key, text) {
+    window.localStorage[key] = text;
   }
   
   // casting a string argument to the correct type

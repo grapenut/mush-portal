@@ -18,6 +18,9 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Icon from '@material-ui/core/Icon';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import IconButton from '@material-ui/core/IconButton';
 
 import MenuIcon from '@material-ui/icons/Menu';
 import BackspaceIcon from '@material-ui/icons/Backspace';
@@ -27,10 +30,11 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import KeyboardIcon from '@material-ui/icons/Keyboard';
 import WifiIcon from '@material-ui/icons/Wifi';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
+import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 
 import Settings from '../Settings';
 
@@ -41,8 +45,12 @@ import Settings from '../Settings';
 const drawerHeight = 240;
 
 const styles = theme => ({
+  frame: {
+    display: "flex",
+    flexFlow: "column nowrap",
+  },
   root: {
-    flexGrow: 1,
+    width: "100%",
   },
   title: {
     margin: '0 20px',
@@ -58,8 +66,8 @@ const styles = theme => ({
     marginRight: theme.spacing.unit,
   },
   tasklabel: {
-//    display: "flex",
-//    "flex-direction": "column",
+    display: "flex",
+    "flexFlow": "row nowrap",
   },
   cmdbutton: {
   },
@@ -113,8 +121,18 @@ const styles = theme => ({
       display: 'none',
     },
   },
-  overflowButtons: {
-    
+  mobileButtons: {
+    display: "flex",
+    flexFlow: "row wrap",
+    width: "100%",
+  },
+  scrollButtons: {
+    flex: '0 0 24px',
+    padding: 0,
+    alignSelf: "center",
+  },
+  emptyText: {
+    textAlign: "center",
   },
 });
 
@@ -130,6 +148,39 @@ function BadgeIcon(props) {
     );
   }
   return (<Icon>{props.children}</Icon>);
+};
+
+
+function BadgeWrapper(props) {
+  var count = props.count ? props.count() : 0;
+
+  if (count > 0) {
+    return (
+      <Badge badgeContent={count} color="error">
+        {props.children}
+      </Badge>
+    );
+  }
+  return props.children;
+};
+
+
+function TabButton(props) {
+  if (props.visible) {
+    return (
+      <IconButton onClick={props.onClick} className={props.className}>
+        {props.direction === "left" ? (
+          <KeyboardArrowLeftIcon />
+        ) : (
+          <KeyboardArrowRightIcon />
+        )}
+      </IconButton>
+    );
+  } else {
+    return (
+      <div className={props.className}></div>
+    );
+  }
 };
 
 
@@ -151,7 +202,6 @@ class Taskbar extends React.Component {
       helpAnchor: null,
       logAnchor: null,
       historyAnchor: null,
-      mobileAnchor: null,
     };
     
     this.help = "";
@@ -212,6 +262,7 @@ class Taskbar extends React.Component {
   
   pushTask = (task) => {
     const { taskbar } = this.state;
+    task.count = 0;
     taskbar.push(task);
     this.setState({ taskbar });
   };
@@ -234,15 +285,6 @@ class Taskbar extends React.Component {
     window.client.focus(true);
   };
   
-  showMobileMenu = event => {
-    this.setState({ mobileAnchor: event.currentTarget });
-  };
-  
-  closeMobileMenu = () => {
-    this.setState({ mobileAnchor: null });
-    window.client.focus(true);
-  };
-
   toggleSidebar = () => {
     const client = window.client;
     
@@ -406,17 +448,19 @@ class Taskbar extends React.Component {
   render() {
     const input = window.client.input;
     const { classes } = this.props;
-    const { title, taskbar, open, buttons, historyAnchor, mobileAnchor,
+    const { title, taskbar, open, buttons, historyAnchor,
             menuAnchor, uploadAnchor, helpAnchor, logAnchor } = this.state;
     const { sidebarOpen, sidebarAnchor } = window.client.settings;
 
-    var rev = input ? input.history.slice().reverse() : [];
+    var rev = input && Boolean(historyAnchor) ? input.history.slice().reverse() : [];
     
     const renderTasks = taskbar.map((task,i) => (
       <Tooltip key={i} title={task.headertitle.innerText}>
         <Button key={task.id} classes={{ label: classes.tasklabel }} className={classes.taskbutton} aria-label="open-task" onClick={() => this.popTask(task)}>
-          <Icon className={classes.taskicon}>{task.headerlogo.innerText}</Icon>
-          {!window.client.mobile && task.headertitle.innerText}
+          <BadgeWrapper count={() => task.count}>
+            <Icon className={classes.taskicon}>{task.headerlogo.innerText}</Icon>
+            {!window.client.mobile && task.headertitle.innerText}
+          </BadgeWrapper>
         </Button>
       </Tooltip>
     ));
@@ -432,189 +476,201 @@ class Taskbar extends React.Component {
     ));
     
     return (
-      <AppBar className={classes.root} position="static" onClick={() => window.client.focus()}>
-        <Toolbar disableGutters={!this.state.open}>
-          {sidebarAnchor === "left" && (
-            <div className={classes.sectionMobile}>
-              <Tooltip title={sidebarOpen ? "Open sidebar." : "Close sidebar."}>
-                <Button aria-label="open-left-sidebar" onClick={this.toggleSidebar}>
-                  {sidebarOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-                </Button>
-              </Tooltip>
+      <div className={classes.frame}>
+        <AppBar className={classes.root} position="static" onClick={() => window.client.focus()}>
+          <Toolbar disableGutters={!this.state.open}>
+            {sidebarAnchor === "left" && (
+              <div className={classes.sectionMobile}>
+                <Tooltip title={sidebarOpen ? "Open sidebar." : "Close sidebar."}>
+                  <Button aria-label="open-left-sidebar" onClick={this.toggleSidebar}>
+                    {sidebarOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+                  </Button>
+                </Tooltip>
+              </div>
+            )}
+            
+            <Typography variant="h6" color="inherit" noWrap className={classes.title}>
+              {title}
+            </Typography>
+            
+            <div className={classes.sectionDesktop}>
+              <div className={classes.flex}></div>
+              {renderTasks}
+              <div className={classes.tasksep}></div>
+              {renderButtons}
             </div>
-          )}
-          
-          <Typography variant="h6" color="inherit" noWrap className={classes.title}>
-            {title}
-          </Typography>
-          
-          <div className={classes.sectionDesktop}>
-            <div className={classes.flex}></div>
-            {renderTasks}
-            <div className={classes.tasksep}></div>
-            {renderButtons}
-          </div>
-          
-          <div className={classes.overflowButtons}>
-          </div>
-          
-          <div className={classes.sectionMobile}>
-            <Tooltip title="Windows and commands...">
-              <Button aria-owns={mobileAnchor ? 'taskbar.mobile' : null} aria-label="open-mobile" aria-haspopup="true" onClick={this.showMobileMenu}>
-                <MoreVertIcon />
+            
+            <Tooltip title="Client utilities...">
+              <Button aria-owns={menuAnchor ? 'taskbar.menu' : null} aria-label="open-menu" aria-haspopup="true" onClick={this.showMenu}>
+                <MenuIcon />
               </Button>
             </Tooltip>
-          </div>
-          
-          <Tooltip title="Client utilities...">
-            <Button aria-owns={menuAnchor ? 'taskbar.menu' : null} aria-label="open-menu" aria-haspopup="true" onClick={this.showMenu}>
-              <MenuIcon />
-            </Button>
-          </Tooltip>
-          
-          {sidebarAnchor === "right" && (
-            <div className={classes.sectionMobile}>
-              <Tooltip title={sidebarOpen ? "Open sidebar." : "Close sidebar."}>
-                <Button aria-label="open-right-sidebar" onClick={this.toggleSidebar}>
-                  {sidebarOpen ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-                </Button>
-              </Tooltip>
-            </div>
-          )}
-          
-          <SwipeableDrawer
-            variant="temporary"
-            anchor="left"
-            open={open}
-            onClose={this.closeDrawer}
-            onOpen={this.openDrawer}
             
-          >
-            <Settings closeDrawer={this.closeDrawer} />
-          </SwipeableDrawer>
+            {sidebarAnchor === "right" && (
+              <div className={classes.sectionMobile}>
+                <Tooltip title={sidebarOpen ? "Open sidebar." : "Close sidebar."}>
+                  <Button aria-label="open-right-sidebar" onClick={this.toggleSidebar}>
+                    {sidebarOpen ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+                  </Button>
+                </Tooltip>
+              </div>
+            )}
+            
+            <SwipeableDrawer
+              variant="temporary"
+              anchor="left"
+              open={open}
+              onClose={this.closeDrawer}
+              onOpen={this.openDrawer}
+              
+            >
+              <Settings closeDrawer={this.closeDrawer} />
+            </SwipeableDrawer>
 
-          <Popover id="taskbar.help" anchorEl={helpAnchor} open={Boolean(helpAnchor)} onClose={this.closeHelp}>
-            <form onSubmit={this.searchHelp}>
-              <TextField label="Help topic" className={classes.padded} autoComplete="off" autoFocus variant="outlined" onChange={this.typeHelp} />
-            </form>
-            <Button fullWidth onClick={this.searchHelp}>
-              Get Help
-            </Button>
-          </Popover>
-          
-          <Popover id="taskbar.log" anchorEl={logAnchor} open={Boolean(logAnchor)} onClose={this.closeLog}>
-            <form onSubmit={this.saveLog}>
-              <TextField label="File Name" variant="outlined" className={classes.padded}
-                onChange={this.typeLog} autoFocus
-                InputProps={{ inputProps: { style: { textAlign: 'right' }}, endAdornment: <InputAdornment position="end">.txt</InputAdornment> }}
-              />
-            </form>
-            <Button fullWidth onClick={this.saveLog}>
-              Save Log
-            </Button>
-          </Popover>
-          
-          <Popover id="taskbar.upload" anchorEl={uploadAnchor} open={Boolean(uploadAnchor)} onClose={this.closeUpload}>
-            <form onSubmit={this.handleURL} className={classes.padded}>
-              <TextField type="url" fullWidth label="Insert URL" variant="outlined" onChange={this.typeURL} autoFocus />
-            </form>
-            <Button onClick={this.handleURL}>
-              Upload URL
-            </Button>
-            <input
-              accept="text/plain"
-              className={classes.fileinput}
-              id="file.upload"
-              type="file"
-              onChange={this.handleFile}
-            />
-            <label htmlFor="file.upload">
-              <Button component="span">
-                Choose File
+            <Popover id="taskbar.help" anchorEl={helpAnchor} open={Boolean(helpAnchor)} onClose={this.closeHelp}>
+              <form onSubmit={this.searchHelp}>
+                <TextField label="Help topic" className={classes.padded} autoComplete="off" autoFocus variant="outlined" onChange={this.typeHelp} />
+              </form>
+              <Button fullWidth onClick={this.searchHelp}>
+                Get Help
               </Button>
-            </label>
-            <Button onClick={this.previewUpload}>
-              Paste Text
-            </Button>
-          </Popover>
-          
-          <Popover id="taskbar.history" anchorEl={historyAnchor} open={Boolean(historyAnchor)} onClose={this.closeHistory}>
-            <List className={classes.historyPopover}>
-              {rev.map((cmd, i) => (
-                <ListItem key={i} button dense divider onClick={this.insertCommand(cmd)}>
-                  <ListItemText primary={cmd} />
-                </ListItem>
-              ))}
-            </List>
-            <Button onClick={this.clearHistory}>
-              Clear History
-            </Button>
-          </Popover>
-          
-          <Menu disableEnforceFocus id="taskbar.mobile" anchorEl={mobileAnchor} open={Boolean(mobileAnchor)} onClick={this.closeMobileMenu} onClose={this.closeMobileMenu}>
-            <MenuItem onClick={this.closeMobileMenu}>
-              <Tooltip title="Close menu.">
-                <Button><Icon><ExpandLessIcon /></Icon></Button>
-              </Tooltip>
-            </MenuItem>
-            {renderButtons.slice(0).reverse().map((button, i) => (
-              <MenuItem key={i} onClick={this.closeMobileMenu}>
-                {button}
+            </Popover>
+            
+            <Popover id="taskbar.log" anchorEl={logAnchor} open={Boolean(logAnchor)} onClose={this.closeLog}>
+              <form onSubmit={this.saveLog}>
+                <TextField label="File Name" variant="outlined" className={classes.padded}
+                  onChange={this.typeLog} autoFocus
+                  InputProps={{ inputProps: { style: { textAlign: 'right' }}, endAdornment: <InputAdornment position="end">.txt</InputAdornment> }}
+                />
+              </form>
+              <Button fullWidth onClick={this.saveLog}>
+                Save Log
+              </Button>
+            </Popover>
+            
+            <Popover id="taskbar.upload" anchorEl={uploadAnchor} open={Boolean(uploadAnchor)} onClose={this.closeUpload}>
+              <form onSubmit={this.handleURL} className={classes.padded}>
+                <TextField type="url" fullWidth label="Insert URL" variant="outlined" onChange={this.typeURL} autoFocus />
+              </form>
+              <Button onClick={this.handleURL}>
+                Upload URL
+              </Button>
+              <input
+                accept="text/plain"
+                className={classes.fileinput}
+                id="file.upload"
+                type="file"
+                onChange={this.handleFile}
+              />
+              <label htmlFor="file.upload">
+                <Button component="span">
+                  Choose File
+                </Button>
+              </label>
+              <Button onClick={this.previewUpload}>
+                Paste Text
+              </Button>
+            </Popover>
+            
+            <Popover id="taskbar.history" anchorEl={historyAnchor} open={Boolean(historyAnchor)} onClose={this.closeHistory}>
+              <List className={classes.historyPopover}>
+                {rev.map((cmd, i) => (
+                  <ListItem key={i} button dense divider onClick={this.insertCommand(cmd)}>
+                    <ListItemText primary={cmd} />
+                  </ListItem>
+                ))}
+              </List>
+              <Button onClick={this.clearHistory}>
+                Clear History
+              </Button>
+            </Popover>
+            
+            <Menu disableEnforceFocus id="taskbar.menu" anchorEl={menuAnchor} open={Boolean(menuAnchor)} onClick={this.closeMenu} onClose={this.closeMenu}>
+              <MenuItem onClick={this.closeMenu}>
+                <Tooltip title="Close menu.">
+                  <ExpandLessIcon />
+                </Tooltip>
               </MenuItem>
-            ))}
-            {renderTasks.slice(0).reverse().map((task, i) => (
-              <MenuItem key={i} onClick={this.closeMobileMenu}>
-                {task}
+              <MenuItem onClick={this.openDrawer}>
+                <Tooltip title="Change settings.">
+                  <SettingsIcon />
+                </Tooltip>
               </MenuItem>
-            ))}
-          </Menu>
-          
-          <Menu disableEnforceFocus id="taskbar.menu" anchorEl={menuAnchor} open={Boolean(menuAnchor)} onClick={this.closeMenu} onClose={this.closeMenu}>
-            <MenuItem onClick={this.closeMenu}>
-              <Tooltip title="Close menu.">
-                <ExpandLessIcon />
-              </Tooltip>
-            </MenuItem>
-            <MenuItem onClick={this.openDrawer}>
-              <Tooltip title="Change settings.">
-                <SettingsIcon />
-              </Tooltip>
-            </MenuItem>
-            <MenuItem onClick={this.openCustomizer}>
-              <Tooltip title="Client customization.">
-                <BuildIcon />
-              </Tooltip>
-            </MenuItem>
-            <MenuItem aria-owns={uploadAnchor ? 'taskbar.upload' : null} aria-label="open-upload" aria-haspopup="true" onClick={this.showUpload}>
-              <Tooltip title="Upload file/URL.">
-                <CloudUploadIcon />
-              </Tooltip>
-            </MenuItem>
-            <MenuItem aria-owns={logAnchor ? 'taskbar.log' : null} aria-label="open-log" aria-haspopup="true" onClick={this.showLog}>
-              <Tooltip title="Save display log.">
-                <SaveIcon />
-              </Tooltip>
-            </MenuItem>
-            <MenuItem aria-owns={historyAnchor ? 'taskbar.history' : null} aria-label="open-history" aria-haspopup="true" onClick={this.showHistory}>
-              <Tooltip title="Show command history.">
-                <KeyboardIcon />
-              </Tooltip>
-            </MenuItem>
-            <MenuItem onClick={this.clearScreen}>
-              <Tooltip title="Clear screen.">
-                <BackspaceIcon />
-              </Tooltip>
-            </MenuItem>
-            <MenuItem onClick={this.reconnect}>
-              <Tooltip title="Reconnect.">
-                <WifiIcon />
-              </Tooltip>
-            </MenuItem>            
-          </Menu>
+              <MenuItem onClick={this.openCustomizer}>
+                <Tooltip title="Client customization.">
+                  <BuildIcon />
+                </Tooltip>
+              </MenuItem>
+              <MenuItem aria-owns={uploadAnchor ? 'taskbar.upload' : null} aria-label="open-upload" aria-haspopup="true" onClick={this.showUpload}>
+                <Tooltip title="Upload file/URL.">
+                  <CloudUploadIcon />
+                </Tooltip>
+              </MenuItem>
+              <MenuItem aria-owns={logAnchor ? 'taskbar.log' : null} aria-label="open-log" aria-haspopup="true" onClick={this.showLog}>
+                <Tooltip title="Save display log.">
+                  <SaveIcon />
+                </Tooltip>
+              </MenuItem>
+              <MenuItem aria-owns={historyAnchor ? 'taskbar.history' : null} aria-label="open-history" aria-haspopup="true" onClick={this.showHistory}>
+                <Tooltip title="Show command history.">
+                  <KeyboardIcon />
+                </Tooltip>
+              </MenuItem>
+              <MenuItem onClick={this.clearScreen}>
+                <Tooltip title="Clear screen.">
+                  <BackspaceIcon />
+                </Tooltip>
+              </MenuItem>
+              <MenuItem onClick={this.reconnect}>
+                <Tooltip title="Reconnect.">
+                  <WifiIcon />
+                </Tooltip>
+              </MenuItem>            
+            </Menu>
 
-          <div className={classes.tasksep}></div>
-        </Toolbar>
-      </AppBar>
+            <div className={classes.tasksep}></div>
+          </Toolbar>
+        </AppBar>
+        
+        <div className={classes.sectionMobile}>
+          <AppBar position="relative">
+            <Tabs value={false} indicatorColor="primary" scrollable scrollButtons="on" ScrollButtonComponent={TabButton} classes={{ scrollButtons: classes.scrollButtons }}>
+              {buttons.length > 0 && buttons.map((button,i) => (
+                <Tooltip key={i} title={button.title}>
+                  <Tab key={i} classes={{ wrapper: classes.tasklabel }}
+                    aria-label={button.ariaLabel} 
+                    icon={(<BadgeIcon count={button.count}>{button.icon}</BadgeIcon>)}
+                    onClick={button.action}
+                  />
+                </Tooltip>
+              ))}
+            </Tabs>
+          </AppBar>
+        </div>
+        
+        <div className={classes.sectionMobile}>
+          <AppBar position="relative">
+            <Tabs value={false} indicatorColor="primary" scrollable scrollButtons="on" ScrollButtonComponent={TabButton} classes={{ scrollButtons: classes.scrollButtons }}>
+              {taskbar.length > 0 && taskbar.map((task,i) => (
+                <Tooltip key={i} title={task.headertitle.innerText}>
+                  <Tab key={i} classes={{ wrapper: classes.tasklabel }}
+                    aria-label="open-task"
+                    label={(
+                      <span>
+                        <BadgeWrapper count={() => task.count}>
+                          <Icon className={classes.taskicon}>{task.headerlogo.innerText}</Icon>
+                        </BadgeWrapper>
+                        {task.headertitle.innerText}
+                      </span>
+                    )}
+                    onClick={() => this.popTask(task)}
+                  />
+                </Tooltip>
+              ))}
+            </Tabs>
+          </AppBar>
+        </div>
+      </div>
     );
   }
 }
@@ -625,5 +681,4 @@ Taskbar.propTypes = {
 };
 
 export default withStyles(styles, { withTheme: true })(Taskbar);
-
 

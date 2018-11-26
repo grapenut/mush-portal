@@ -6,11 +6,6 @@ Sidebar
 TODO
 ------------------
 
-Spawn windows
-  Spawn output window for triggered text
-  Activity badge on updates
-  Command window with custom chat prefix (so you don't have to type +p, etc)
-
 BBoard
   Navigation icons (back, reload)
   +bbpost front-end
@@ -79,6 +74,16 @@ User-defined Actions
 Settings
   Server host, port, and SSL.
   Font size and family
+
+Spawn windows
+  Spawn output window for triggered text
+  Activity badge on updates
+  Command window with custom chat prefix (so you don't have to type +p, etc)
+
+History Buffer
+  Save to localStorage and restore on load
+  Add configurable buffer sizes to Settings
+  Buffers output for main terminal and spawns
 
 
 

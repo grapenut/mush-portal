@@ -715,7 +715,65 @@ class Emulator {
     window.requestAnimationFrame(step);
 */
   }
+  
+  /////////////////////////////////////////////////////////
+  // save and load history buffers
+  
+  loadHistory = (key) => {
+    if (window.localStorage.hasOwnProperty(key)) {
+      const html = window.localStorage[key];
+      if (html !== "") {
+        try {
+          this.root.innerHTML = html + this.root.innerHTML;
+        } catch (e) {
+          console.log("Unable to insert history: ", e);
+        }
+      }
+    }
+  };
 
+  saveHistory = (key, size) => {
+    const store = window.localStorage;
+    
+    if (size > 0) {
+      const nodes = this.root.childNodes;
+      var start = nodes.length - 1;
+      
+      if (start < 0) return;
+      
+      var found = 0;
+      
+      for (let i = start; i > -1 && found < size; i--) {
+        let count = nodes[i].textContent.split("\n").length;
+        
+        if (nodes[i].textContent.endsWith('\n')) {
+          count = count - 1;
+        }
+        
+        if (count > 0) {
+          found = found + count;
+          start = i;
+        }
+      }
+      
+      //var buff = "";
+      //for (let i = start; i < nodes.length; i++) {
+      //  buff = buff + nodes[i].outerHTML;
+      //}
+      
+      var range = document.createRange();
+      range.setStartBefore(nodes[start]);
+      range.setEndAfter(nodes[nodes.length-1]);
+      var fragment = range.cloneContents();
+      var div = document.createElement('div');
+      div.appendChild(fragment);
+      
+      store[key] = div.innerHTML;
+    } else {
+      delete store[key];
+    }
+  };
+  
   
 }
 
