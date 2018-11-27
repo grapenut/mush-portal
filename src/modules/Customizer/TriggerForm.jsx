@@ -27,6 +27,17 @@ const styles = theme => ({
     justifyContent: "space-between",
     alignItems: "center",
   },
+  switchBase: {
+    [theme.breakpoints.down('sm')]: {
+      height: "24px",
+    },
+  },
+  inputBase: {
+    padding: 0.25*theme.spacing.unit,
+    [theme.breakpoints.up('md')]: {
+      padding: theme.spacing.unit,
+    },
+  },
 });
 
 
@@ -52,16 +63,16 @@ class TriggerForm extends React.Component {
     
     return (
       <div className={classes.frame}>
-        <TextField label="Matching pattern" fullWidth value={item.pattern} onChange={handleChange('pattern')} />
+        <TextField label="Matching pattern" fullWidth value={item.pattern} onChange={handleChange('pattern')} inputProps={{ classes: { input: classes.inputBase } }} />
         <div className={classes.row}>
           <span className={classes.switchText}>
             <Typography>Wildcard</Typography>
-            <Switch checked={item.regex} color="default" onChange={handleSwitch('regex')} />
+            <Switch checked={item.regex} color="default" onChange={handleSwitch('regex')} classes={{ switchBase: classes.switchBase }} />
             <Typography>RegExp</Typography>
           </span>
           <span className={classes.switchText}>
             <Typography>Suppress terminal output?</Typography>
-            <Switch checked={item.suppress} onChange={handleSwitch('suppress')} />
+            <Switch checked={item.suppress} onChange={handleSwitch('suppress')} classes={{ switchBase: classes.switchBase }} />
           </span>
         </div>
       </div>

@@ -14,8 +14,11 @@ import ListSubheader from '@material-ui/core/ListSubheader';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Popover from '@material-ui/core/Popover';
+import IconButton from '@material-ui/core/IconButton';
 
 import AddCircleIcon from '@material-ui/icons/AddCircle';
+import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
+import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 
 import FormEditor from './FormEditor';
 import TriggerForm from './TriggerForm';
@@ -36,13 +39,19 @@ const styles = theme => ({
     "flex-flow": "column nowrap",
   },
   container: {
-    padding: 3*theme.spacing.unit,
+    padding: theme.spacing.unit,
     flex: 1,
     display: "flex",
     "flex-flow": "row nowrap",
+    [theme.breakpoints.up('md')]: {
+      padding: 3*theme.spacing.unit,
+    },
   },
   left: {
-    marginRight: 3*theme.spacing.unit,
+    marginRight: 0,
+    [theme.breakpoints.up('md')]: {
+      marginRight: 3*theme.spacing.unit,
+    }
   },
   right: {
     position: "relative",
@@ -87,7 +96,32 @@ const styles = theme => ({
     flexFlow: "column nowrap",
     justifyContent: "space-between",
   },
+  scrollButtons: {
+    [theme.breakpoints.down('sm')]: {
+      flex: '0 0 24px',
+      padding: 0,
+      alignSelf: "center",
+    }
+  },
 });
+
+function TabButton(props) {
+  if (props.visible) {
+    return (
+      <IconButton onClick={props.onClick} className={props.className}>
+        {props.direction === "left" ? (
+          <KeyboardArrowLeftIcon />
+        ) : (
+          <KeyboardArrowRightIcon />
+        )}
+      </IconButton>
+    );
+  } else {
+    return (
+      <div className={props.className}></div>
+    );
+  }
+};
 
 
 //////////////////////////////////////////////////////////////////////
@@ -174,7 +208,7 @@ class Customizer extends React.Component {
     return (
       <div className={classes.frame}>
         <AppBar position="static">
-          <Tabs value={this.state.tab} scrollable scrollButtons="on" onChange={this.changeTab}>
+          <Tabs value={this.state.tab} scrollable scrollButtons="on" onChange={this.changeTab} ScrollButtonComponent={TabButton} classes={{ scrollButtons: classes.scrollButtons }}>
             {this.tabs.map((t,i) => (<Tab key={i} label={t.listName} />))}
           </Tabs>
         </AppBar>

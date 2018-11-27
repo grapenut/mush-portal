@@ -260,11 +260,29 @@ class Taskbar extends React.Component {
     this.setState({ buttons });
   };
   
+  // wrapper that scrolls the output
+  scrollIfNeeded() {
+    window.client.output.scrollDown();
+  }
+
   pushTask = (task) => {
     const { taskbar } = this.state;
+    var scroll = false;
+    
+    if (taskbar.length < 1) {
+      if (window.client.output.nearBottom(window.client.scrollThreshold)) {
+        scroll = true;
+      }
+    }
+    
     task.count = 0;
     taskbar.push(task);
     this.setState({ taskbar });
+    
+    if (scroll) {
+      clearTimeout(this.scrollIfNeeded);
+      setTimeout(this.scrollIfNeeded, 1000);
+    }
   };
   
   popTask = (task) => {
@@ -450,43 +468,20 @@ class Taskbar extends React.Component {
     const { classes } = this.props;
     const { title, taskbar, open, buttons, historyAnchor,
             menuAnchor, uploadAnchor, helpAnchor, logAnchor } = this.state;
-    const { sidebarOpen, sidebarAnchor } = window.client.settings;
-
-    var rev = input && Boolean(historyAnchor) ? input.history.slice().reverse() : [];
+    const { sidebarOpen, sidebarAnchor, mobileAutoHide } = window.client.settings;
     
-    const renderTasks = taskbar.map((task,i) => (
-      <Tooltip key={i} title={task.headertitle.innerText}>
-        <Button key={task.id} classes={{ label: classes.tasklabel }} className={classes.taskbutton} aria-label="open-task" onClick={() => this.popTask(task)}>
-          <BadgeWrapper count={() => task.count}>
-            <Icon className={classes.taskicon}>{task.headerlogo.innerText}</Icon>
-            {!window.client.mobile && task.headertitle.innerText}
-          </BadgeWrapper>
-        </Button>
-      </Tooltip>
-    ));
-
-    const renderButtons = buttons.map((button,i) => (
-      <Tooltip key={i} title={button.title}>
-        <Button aria-label={button.ariaLabel} onClick={button.action}>
-          <BadgeIcon count={button.count}>
-            {button.icon}
-          </BadgeIcon>
-        </Button>
-      </Tooltip>
-    ));
+    var rev = input && Boolean(historyAnchor) ? input.history.slice().reverse() : [];
     
     return (
       <div className={classes.frame}>
         <AppBar className={classes.root} position="static" onClick={() => window.client.focus()}>
           <Toolbar disableGutters={!this.state.open}>
             {sidebarAnchor === "left" && (
-              <div className={classes.sectionMobile}>
-                <Tooltip title={sidebarOpen ? "Open sidebar." : "Close sidebar."}>
-                  <Button aria-label="open-left-sidebar" onClick={this.toggleSidebar}>
-                    {sidebarOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-                  </Button>
-                </Tooltip>
-              </div>
+              <Tooltip title={sidebarOpen ? "Open sidebar." : "Close sidebar."}>
+                <Button aria-label="open-left-sidebar" onClick={this.toggleSidebar}>
+                  {sidebarOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+                </Button>
+              </Tooltip>
             )}
             
             <Typography variant="h6" color="inherit" noWrap className={classes.title}>
@@ -495,9 +490,26 @@ class Taskbar extends React.Component {
             
             <div className={classes.sectionDesktop}>
               <div className={classes.flex}></div>
-              {renderTasks}
+              {taskbar.map((task,i) => (
+                <Tooltip key={i} title={task.headertitle.innerText}>
+                  <Button key={task.id} classes={{ label: classes.tasklabel }} className={classes.taskbutton} aria-label="open-task" onClick={() => this.popTask(task)}>
+                    <BadgeWrapper count={() => task.count}>
+                      <Icon className={classes.taskicon}>{task.headerlogo.innerText}</Icon>
+                      {!window.client.mobile && task.headertitle.innerText}
+                    </BadgeWrapper>
+                  </Button>
+                </Tooltip>
+              ))}
               <div className={classes.tasksep}></div>
-              {renderButtons}
+              {buttons.map((button,i) => (
+                <Tooltip key={i} title={button.title}>
+                  <Button aria-label={button.ariaLabel} onClick={button.action}>
+                    <BadgeIcon count={button.count}>
+                      {button.icon}
+                    </BadgeIcon>
+                  </Button>
+                </Tooltip>
+              ))}
             </div>
             
             <Tooltip title="Client utilities...">
@@ -507,13 +519,11 @@ class Taskbar extends React.Component {
             </Tooltip>
             
             {sidebarAnchor === "right" && (
-              <div className={classes.sectionMobile}>
-                <Tooltip title={sidebarOpen ? "Open sidebar." : "Close sidebar."}>
-                  <Button aria-label="open-right-sidebar" onClick={this.toggleSidebar}>
-                    {sidebarOpen ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-                  </Button>
-                </Tooltip>
-              </div>
+              <Tooltip title={sidebarOpen ? "Open sidebar." : "Close sidebar."}>
+                <Button aria-label="open-right-sidebar" onClick={this.toggleSidebar}>
+                  {sidebarOpen ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+                </Button>
+              </Tooltip>
             )}
             
             <SwipeableDrawer
@@ -632,44 +642,48 @@ class Taskbar extends React.Component {
           </Toolbar>
         </AppBar>
         
-        <div className={classes.sectionMobile}>
-          <AppBar position="relative">
-            <Tabs value={false} indicatorColor="primary" scrollable scrollButtons="on" ScrollButtonComponent={TabButton} classes={{ scrollButtons: classes.scrollButtons }}>
-              {buttons.length > 0 && buttons.map((button,i) => (
-                <Tooltip key={i} title={button.title}>
-                  <Tab key={i} classes={{ wrapper: classes.tasklabel }}
-                    aria-label={button.ariaLabel} 
-                    icon={(<BadgeIcon count={button.count}>{button.icon}</BadgeIcon>)}
-                    onClick={button.action}
-                  />
-                </Tooltip>
-              ))}
-            </Tabs>
-          </AppBar>
-        </div>
+        {(!mobileAutoHide || buttons.length > 0) && (
+          <div className={classes.sectionMobile}>
+            <AppBar position="relative">
+              <Tabs value={false} indicatorColor="primary" scrollable scrollButtons="on" ScrollButtonComponent={TabButton} classes={{ scrollButtons: classes.scrollButtons }}>
+                {buttons.length > 0 && buttons.map((button,i) => (
+                  <Tooltip key={i} title={button.title}>
+                    <Tab key={i} classes={{ wrapper: classes.tasklabel }}
+                      aria-label={button.ariaLabel} 
+                      icon={(<BadgeIcon count={button.count}>{button.icon}</BadgeIcon>)}
+                      onClick={button.action}
+                    />
+                  </Tooltip>
+                ))}
+              </Tabs>
+            </AppBar>
+          </div>
+        )}
         
-        <div className={classes.sectionMobile}>
-          <AppBar position="relative">
-            <Tabs value={false} indicatorColor="primary" scrollable scrollButtons="on" ScrollButtonComponent={TabButton} classes={{ scrollButtons: classes.scrollButtons }}>
-              {taskbar.length > 0 && taskbar.map((task,i) => (
-                <Tooltip key={i} title={task.headertitle.innerText}>
-                  <Tab key={i} classes={{ wrapper: classes.tasklabel }}
-                    aria-label="open-task"
-                    label={(
-                      <span>
-                        <BadgeWrapper count={() => task.count}>
-                          <Icon className={classes.taskicon}>{task.headerlogo.innerText}</Icon>
-                        </BadgeWrapper>
-                        {task.headertitle.innerText}
-                      </span>
-                    )}
-                    onClick={() => this.popTask(task)}
-                  />
-                </Tooltip>
-              ))}
-            </Tabs>
-          </AppBar>
-        </div>
+        {(!mobileAutoHide || taskbar.length > 0) && (
+          <div className={classes.sectionMobile}>
+            <AppBar position="relative">
+              <Tabs value={false} indicatorColor="primary" scrollable scrollButtons="on" ScrollButtonComponent={TabButton} classes={{ scrollButtons: classes.scrollButtons }}>
+                {taskbar.length > 0 && taskbar.map((task,i) => (
+                  <Tooltip key={i} title={task.headertitle.innerText}>
+                    <Tab key={i} classes={{ wrapper: classes.tasklabel }}
+                      aria-label="open-task"
+                      label={(
+                        <span>
+                          <BadgeWrapper count={() => task.count}>
+                            <Icon className={classes.taskicon}>{task.headerlogo.innerText}</Icon>
+                          </BadgeWrapper>
+                          {task.headertitle.innerText}
+                        </span>
+                      )}
+                      onClick={() => this.popTask(task)}
+                    />
+                  </Tooltip>
+                ))}
+              </Tabs>
+            </AppBar>
+          </div>
+        )}
       </div>
     );
   }

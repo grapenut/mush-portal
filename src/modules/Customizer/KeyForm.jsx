@@ -24,6 +24,17 @@ const styles = theme => ({
     justifyContent: "space-between",
     alignItems: "center",
   },
+  switchBase: {
+    [theme.breakpoints.down('sm')]: {
+      height: "24px",
+    },
+  },
+  inputBase: {
+    padding: 0.25*theme.spacing.unit,
+    [theme.breakpoints.up('md')]: {
+      padding: theme.spacing.unit,
+    },
+  },
 });
 
 
@@ -50,7 +61,7 @@ class KeyForm extends React.Component {
     return (
       <div className={classes.frame}>
         <span className={classes.flex}>
-          <TextField label="Key code" value={item.keycode ? item.keycode : ""} onChange={handleChange('keycode')} />
+          <TextField label="Key code" value={item.keycode ? item.keycode : ""} onChange={handleChange('keycode')} inputProps={{ classes: { input: classes.inputBase } }} />
         </span>
         <span className={classes.switchText}>
           <Typography>Ctrl</Typography>

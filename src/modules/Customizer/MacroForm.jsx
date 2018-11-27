@@ -13,16 +13,30 @@ import Switch from '@material-ui/core/Switch';
 
 const styles = theme => ({
   frame: {
-    display: "flex",
-    flexFlow: "row nowrap",
+    position: "relative",
+    width: "100%",
   },
-  flex: {
-    flex: 1,
+  row: {
+    width: "100%",
+    display: "flex",
+    flexFlow: "row wrap",
+    justifyContent: "space-between",
   },
   switchText: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  switchBase: {
+    [theme.breakpoints.down('sm')]: {
+      height: "24px",
+    },
+  },
+  inputBase: {
+    padding: 0.25*theme.spacing.unit,
+    [theme.breakpoints.up('md')]: {
+      padding: theme.spacing.unit,
+    },
   },
 });
 
@@ -49,12 +63,14 @@ class MacroForm extends React.Component {
     
     return (
       <div className={classes.frame}>
-        <TextField label="Matching pattern" className={classes.flex} value={item.pattern} onChange={handleChange('pattern')} />
-        <span className={classes.switchText}>
-          <Typography>Wildcard</Typography>
-          <Switch checked={item.regex} color="default" onChange={handleSwitch('regex')} />
-          <Typography>RegExp</Typography>
-        </span>
+        <TextField label="Matching pattern" fullWidth value={item.pattern} onChange={handleChange('pattern')} inputProps={{ classes: { input: classes.inputBase } }} />
+        <div className={classes.row}>
+          <span className={classes.switchText}>
+            <Typography>Wildcard</Typography>
+            <Switch checked={item.regex} color="default" onChange={handleSwitch('regex')} classes={{ switchBase: classes.switchBase }} />
+            <Typography>RegExp</Typography>
+          </span>
+        </div>
       </div>
     );
   }

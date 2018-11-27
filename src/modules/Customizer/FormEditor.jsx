@@ -30,25 +30,48 @@ const styles = theme => ({
     position: "absolute",
     height: "100%",
     width: "100%",
-    overflowX: "hidden",
-    overflowY: "auto",
+    overflow: "hidden",
   },
   form: {
+    position: "absolute",
+    display: "flex",
     height: "100%",
     width: "100%",
-    display: "flex",
     flexFlow: "column nowrap", 
+  },
+  container: {
+    flex: 1,
+    display: "flex",
+    flexFlow: "column nowrap",
+  },
+  name: {
+    width: "100%",
+    display: "flex",
+    flexFlow: "row wrap",
+  },
+  flow: {
+    overflowX: "hidden",
+    overflowY: "auto",
   },
   top: {
     display: "flex",
     flexFlow: "row wrap",
     width: "100%",
+    overflowX: "hidden",
+    overflowY: "auto",
+    [theme.breakpoints.down('sm')]: {
+      flex: 1,
+    },
+  },
+  editor: {
+    flex: 1,
+    [theme.breakpoints.up('md')]: {
+      margin: theme.spacing.unit+"px 0",
+    },
   },
   bottom: {
-    position: "relative",
     display: "flex",
     flexFlow: "row nowrap",
-    bottom: 0,
     width: "100%",
   },
   middle: {
@@ -69,12 +92,6 @@ const styles = theme => ({
     flex: 1,
     minWidth: "10em",
   },
-  editor: {
-    flex: 1,
-    minWidth: "10em",
-    minHeight: "4em",
-    marginTop: theme.spacing.unit,
-  },
   block: {
     display: "flex",
     "flex-direction": "column",
@@ -85,10 +102,27 @@ const styles = theme => ({
       display: 'none',
     },
   },
+  desktopOnly: {
+    display: 'none',
+    [theme.breakpoints.up('md')]: {
+      display: 'flex',
+    },
+  },
   switchText: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
+  },
+  switchBase: {
+    [theme.breakpoints.down('sm')]: {
+      height: "24px",
+    },
+  },
+  inputBase: {
+    padding: 0.25*theme.spacing.unit,
+    [theme.breakpoints.up('md')]: {
+      padding: theme.spacing.unit,
+    },
   },
 });
 
@@ -345,40 +379,48 @@ class FormEditor extends React.Component {
     return (
       <div className={classes.frame}>
         <form onSubmit={this.onSubmit} className={classes.form}>
-        
-          <div className={classes.top}>
-            <TextField label="Name" className={classes.flex} value={item.name} onChange={this.handleChange('name')} disabled={immutable} />
-            <span className={classes.switchText}>
-              <Typography>{ltype}</Typography>
-              <Switch checked={mode}
-                color="default"
-                onChange={this.handleSwitch('javascript')}
+          <div className={classes.container}>
+            <div className={classes.top}>
+              <div className={classes.name}>
+                <TextField label="Name" className={classes.flex} value={item.name} onChange={this.handleChange('name')} disabled={immutable} InputProps={{ classes: { input: classes.inputBase }, }} />
+                <span className={classes.switchText}>
+                  <Typography>{ltype}</Typography>
+                  <Switch checked={mode}
+                    classes={{ switchBase: classes.switchBase }}
+                    color="default"
+                    onChange={this.handleSwitch('javascript')}
+                  />
+                  <Typography>{rtype}</Typography>
+                </span>
+              </div>
+              {Form && (<Form item={item} handleNumber={this.handleNumber} handleChange={this.handleChange} handleSwitch={this.handleSwitch} />)}
+            </div>
+            
+            <div className={classes.editor}>
+              <AceEditor
+                width="100%"
+                height="100%"
+                minHeight="4em"
+                minWidth="10em"
+                className={classes.editor}
+                ref={this.editor}
+                mode={mode ? rtype.toLowerCase() : ltype.toLowerCase()}
+                theme="tomorrow_night_bright"
+                value={item.text}
+                onChange={this.changeText}
+                wrapEnabled={true}
+                highlightActiveLine={false}
+                editorProps={{ $blockScrolling: Infinity }}
               />
-              <Typography>{rtype}</Typography>
-            </span>
+            </div>
           </div>
-          
-          {Form && (<Form className={classes.top} item={item} handleNumber={this.handleNumber} handleChange={this.handleChange} handleSwitch={this.handleSwitch} />)}
-          
-          <AceEditor
-            className={classes.editor}
-            ref={this.editor}
-            mode={mode ? rtype.toLowerCase() : ltype.toLowerCase()}
-            width="100%"
-            theme="tomorrow_night_bright"
-            value={item.text}
-            onChange={this.changeText}
-            wrapEnabled={true}
-            highlightActiveLine={false}
-            editorProps={{ $blockScrolling: Infinity }}
-          />
           
           <div className={classes.bottom}>
             <Button className={classes.mobileOnly} classes={{ label: classes.block }} onClick={() => window.client.react.customizer.setState({ edit: false, selected: -1 })}>
-              <CloseIcon /> Close
+              <CloseIcon /><span className={classes.desktopOnly}>Close</span>
             </Button>
             <Button onClick={this.onDelete} classes={{ label: classes.block }} disabled={selected === -1}>
-              <DeleteIcon /> Delete
+              <DeleteIcon /><span className={classes.desktopOnly}>Delete</span>
             </Button>
             <span className={classes.middle}>
               <Typography className={classes.align} color={error ? "error" : "default"}>
@@ -386,11 +428,13 @@ class FormEditor extends React.Component {
               </Typography>
             </span>
             <Button onClick={this.onSubmit} classes={{ label: classes.block }} disabled={immutable && selected === -1}>
-              <SaveIcon /> Save
+              <SaveIcon /><span className={classes.desktopOnly}>Save</span>
             </Button>
             <Button onClick={this.onReset} classes={{ label: classes.block }} disabled={immutable && selected === -1}>
               {immutable && item.text === "" ? (<CloudDownloadIcon />) : (<UndoIcon />)}
-              {immutable && item.text === "" ? "Source" : "Reset"}
+              <span className={classes.desktopOnly}>
+                {immutable && item.text === "" ? "Source" : "Reset"}
+              </span>
             </Button>
           </div>
           

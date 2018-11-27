@@ -53,13 +53,15 @@ class Client {
   constructor() {
     // client settings
     this.defaultSettings = {
-      // display settings
+      // font
       fontFamily: "Courier New",
       fontSize: 10,
+      // default text colors
       ansiFG: 'ansi-37',
       ansiBG: 'ansi-40',
-      wrapWidth: 100,
       invertHighlight: false,
+      // terminal settings
+      wrapWidth: 100,
       // upload editor
       decompileEditor: true,
       decompileKey: 'FugueEdit > ',
@@ -82,6 +84,8 @@ class Client {
       // history settings
       historySize: 1000,
       historySpawnSize: 100,
+      // mobile settings
+      mobileAutoHide: false,
     };
     this.settings = null;
     

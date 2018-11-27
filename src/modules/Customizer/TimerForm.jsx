@@ -24,6 +24,17 @@ const styles = theme => ({
     justifyContent: "space-between",
     alignItems: "center",
   },
+  switchBase: {
+    [theme.breakpoints.down('sm')]: {
+      height: "24px",
+    },
+  },
+  inputBase: {
+    padding: 0.25*theme.spacing.unit,
+    [theme.breakpoints.up('md')]: {
+      padding: theme.spacing.unit,
+    },
+  },
 });
 
 
@@ -49,12 +60,12 @@ class TimerForm extends React.Component {
     
     return (
       <div className={classes.frame}>
-        <TextField type="number" label="Delay seconds" className={classes.flex} value={String(item.delay)} onChange={handleNumber('delay')} />
+        <TextField type="number" label="Delay seconds" className={classes.flex} value={String(item.delay)} onChange={handleNumber('delay')} inputProps={{ classes: { input: classes.inputBase } }} />
         <span className={classes.switchText}>
           <Typography>Repeat this timer?</Typography>
-          <Switch checked={item.repeat} onChange={handleSwitch('repeat')} />
+          <Switch checked={item.repeat} onChange={handleSwitch('repeat')} classes={{ switchBase: classes.switchBase }} />
         </span>
-        <TextField type="number" disabled={!item.repeat} label="Number of times" className={classes.flex} value={String(item.times)} onChange={handleNumber('times')} />
+        <TextField type="number" disabled={!item.repeat} label="Number of times" className={classes.flex} value={String(item.times)} onChange={handleNumber('times')} inputProps={{ classes: { input: classes.inputBase } }} />
       </div>
     );
   }
