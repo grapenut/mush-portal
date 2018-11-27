@@ -78,6 +78,7 @@ class Client {
       debugEvents: false,
       debugActions: false,
       // default connection settings, can override in public/local.js
+      allowServerChange: true,
       serverAddress: "node.grapenut.org",
       serverSSL: window.location.protocol === "https:",
       serverPort: window.location.protocol === "https:" ? 2001 : 2000,
@@ -85,7 +86,7 @@ class Client {
       historySize: 1000,
       historySpawnSize: 100,
       // mobile settings
-      mobileAutoHide: false,
+      mobileAutoHide: true,
     };
     this.settings = null;
     

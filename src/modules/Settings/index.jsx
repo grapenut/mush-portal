@@ -178,7 +178,7 @@ class Settings extends React.Component {
     const { classes, closeDrawer } = this.props;
     const { expanded, debugEvents, decompileEditor, decompileKey, ansiFG, ansiBG, wrapWidth,
       invertHighlight, debugActions, serverAddress, serverPort, serverSSL,
-      historySize, historySpawnSize, mobileAutoHide, hiddenChangeServer,
+      historySize, historySpawnSize, mobileAutoHide, allowServerChange,
       sidebarOpen, sidebarAnchor, sidebarAlwaysShow, sidebarShowPlayers, fontFamily, fontSize,
       sidebarShowThings, sidebarShowExits, sidebarShowCompass, sidebarWidth } = this.state;
     const isMobile = window.client.mobile;
@@ -212,13 +212,13 @@ class Settings extends React.Component {
           <ListItemIcon>
             <PublicIcon />
           </ListItemIcon>
-          <TextField label="Server address" value={serverAddress} onChange={this.handleValue('serverAddress')} />
+          <TextField label="Server address" disabled={!allowServerChange} value={serverAddress} onChange={this.handleValue('serverAddress')} />
         </ListItem>
         <ListItem dense>
           <ListItemIcon>
             <SettingsEthernetIcon />
           </ListItemIcon>
-          <TextField label="Server port" value={serverPort} onChange={this.handleValue('serverPort')} type="number" />
+          <TextField label="Server port" disabled={!allowServerChange} value={serverPort} onChange={this.handleValue('serverPort')} type="number" />
         </ListItem>
         <ListItem dense>
           <ListItemIcon>
@@ -226,7 +226,7 @@ class Settings extends React.Component {
           </ListItemIcon>
           <ListItemText className={classes.switchText} primary="Encrypt connection with SSL?" />
           <ListItemSecondaryAction>
-            <Switch checked={serverSSL} value="serverSSL" onChange={this.handleSwitch('serverSSL')} />
+            <Switch checked={serverSSL} disabled={!allowServerChange} value="serverSSL" onChange={this.handleSwitch('serverSSL')} />
           </ListItemSecondaryAction>
         </ListItem>
       </List>
