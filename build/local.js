@@ -1,8 +1,48 @@
 /////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////
+// connection settings
+/////////////////////////////////////////////////////////////////////
+
+// allow users to override the default address
+// www.mysite.com/app?address:port
+var urlAddress = window.location.search.substring(1);
+
+// check for HTTPS and switch to SSL
+var urlSSL = window.location.protocol === "https:";
+
+// if true, connect using SSL. make sure the port is updated as well.
+client.defaultSettings.serverSSL = urlSSL;
+
+// the default server hostname
+client.defaultSettings.serverAddress = "node.grapenut.org";
+
+// the default server port, accounting for SSL
+client.defaultSettings.serverPort = urlSSL ? '2001' : '2000';
+
+// reload user settings
+client.loadSettings();
+
+// allow the server connection info to be changed in settings?
+client.settings.allowServerChange = true;
+
+// override the saved address with an address from the URL
+// www.mysite.com/app?address:port
+if (urlAddress) {
+  client.settings.serverSSL = urlSSL;
+  client.settings.serverAddress = urlAddress.split(":")[0];
+  client.settings.serverPort = urlAddress.split(":")[1];
+}
+
+// initiate the connection, now that we have established the server info
+client.connect();
+
+
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
 // custom color configuration
 /////////////////////////////////////////////////////////////////////
-// override the default emulator color settings, unless user-defined
+
+// invert the default colors and highlighting, for black text on white background
 //if (!window.localStorage.hasOwnProperty("settings_invertHighlight")) {
 //  client.changeSetting('invertHighlight', true);
 //}
@@ -18,31 +58,6 @@ client.theme = client.createTheme({
   },
 });
 client.react.portal.updateTheme(client.theme);
-
-
-/////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////
-// connection settings
-/////////////////////////////////////////////////////////////////////
-
-// server address, port and protocol
-// you can override the default address
-// www.mysite.com/app?address:port
-var urlAddress = window.location.search.substring(1);
-var urlSSL = window.location.protocol === "https:";
-
-client.defaultSettings.serverSSL = urlSSL;
-client.defaultSettings.serverAddress = "node.grapenut.org";
-client.defaultSettings.serverPort = urlSSL ? '2001' : '2000';
-client.loadSettings();
-
-if (urlAddress) {
-  client.settings.serverSSL = urlSSL;
-  client.settings.serverAddress = urlAddress.split(":")[0];
-  client.settings.serverPort = urlAddress.split(":")[1];
-}
-
-client.connect();
 
 
 /////////////////////////////////////////////////////////////////////
