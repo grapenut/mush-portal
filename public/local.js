@@ -268,6 +268,7 @@ client.events.on('unreadbb', function(obj) {
 
 // update the status bar after logging in
 client.events.on('login', function(obj) {
+  client.react.login.closeLogin();
   client.loggedIn = true;
   client.react.statusbar && client.react.statusbar.setStatus("Connected to "+obj.login+".");
 });

@@ -134,13 +134,13 @@ class FormEditor extends React.Component {
   constructor(props) {
     super(props);
     
-    const { list, listName, selected } = props;
+    const { list, listName, selected, template } = props;
 
-    const template = window.client.actionTemplates[listName];
+    const empty = window.client.templates.empty[listName];
     
     this.state = {
       list: list,
-      item: Object.assign({}, list && selected > -1 ? list[selected] : template),
+      item: Object.assign({}, list && selected > -1 ? list[selected] : (template || empty)),
       selected: selected,
       status: "",
       error: false,
@@ -163,23 +163,31 @@ class FormEditor extends React.Component {
   }
 
   static getDerivedStateFromProps(props, state) {
-    const { list, listName, selected } = props;
+    const { list, listName, selected, template } = props;
     
-    const template = window.client.actionTemplates[listName];
+    const empty = window.client.templates.empty[listName];
     
     var newState = {};
     
     if (list !== state.list) {
       newState.list = list;
       newState.selected = selected;
-      newState.item = Object.assign({}, list && selected > -1 ? list[selected] : template);
+      newState.item = Object.assign({}, list && selected > -1 ? list[selected] : (template || empty));
       newState.needsToResize = true;
       return newState;
     }
     
     if (selected !== state.selected) {
       newState.selected = selected;
-      newState.item = Object.assign({}, list && selected > -1 ? list[selected] : template);
+      newState.item = Object.assign({}, list && selected > -1 ? list[selected] : (template || empty));
+      newState.needsToResize = true;
+      return newState;
+    }
+    
+    if (template !== state.template) {
+      newState.template = template;
+      newState.item = Object.assign({}, list && selected > -1 ? list[selected] : (template || empty));
+      newState.needsToResize = true;
       return newState;
     }
     
@@ -187,7 +195,7 @@ class FormEditor extends React.Component {
   }
   
   defaultText() {
-    const { list, listName, selected, immutable } = this.props;
+    const { list, listName, selected, immutable, template } = this.props;
     const { item } = this.state;
     const name = item.name;
     
@@ -212,8 +220,8 @@ class FormEditor extends React.Component {
     };
     req.open("GET", "./" + name);
     req.send();
-
-    return window.client.actionTemplates[listName].text.slice();
+    
+    return window.client.templates.empty[listName].text.slice();
   }
 
   setStatus = (error, status) => {
@@ -309,7 +317,7 @@ class FormEditor extends React.Component {
     if (window.confirm("Do you really want to delete that?") && list && selected > -1) {
       if (immutable) {
         let name = list[selected].name;
-        list[selected] = Object.assign({}, client.actionTemplates[listName]);
+        list[selected] = Object.assign({}, client.templates.empty[listName]);
         list[selected].name = name;
         this.setState({ item: Object.assign({}, list[selected]) });
       } else {
@@ -328,25 +336,25 @@ class FormEditor extends React.Component {
   };
   
   onReset = () => {
-    const { list, listName, selected, immutable } = this.props;
+    const { list, listName, selected, immutable, template } = this.props;
     const { item } = this.state;
-    var template = Object.assign({}, window.client.actionTemplates[listName]);
+    var empty = Object.assign({}, window.client.templates.empty[listName]);
     
     if (list && selected > -1) {
       if (immutable) {
-        template.name = list[selected].name;
+        empty.name = list[selected].name;
         if (item.text === "") {
-          template.text = this.defaultText();
+          empty.text = this.defaultText();
         } else {
-          template.text = list[selected].text;
+          empty.text = list[selected].text;
         }
       } else {
-        template = list[selected];
+        empty = list[selected];
       }
     }
     
     this.setState({
-      item: Object.assign({}, template),
+      item: Object.assign({}, template || empty),
     });
     
     this.setStatus(false, "Reset.");
@@ -357,9 +365,9 @@ class FormEditor extends React.Component {
       this.onResize();
     }
   }
-
+  
   render() {
-    const { classes, selected, Form, immutable } = this.props;
+    const { classes, selected, Form, immutable, template } = this.props;
     const { item, error, status } = this.state;
     
     var ltype = "MushCode";
@@ -453,6 +461,7 @@ FormEditor.propTypes = {
   selected: PropTypes.number.isRequired,
   Form: PropTypes.func,
   immutable: PropTypes.bool,
+  template: PropTypes.object,
 };
 
 export default withStyles(styles, { withTheme: true })(FormEditor);

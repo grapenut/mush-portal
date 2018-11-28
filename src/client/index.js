@@ -20,6 +20,7 @@ import Connection from './connection';
 import Emulator from './emulator';
 import UserInput from './userinput';
 import JSONAPI from './jsonapi';
+import Templates from './templates';
 
 import 'jspanel4/dist/jspanel.min.css';
 
@@ -99,51 +100,9 @@ class Client {
       "Customizer": Customizer,
       "Spawn": Spawn,
     };
-
-    // triggers, timers, macros, and keybindings
-    this.actionTemplates = {
-      triggers: {
-        name: "",
-        text: "",
-        javascript: false,
-        pattern: "",
-        regex: false,
-        suppress: false,
-      },
-      timers: {
-        name: "",
-        text: "",
-        javascript: false,
-        delay: 0,
-        repeat: false,
-        times: 0,
-      },
-      macros: {
-        name: "",
-        text: "",
-        javascript: false,
-        pattern: "",
-        regex: false,
-      },
-      keys: {
-        name: "",
-        text: "",
-        javascript: false,
-        keycode: null,
-        ctrl: false,
-        alt: false,
-        shift: false,
-      },
-      css: {
-        name: "",
-        text: "",
-      },
-      scripts: {
-        name: "",
-        text: "// Insert JavaScript below.\n",
-      },
-    };
-        
+    
+    this.templates = new Templates();
+    
     this.triggers = [];
     this.timers = [];
     this.macros = [];
@@ -159,7 +118,7 @@ class Client {
     this.loadCSS();
     this.loadScripts();
     
-    // must come after client.css definition
+    // must come after client .css definitions
     this.loadSettings();
     
     // Client colors and theme
@@ -547,7 +506,7 @@ class Client {
             // there is no override, so relink inverse.css
             this.loadStyle('./inverse.css');
           } else {
-            // there is an override, use update it
+            // there is an override, update it
             this.updateCSS(css);
           }
         }
@@ -979,6 +938,8 @@ class Client {
       // handle text triggers
       let suppress = false;
       client.triggers.forEach((trigger, i) => {
+        if (trigger.disabled) return;
+        
         let re = client.createPattern(trigger.regex, trigger.pattern);
         let args = text.match(re);
         
@@ -1100,6 +1061,8 @@ class Client {
   sendMacro(cmds) {
     let matched = false;
     this.macros.forEach((m) => {
+      if (m.disabled) return;
+      
       let re = this.createPattern(m.regex, m.pattern);
       
       cmds.split('\n').forEach((cmd) => {

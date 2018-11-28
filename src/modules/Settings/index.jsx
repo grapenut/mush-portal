@@ -511,7 +511,7 @@ class Settings extends React.Component {
             ) : ( <span>{sidebarDisplay}</span> )}
             
             {isMobile ? (
-              <ExpansionPanel disabled={!sidebarOpen} className={classes.panel} expanded={expanded === 'sidebarContent'} onChange={this.handleExpand('sidebarContent')}>
+              <ExpansionPanel className={classes.panel} expanded={expanded === 'sidebarContent'} onChange={this.handleExpand('sidebarContent')}>
                 <ExpansionPanelSummary classes={{ root: classes.noPadding }} expandIcon={<ExpandMoreIcon />}>
                   <Typography className={classes.summaryText}>Sidebar Content</Typography>
                 </ExpansionPanelSummary>

@@ -50,11 +50,9 @@ class Input extends React.Component {
     const { classes, ansiFG, ansiBG } = this.props;
     const { fontFamily, fontSize } = window.client.settings;
     
-    const size = 1.5*fontSize;
-
     const font = {
       fontFamily: "'" + fontFamily + "', monospace",
-      fontSize: (window.client.mobile ? size/2 : size) + "pt",
+      fontSize: (window.client.mobile ? 16 : fontSize) + "pt",
     };
     
     return (

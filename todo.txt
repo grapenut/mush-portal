@@ -9,10 +9,6 @@ IOS Safari
 TODO
 ------------------
 
-SavedTemplates
-  Saved versions of actions that can be easily cloned.
-  Channel spawns could use these directly with a settings switch
-
 Customizer
   Edit taskbar buttons using customizer!
 
@@ -95,6 +91,8 @@ History Buffer
   Add configurable buffer sizes to Settings
   Buffers output for main terminal and spawns
 
+SavedTemplates
+  Saved versions of actions that can be easily cloned.
 
 
 

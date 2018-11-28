@@ -10,12 +10,17 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import Popover from '@material-ui/core/Popover';
 import IconButton from '@material-ui/core/IconButton';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import Switch from '@material-ui/core/Switch';
 
+import FileCopyIcon from '@material-ui/icons/FileCopy';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
@@ -103,6 +108,11 @@ const styles = theme => ({
       alignSelf: "center",
     }
   },
+  switchBase: {
+    [theme.breakpoints.down('sm')]: {
+      height: "24px",
+    },
+  },
 });
 
 function TabButton(props) {
@@ -176,17 +186,45 @@ class Customizer extends React.Component {
       tab: 0,
       edit: false,
       selected: -1,
+      menuAnchor: null,
+      template: null,
       helpText: null,
     };
   }
 
   changeTab = (event, tab) => {
-    this.setState({ tab, selected: -1, edit: false });
+    this.setState({ tab, selected: -1, edit: false, template: null });
   };
   
   onSelect = (key) => (event) => {
-    this.setState({ selected: key });
-  }; 
+    this.setState({ selected: key, template: null });
+  };
+  
+  showTemplates = event => {
+    this.setState({ menuAnchor: event.currentTarget });
+  };
+  
+  hideTemplates = () => {
+    this.setState({ menuAnchor: null });
+  };
+  
+  chooseTemplate = template => () => {
+    this.setState({ template, edit: true, selected: -1 });
+  };
+  
+  handleSwitch = (item) => (e) => {
+    const tab = this.tabs[this.state.tab];
+    const css = item.name.endsWith('.css');
+    
+    item.disabled = !e.target.checked;
+    this.forceUpdate();
+    
+    if (css) {
+      window.client.saveCSS();
+    } else {
+      window.client.saveLocalStorage(tab.list, tab.listName);
+    }
+  };
   
   componentDidMount() {
     window.client.react.customizer = this;
@@ -202,8 +240,11 @@ class Customizer extends React.Component {
   
   render() {
     const { classes, panel } = this.props;
-    const { selected, edit, helpText } = this.state;
+    const { selected, edit, helpText, menuAnchor, template } = this.state;
+    
     const tab = this.tabs[this.state.tab];
+    const smallName = tab.listName.toLowerCase();
+    const templates = window.client.templates.saved[smallName];
     
     return (
       <div className={classes.frame}>
@@ -221,17 +262,33 @@ class Customizer extends React.Component {
                     <ListItem key={i} dense button divider selected={selected === i} onClick={this.onSelect(i)} className={i % 2 === 0 ? classes.even : classes.odd}>
                       <ListItemIcon className={classes.listNum}><span>{i+1}</span></ListItemIcon>
                       <ListItemText className={classes.listText} primary={item.name} />
+                      {!tab.immutable && (
+                        <ListItemSecondaryAction>
+                          <Switch checked={!item.disabled}
+                            classes={{ switchBase: classes.switchBase }}
+                            onChange={this.handleSwitch(item)}
+                          />
+                        </ListItemSecondaryAction>
+                      )}
                     </ListItem>
                   ))}
                   {tab.list.length < 1 && (
                     <ListItem key={-1} dense className={classes.even}>
-                      <ListItemText className={classes.listText} secondary={"No "+tab.listName.toLowerCase()} />
+                      <ListItemText className={classes.listText} secondary={"No "+smallName} />
                     </ListItem>
                   )}
                 </List>
               </div>
+              
+              {templates && templates.length > 0 && (
+                <Button aria-owns={menuAnchor ? 'template.menu' : null} aria-label="open-templates" aria-haspopup="true" classes={{ label: classes.block }} onClick={this.showTemplates}>
+                  <FileCopyIcon />
+                  Templates
+                </Button>
+              )}
+              
               {!tab.immutable && (
-                <Button classes={{ label: classes.block }} onClick={() => this.setState({ edit: true, selected: -1 })}>
+                <Button classes={{ label: classes.block }} onClick={() => this.setState({ edit: true, selected: -1, template: null })}>
                   <AddCircleIcon />
                   New {tab.listName.slice(0,-1)}
                 </Button>
@@ -240,10 +297,20 @@ class Customizer extends React.Component {
           </div>
           <div className={classes.right}>
             <span className={edit || selected > -1 ? classes.mobileOpen : classes.mobileClose}>
-              <FormEditor list={tab.list} listName={tab.listName.toLowerCase()} selected={selected} panel={panel} Form={tab.Form} immutable={tab.immutable} />
+              <FormEditor list={tab.list} listName={smallName} template={template} selected={selected} panel={panel} Form={tab.Form} immutable={tab.immutable} />
             </span>
           </div>
         </Typography>
+        
+        <Menu disableEnforceFocus id="template.menu" anchorEl={menuAnchor} open={Boolean(menuAnchor)} onClick={this.hideTemplates} onClose={this.hideTemplates}>
+          {templates && templates.map((tmpl, i) => (
+            <MenuItem onClick={this.chooseTemplate(tmpl)}>
+              {tmpl.name}
+            </MenuItem>
+          ))}
+        </Menu>
+        
+        
         <Popover anchorEl={helpText} open={Boolean(helpText)} onClose={() => this.setState({ helpText: null })}>
           <Typography>
             This is where help text goes.
