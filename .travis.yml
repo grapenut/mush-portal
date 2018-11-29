@@ -13,6 +13,6 @@ after_success:
   - git config --global user.name "Travis CI"
   - git add build
   - git commit -m "Travis build: $TRAVIS_BUILD_NUMBER [skip travis]"
-  - git remote add secret "https://${SECRET_KEY}@github.com/grapenut/mush-portal.git" > /dev/null 2>&1
-  - git push --set-upstream secret master
+  - git remote add origin "https://${SECRET_KEY}@github.com/grapenut/mush-portal.git" > /dev/null 2>&1
+  - git push origin master
 
