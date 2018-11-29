@@ -13,5 +13,7 @@ after_success:
   - git config --global user.name "Travis CI"
   - git add build
   - git commit -m 'Automatic build [skip travis]'
+  - git remote -v
   - git remote add secret "https://${GH_TOKEN}@github.com/grapenut/mush-portal.git" > /dev/null 2>&1
-  - git push secret master
+  - git status
+  - git push --set-upstream secret master
