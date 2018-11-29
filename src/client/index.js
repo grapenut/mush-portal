@@ -90,6 +90,7 @@ class Client {
       sidebarShowThings: true,
       sidebarShowExits: true,
       sidebarShowCompass: true,
+      sidebarLargeCompass: true,
       // debugging
       debugEvents: false,
       debugActions: false,

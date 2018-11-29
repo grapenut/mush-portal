@@ -14,7 +14,7 @@ import SvgIcon from '@material-ui/core/SvgIcon';
 import Typography from '@material-ui/core/Typography';
 import Tooltip from '@material-ui/core/Tooltip';
 
-//import RemoveRedEyeIcon from '@material-ui/icons/RemoveRedEye';
+import RemoveRedEyeIcon from '@material-ui/icons/RemoveRedEye';
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward';
@@ -38,6 +38,22 @@ const COMPASS = {
   IN: (<ExitToAppIcon />),
   OUT: (<LaunchIcon />),
 };
+
+const EXTRA = {
+  NORTH: false,
+  SOUTH: false,
+  WEST: false,
+  EAST: false,
+  SOUTHEAST: false,
+  SOUTHWEST: false,
+  NORTHEAST: false,
+  NORTHWEST: false,
+  UP: true,
+  DOWN: true,
+  IN: true,
+  OUT: true,
+};
+
 
 const styles = theme => ({
   frame: {
@@ -120,7 +136,7 @@ class Sidebar extends React.Component {
   }
   
   parseExits(exits) {
-    const { sidebarShowCompass } = this.props;
+    const { sidebarShowCompass, sidebarLargeCompass } = this.props;
     
     this.ucExits = [];
     this.customExits = [];
@@ -139,14 +155,18 @@ class Sidebar extends React.Component {
     for (let i = 0; i < exits.length; i++) {
       let fullexit = this.ucExits[i];
       let match = -1;
+      let skip = false;
 
       fullexit.split(";").forEach((exit, n) => {
-        if (match === -1) {
+        if (!skip && match === -1) {
           match = keys.indexOf(exit);
+          if (!sidebarLargeCompass && match !== -1 && EXTRA[exit]) {
+            skip = true;
+          }
         }
       });
 
-      if (match === -1) {
+      if (skip || match === -1) {
         this.customExits.push(exits[i]);
       } else {
         this.useCompass = true;
@@ -198,6 +218,20 @@ class Sidebar extends React.Component {
         <span>
           <IconButton classes={sidebarDense ? { root: classes.smallIcons } : null} onClick={this.go(exit)} disabled={disabled}>
             {COMPASS[uc]}
+          </IconButton>
+        </span>
+      </Tooltip>
+    );    
+  };
+
+  buildLook = () => {
+    const { classes, sidebarDense } = this.props;
+    
+    return (
+      <Tooltip title="Update contents.">
+        <span>
+          <IconButton classes={sidebarDense ? { root: classes.smallIcons } : null} onClick={this.action}>
+            <RemoveRedEyeIcon />
           </IconButton>
         </span>
       </Tooltip>
@@ -260,10 +294,20 @@ class Sidebar extends React.Component {
   }
   
   render() {
-    const { classes, sidebarDense, sidebarShowPlayers,
+    const { classes, sidebarDense, sidebarShowPlayers, sidebarLargeCompass,
       sidebarShowThings, sidebarShowExits, sidebarShowCompass } = this.props;
     const { exits, things, players } = this.state;
     const customExits = this.customExits;
+
+    var width;
+    var numicons = sidebarShowCompass ? (sidebarLargeCompass ? 4 : 3) : 0;
+    if (sidebarDense) {
+      width = (24 + this.props.theme.spacing.unit) * numicons;
+    } else {
+      width = 48 * numicons;
+    }
+    width = Math.min(192, Math.max(96, width)) + "px";
+    
     var exitWidget;
     
     if (sidebarShowExits) {
@@ -293,23 +337,23 @@ class Sidebar extends React.Component {
             {this.buildExit("Northwest")}
             {this.buildExit("North")}
             {this.buildExit("Northeast")}
-            {this.buildExit("Up")}
+            {sidebarLargeCompass && this.buildExit("Up")}
             <br />
             {this.buildExit("West")}
-            {this.buildExit("In")}
+            {sidebarLargeCompass ? this.buildExit("In") : this.buildLook()}
             {this.buildExit("East")}
-            {this.buildExit("Out")}
+            {sidebarLargeCompass && this.buildExit("Out")}
             <br />
             {this.buildExit("Southwest")}
             {this.buildExit("South")}
             {this.buildExit("Southeast")}
-            {this.buildExit("Down")}
+            {sidebarLargeCompass && this.buildExit("Down")}
           </div>
         );
       }
 
     return (
-      <div className={classes.frame} style={{ width: sidebarDense ? "128px" : "192px" }} onClick={() => window.client.focus()}>
+      <div className={classes.frame} style={{ width: width }} onClick={() => window.client.focus()}>
         {((sidebarShowPlayers && players.length > 0) || (sidebarShowThings && things.length > 0)) && (
           <div className={classes.contents}>
             <span className={classes.overflow}>
@@ -358,6 +402,7 @@ Sidebar.propTypes = {
   sidebarShowExits: PropTypes.bool.isRequired,
   sidebarShowCompass: PropTypes.bool.isRequired,
   sidebarDense: PropTypes.bool.isRequired,
+  sidebarLargeCompass: PropTypes.bool.isRequired,
 };
 
 export default withStyles(styles, { withTheme: true })(Sidebar);

@@ -177,7 +177,7 @@ class Settings extends React.Component {
   render() {
     const { classes, closeDrawer } = this.props;
     const { expanded, debugEvents, decompileEditor, decompileKey, ansiFG, ansiBG, wrapWidth,
-      invertHighlight, debugActions, serverAddress, serverPort, serverSSL,
+      invertHighlight, debugActions, serverAddress, serverPort, serverSSL, sidebarLargeCompass,
       historySize, historySpawnSize, mobileHideTaskbar, mobileHideStatusbar, allowServerChange,
       sidebarOpen, sidebarAnchor, sidebarAlwaysShow, sidebarShowPlayers, fontFamily, fontSize,
       sidebarShowThings, sidebarShowExits, sidebarShowCompass, sidebarDense } = this.state;
@@ -414,6 +414,16 @@ class Settings extends React.Component {
           <ListItemText className={classes.switchText} primary="Show compass?" />
           <ListItemSecondaryAction>
             <Switch disabled={!sidebarOpen || !sidebarShowExits} checked={sidebarShowCompass} value="sidebarShowCompass" onChange={this.handleSwitch('sidebarShowCompass')} />
+          </ListItemSecondaryAction>
+        </ListItem>
+        
+        <ListItem dense disabled={!sidebarOpen || !sidebarShowExits || !sidebarShowCompass}>
+          <ListItemIcon>
+            <ExploreIcon />
+          </ListItemIcon>
+          <ListItemText className={classes.switchText} primary="Show in, out, up, & down?" />
+          <ListItemSecondaryAction>
+            <Switch disabled={!sidebarOpen || !sidebarShowExits || !sidebarShowCompass} checked={sidebarLargeCompass} value="sidebarLargeCompass" onChange={this.handleSwitch('sidebarLargeCompass')} />
           </ListItemSecondaryAction>
         </ListItem>
       </List>

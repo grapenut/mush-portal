@@ -1,10 +1,6 @@
 BUGS
 ------------------
-Sidebar
-  Contents overflow and push out exits.
-
-IOS Safari
-  Debug why Javascript actions aren't working.
+  None (really I double checked.)
 
 TODO
 ------------------

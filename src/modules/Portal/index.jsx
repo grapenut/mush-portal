@@ -87,7 +87,8 @@ class Portal extends React.Component {
     const { theme } = this.state;
     const { sidebarOpen, sidebarAnchor, ansiFG, ansiBG, wrapWidth,
       sidebarAlwaysShow, sidebarShowExits, sidebarShowPlayers,
-      sidebarShowThings, sidebarShowCompass, sidebarDense } = window.client.settings;
+      sidebarShowThings, sidebarShowCompass, sidebarDense,
+      sidebarLargeCompass } = window.client.settings;
       
     var left = sidebarOpen && sidebarAnchor === "left";
     var right = sidebarOpen && sidebarAnchor === "right";
@@ -98,7 +99,7 @@ class Portal extends React.Component {
       window.client.container = this.middle.current;
     }
     
-    var sidebar = (<Sidebar sidebarShowCompass={sidebarShowCompass} sidebarDense={sidebarDense} sidebarShowExits={sidebarShowExits} sidebarShowPlayers={sidebarShowPlayers} sidebarShowThings={sidebarShowThings} />);
+    var sidebar = (<Sidebar sidebarShowCompass={sidebarShowCompass} sidebarLargeCompass={sidebarLargeCompass} sidebarDense={sidebarDense} sidebarShowExits={sidebarShowExits} sidebarShowPlayers={sidebarShowPlayers} sidebarShowThings={sidebarShowThings} />);
 
     return (
       <MuiThemeProvider theme={theme}>
