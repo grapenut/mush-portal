@@ -12,8 +12,8 @@ commit_website_files() {
 }
 
 upload_files() {
-  git remote add origin https://${SECRET_KEY}@github.com/grapenut/mush-portal.git > /dev/null 2>&1
-  git push --quiet --set-upstream origin master
+  git remote add secret https://${SECRET_KEY}@github.com/grapenut/mush-portal.git > /dev/null 2>&1
+  git push --quiet --set-upstream secret master
 }
 
 setup_git
