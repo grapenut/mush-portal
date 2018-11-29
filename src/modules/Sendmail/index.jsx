@@ -1,5 +1,6 @@
 
 import React from 'react';
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
@@ -165,11 +166,11 @@ class Sendmail extends React.Component {
   };
 
   changeText = body => {
-    this.setState({ body });
+    this.setState({ body: this.editor.current.value });
   };
   
   onResize = () => {
-    this.editor.current.editor.resize();
+    //this.editor.current.editor.resize();
   };
   
   setError = error => {
@@ -219,6 +220,12 @@ class Sendmail extends React.Component {
   render() {
     const { classes } = this.props;
     const { chips, subject, body, error } = this.state;
+    const { ansiFG, ansiBG, fontFamily, fontSize } = window.client.settings;
+    
+    const font = {
+      fontFamily: "'" + fontFamily + "', monospace",
+      fontSize: (window.client.mobile ? 16 : fontSize) + "pt",
+    };
     
     return (
       <Card className={classes.card}>
@@ -234,6 +241,13 @@ class Sendmail extends React.Component {
           )}
         />
         <CardContent className={classes.body}>
+          <textarea className={classNames(classes.bodytext, font, ansiFG, ansiBG)}
+            ref={this.editor}
+            width="100%"
+            value={body}
+            onChange={this.changeText}
+          />
+{/*
           <AceEditor
             className={classes.bodytext}
             ref={this.editor}
@@ -246,6 +260,7 @@ class Sendmail extends React.Component {
             highlightActiveLine={false}
             editorProps={{ $blockScrolling: Infinity }}
           />
+*/}
         </CardContent>
         <CardActions className={classes.actions}>
           <Tooltip title="Send draft.">

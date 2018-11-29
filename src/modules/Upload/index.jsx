@@ -28,6 +28,9 @@ const styles = theme => ({
   },
   editor: {
     flex: 1,
+    [theme.breakpoints.down('sm')]: {
+      fontSize: '16pt',
+    },
   },
   flex: {
     display: 'flex',
