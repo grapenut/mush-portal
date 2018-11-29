@@ -98,6 +98,13 @@ class Templates {
         },
 */
         {
+          name: "OpenWindow",
+          text: "Window(\"%2\").SaveHistory().Prefix(\"+%2 \");",
+          javascript: true,
+          pattern: "/win(dow)? (.*)",
+          regex: true,
+        },
+        {
           name: "ChannelRecall",
           text: "th crecall(%1,100,,%r)",
           javascript: false,

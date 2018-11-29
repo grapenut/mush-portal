@@ -468,7 +468,7 @@ class Taskbar extends React.Component {
     const { classes } = this.props;
     const { title, taskbar, open, buttons, historyAnchor,
             menuAnchor, uploadAnchor, helpAnchor, logAnchor } = this.state;
-    const { sidebarOpen, sidebarAnchor, mobileAutoHide } = window.client.settings;
+    const { sidebarOpen, sidebarAnchor, mobileHideTaskbar } = window.client.settings;
     
     var rev = input && Boolean(historyAnchor) ? input.history.slice().reverse() : [];
     
@@ -642,7 +642,7 @@ class Taskbar extends React.Component {
           </Toolbar>
         </AppBar>
         
-        {(!mobileAutoHide || buttons.length > 0) && (
+        {(!mobileHideTaskbar || buttons.length > 0) && (
           <div className={classes.sectionMobile}>
             <AppBar position="relative">
               <Tabs value={false} indicatorColor="primary" scrollable scrollButtons="on" ScrollButtonComponent={TabButton} classes={{ scrollButtons: classes.scrollButtons }}>
@@ -660,7 +660,7 @@ class Taskbar extends React.Component {
           </div>
         )}
         
-        {(!mobileAutoHide || taskbar.length > 0) && (
+        {(!mobileHideTaskbar || taskbar.length > 0) && (
           <div className={classes.sectionMobile}>
             <AppBar position="relative">
               <Tabs value={false} indicatorColor="primary" scrollable scrollButtons="on" ScrollButtonComponent={TabButton} classes={{ scrollButtons: classes.scrollButtons }}>

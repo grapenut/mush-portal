@@ -28,7 +28,7 @@ class Statusbar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      status: ".",
+      status: "",
     };
   }
   
@@ -47,16 +47,19 @@ class Statusbar extends React.Component {
   render() {
     const { classes } = this.props;
     const { status } = this.state;
+    const { mobileHideStatusbar } = window.client.settings;
     
     return (
       <div className={classes.frame} onClick={() => window.client.focus()}>
-        <Typography
-          align="right"
-          color="textPrimary"
-          noWrap
-        >
-          {status}
-        </Typography>
+        {!mobileHideStatusbar && (
+          <Typography
+            align="right"
+            color="textPrimary"
+            noWrap
+          >
+            {status}
+          </Typography>
+        )}
       </div>
     );
   }

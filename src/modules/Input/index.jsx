@@ -23,10 +23,13 @@ const styles = theme => ({
     "vertical-align": "middle",
     padding: "0.25em",
     resize: "none",
-    height: "3em",
+    height: "1em",
     "font-family": "'Courier New', monospace",
     "font-weight": "normal",
     "font-size": "16pt",
+    [theme.breakpoints.up('md')]: {
+      height: "3em",
+    },
   },
 });
 

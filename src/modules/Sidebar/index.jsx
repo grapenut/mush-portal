@@ -1,13 +1,14 @@
 import React from 'react';
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+//import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListSubheader from '@material-ui/core/ListSubheader';
-import Avatar from '@material-ui/core/Avatar';
+//import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import SvgIcon from '@material-ui/core/SvgIcon';
 import Typography from '@material-ui/core/Typography';
@@ -42,41 +43,64 @@ const styles = theme => ({
   frame: {
     position: "relative",
     height: "100%",
-    minWidth: "192px",
+    maxWidth: "192px",
     backgroundColor: theme.palette.background.paper,
     display: "flex",
     "flex-flow": "column nowrap",
     textAlign: "center",
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
   },
   contents: {
-    flexShrink: 1,
+    flex: 1,
+    width: "100%",
+    alignSelf: 'flex-start',
     overflowX: 'hidden',
     overflowY: 'auto',
   },
+  overflow: {
+  },
+  list: {
+    width: "100%",
+  },
+  listHeader: {
+    lineHeight: 1.5,
+  },
   playerItem: {
-    padding: 2,
+    padding: "2px " + theme.spacing.unit + "px",
   },
   thingItem: {
+    padding: "2px " + theme.spacing.unit + "px",
+  },
+  exitItem: {
+    padding: "2px " + theme.spacing.unit + "px",
   },
   customExits: {
-    flexGrow: 1,
-    position: "relative",
+    flex: 1,
+    width: "100%",
+    display: "flex",
+    flexFlow: "column nowrap",
+    justifyContent: "flex-end",
+    alignContent: "flex-end",
+    alignItems: "flex-end",
+  },
+  middle: {
+    width: "100%",
     overflowY: "auto",
     overflowX: "hidden",
   },
   bottom: {
-    position: "absolute",
-    bottom: 0,
     width: "100%",
   },
   navWidget: {
-    position: "relative",
-    bottom: 0,
-    left: "50%",
-    flexShrink: 0,
-    '-webkit-transform': 'translateX(-50%)',
-    transform: 'translateX(-50%)',
+  },
+  smallIcons: {
+    padding: 0.5*theme.spacing.unit,
+  },
+  odd: {
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+  },
+  even: {
+    backgroundColor: 'rgba(0, 0, 0, 0.05)',
   },
 });
 
@@ -165,12 +189,14 @@ class Sidebar extends React.Component {
   };
   
   buildExit = exit => {
+    const { classes } = this.props;
+    const { sidebarDense } = window.client.settings;
     var uc = exit.toUpperCase();
     var disabled = this.matchExit(uc) === -1;
     return (
       <Tooltip disabled={disabled} title={exit}>
         <span>
-          <IconButton onClick={this.go(exit)} disabled={disabled}>
+          <IconButton classes={sidebarDense ? { root: classes.smallIcons } : null} onClick={this.go(exit)} disabled={disabled}>
             {COMPASS[uc]}
           </IconButton>
         </span>
@@ -234,12 +260,11 @@ class Sidebar extends React.Component {
   }
   
   render() {
-    const { classes, sidebarWidth, sidebarShowPlayers,
+    const { classes, sidebarDense, sidebarShowPlayers,
       sidebarShowThings, sidebarShowExits, sidebarShowCompass } = this.props;
     const { exits, things, players } = this.state;
     const customExits = this.customExits;
     var exitWidget;
-    var navWidget;
     
     if (sidebarShowExits) {
       this.parseExits(exits);
@@ -247,21 +272,22 @@ class Sidebar extends React.Component {
       if (customExits.length > 0) {
         exitWidget = (
           <div className={classes.customExits}>
-            <div className={classes.bottom}>
-              <List dense disablePadding subheader={<ListSubheader component="div">Other Exits</ListSubheader>}>
-                {customExits.map((exit, i) => (
-                  <ListItem className={classes.exitItem} key={i} button onClick={this.go(exit.split(";")[0])}>
-                    <ListItemText primary={exit.split(";")[0]} />
-                  </ListItem>
-                ))}
-              </List>
+            <div className={classes.middle}>
+              <div className={classes.bottom}>
+                <List className={classes.list} dense disablePadding subheader={<ListSubheader className={classes.listHeader} component="div">Exits</ListSubheader>}>
+                  {customExits.map((exit, i) => (
+                    <ListItem className={classNames(classes.exitItem, i%2 ? classes.odd : classes.even)} key={i} button onClick={this.go(exit.split(";")[0])}>
+                      <ListItemText primary={exit.split(";")[0]} />
+                    </ListItem>
+                  ))}
+                </List>
+              </div>
             </div>
           </div>
         );
       }
       
-      if (this.useCompass) {
-        navWidget = (
+      var navWidget = (
           <div className={classes.navWidget}>
             <Typography variant="subtitle2" color="textSecondary">Navigation</Typography>
             {this.buildExit("Northwest")}
@@ -281,37 +307,42 @@ class Sidebar extends React.Component {
           </div>
         );
       }
-    }
 
     return (
-      <div className={classes.frame} style={{ width: sidebarWidth }} onClick={() => window.client.focus()}>
-        <div className={classes.contents}>
-          <span>
-            {sidebarShowPlayers && players.length > 0 && (
-              <List dense disablePadding subheader={<ListSubheader component="div">Players</ListSubheader>}>
-                {players.map((player, i) => (
-                  <ListItem disableGutters className={classes.playerItem} key={i}
-                    button onClick={() => this.sendCommand("look "+player)}
-                  >
-                    <ListItemAvatar>
-                      <Avatar>{player.split(" ").map(p => p[0]).join("")}</Avatar>
-                    </ListItemAvatar>
-                    <ListItemText primary={player} />
-                  </ListItem>
-                ))}
-              </List>
-            )}
-            {sidebarShowThings && things.length > 0 && (
-              <List dense disablePadding subheader={<ListSubheader component="div">Contents</ListSubheader>}>
-                {things.map((thing, i) => (
-                  <ListItem className={classes.thingItem} key={i} button onClick={() => this.sendCommand("look "+thing)}>
-                    <ListItemText primary={thing} />
-                  </ListItem>
-                ))}
-              </List>
-            )}
-          </span>
-        </div>
+      <div className={classes.frame} style={{ width: sidebarDense ? "128px" : "192px" }} onClick={() => window.client.focus()}>
+        {((sidebarShowPlayers && players.length > 0) || (sidebarShowThings && things.length > 0)) && (
+          <div className={classes.contents}>
+            <span className={classes.overflow}>
+              {sidebarShowPlayers && players.length > 0 && (
+                <List className={classes.list} dense disablePadding subheader={<ListSubheader className={classes.listHeader} component="div">Players</ListSubheader>}>
+                  {players.map((player, i) => (
+                    <ListItem className={classNames(classes.playerItem, i%2 ? classes.odd : classes.even)} key={i}
+                      button onClick={() => this.sendCommand("look "+player)}
+                    >
+{/*
+                      {!sidebarDense && (
+                        <ListItemAvatar>
+                          <Avatar>{player.split(" ").map(p => p[0]).join("")}</Avatar>
+                        </ListItemAvatar>
+                      )}
+*/}
+                      <ListItemText primary={player} />
+                    </ListItem>
+                  ))}
+                </List>
+              )}
+              {sidebarShowThings && things.length > 0 && (
+                <List className={classes.list} dense disablePadding subheader={<ListSubheader className={classes.listHeader} component="div">Contents</ListSubheader>}>
+                  {things.map((thing, i) => (
+                    <ListItem className={classNames(classes.thingItem, i%2 ? classes.odd : classes.even)} key={i} button onClick={() => this.sendCommand("look "+thing)}>
+                      <ListItemText primary={thing} />
+                    </ListItem>
+                  ))}
+                </List>
+              )}
+            </span>
+          </div>
+        )}
         {sidebarShowExits && exitWidget}
         {sidebarShowExits && sidebarShowCompass && navWidget}
       </div>
@@ -326,7 +357,7 @@ Sidebar.propTypes = {
   sidebarShowThings: PropTypes.bool.isRequired,
   sidebarShowExits: PropTypes.bool.isRequired,
   sidebarShowCompass: PropTypes.bool.isRequired,
-  sidebarWidth: PropTypes.string.isRequired,
+  sidebarDense: PropTypes.bool.isRequired,
 };
 
 export default withStyles(styles, { withTheme: true })(Sidebar);

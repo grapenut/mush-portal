@@ -137,7 +137,7 @@ class MailItem extends React.Component {
 
     const font = {
       fontFamily: "'" + fontFamily + "', monospace",
-      fontSize: (window.client.mobile ? fontSize/2 : fontSize) + "pt",
+      fontSize: fontSize + "pt",
     };
 
     this.emulator && this.emulator.clear();

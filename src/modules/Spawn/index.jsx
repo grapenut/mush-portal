@@ -55,6 +55,9 @@ const styles = theme => ({
     "font-family": "'Courier New', monospace",
     "font-weight": "normal",
     "font-size": "16pt",
+    [theme.breakpoints.down('sm')]: {
+      height: "1em",
+    },
   },
 });
 
@@ -207,7 +210,12 @@ class Spawn extends React.Component {
 
     const font = {
       fontFamily: "'" + fontFamily + "', monospace",
-      fontSize: (window.client.mobile ? fontSize/2 : fontSize) + "pt",
+      fontSize: fontSize + "pt",
+    };
+    
+    const inputFont = {
+      fontFamily: "'" + fontFamily + "', monospace",
+      fontSize: (window.client.mobile ? 16 : fontSize) + "pt",
     };
 
     return (
@@ -217,7 +225,7 @@ class Spawn extends React.Component {
         </div>
         <div className={classes.bottom}>
           <TextField label="Command Prefix" value={prefix} onChange={this.changePrefix} />
-          <textarea ref={this.refinput} className={classNames(classes.input, ansiFG, ansiBG)} style={font}  autoComplete="off"></textarea>
+          <textarea ref={this.refinput} className={classNames(classes.input, ansiFG, ansiBG)} style={inputFont}  autoComplete="off"></textarea>
         </div>
       </div>
     );

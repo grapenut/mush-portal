@@ -65,8 +65,10 @@ const styles = theme => ({
   },
   editor: {
     flex: 1,
-    [theme.breakpoints.up('md')]: {
-      margin: theme.spacing.unit+"px 0",
+    margin: theme.spacing.unit+"px 0",
+    [theme.breakpoints.down('sm')]: {
+      margin: 0,
+      fontSize: "16pt",
     },
   },
   bottom: {
@@ -195,7 +197,7 @@ class FormEditor extends React.Component {
   }
   
   defaultText() {
-    const { list, listName, selected, immutable, template } = this.props;
+    const { list, listName, selected, immutable } = this.props;
     const { item } = this.state;
     const name = item.name;
     
@@ -367,7 +369,7 @@ class FormEditor extends React.Component {
   }
   
   render() {
-    const { classes, selected, Form, immutable, template } = this.props;
+    const { classes, selected, Form, immutable } = this.props;
     const { item, error, status } = this.state;
     
     var ltype = "MushCode";

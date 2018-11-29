@@ -33,7 +33,7 @@ import PictureInPictureIcon from '@material-ui/icons/PictureInPicture';
 import GroupWorkIcon from '@material-ui/icons/GroupWork';
 import AccountCircleIcon from '@material-ui/icons/AccountCircle';
 import ExploreIcon from '@material-ui/icons/Explore';
-import FormatIndentIncreaseIcon from '@material-ui/icons/FormatIndentIncrease';
+import FormatIndentDecreaseIcon from '@material-ui/icons/FormatIndentDecrease';
 import PublicIcon from '@material-ui/icons/Public';
 import SettingsEthernetIcon from '@material-ui/icons/SettingsEthernet';
 import SecurityIcon from '@material-ui/icons/Security';
@@ -178,9 +178,9 @@ class Settings extends React.Component {
     const { classes, closeDrawer } = this.props;
     const { expanded, debugEvents, decompileEditor, decompileKey, ansiFG, ansiBG, wrapWidth,
       invertHighlight, debugActions, serverAddress, serverPort, serverSSL,
-      historySize, historySpawnSize, mobileAutoHide, allowServerChange,
+      historySize, historySpawnSize, mobileHideTaskbar, mobileHideStatusbar, allowServerChange,
       sidebarOpen, sidebarAnchor, sidebarAlwaysShow, sidebarShowPlayers, fontFamily, fontSize,
-      sidebarShowThings, sidebarShowExits, sidebarShowCompass, sidebarWidth } = this.state;
+      sidebarShowThings, sidebarShowExits, sidebarShowCompass, sidebarDense } = this.state;
     const isMobile = window.client.mobile;
    
     var debugging = (
@@ -364,10 +364,14 @@ class Settings extends React.Component {
         
         <ListItem dense disabled={!sidebarOpen}>
           <ListItemIcon>
-            <FormatIndentIncreaseIcon />
+            <FormatIndentDecreaseIcon />
           </ListItemIcon>
-          <TextField label="Sidebar Width" value={sidebarWidth} onChange={this.handleValue('sidebarWidth')} />
+          <ListItemText className={classes.switchText} primary="Use small sidebar icons?" />
+          <ListItemSecondaryAction>
+            <Switch disabled={!sidebarOpen} checked={sidebarDense} value="sidebarDense" onChange={this.handleSwitch('sidebarDense')} />
+          </ListItemSecondaryAction>
         </ListItem>
+        
       </List>
     );
     
@@ -423,7 +427,17 @@ class Settings extends React.Component {
           </ListItemIcon>
           <ListItemText className={classes.switchText} primary="Auto hide mobile taskbar when empty?" />
           <ListItemSecondaryAction>
-            <Switch disabled={!isMobile} checked={mobileAutoHide} value="mobileAutoHide" onChange={this.handleSwitch('mobileAutoHide')} />
+            <Switch disabled={!isMobile} checked={mobileHideTaskbar} value="mobileHideTaskbar" onChange={this.handleSwitch('mobileHideTaskbar')} />
+          </ListItemSecondaryAction>
+        </ListItem>
+        
+        <ListItem dense disabled={!isMobile}>
+          <ListItemIcon>
+            <MobileScreenShareIcon />
+          </ListItemIcon>
+          <ListItemText className={classes.switchText} primary="Hide the status bar to save screen space?" />
+          <ListItemSecondaryAction>
+            <Switch disabled={!isMobile} checked={mobileHideStatusbar} value="mobileHideStatusbar" onChange={this.handleSwitch('mobileHideStatusbar')} />
           </ListItemSecondaryAction>
         </ListItem>
       </List>

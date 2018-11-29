@@ -304,7 +304,7 @@ class Customizer extends React.Component {
         
         <Menu disableEnforceFocus id="template.menu" anchorEl={menuAnchor} open={Boolean(menuAnchor)} onClick={this.hideTemplates} onClose={this.hideTemplates}>
           {templates && templates.map((tmpl, i) => (
-            <MenuItem onClick={this.chooseTemplate(tmpl)}>
+            <MenuItem key={i} onClick={this.chooseTemplate(tmpl)}>
               {tmpl.name}
             </MenuItem>
           ))}

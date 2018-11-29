@@ -49,6 +49,21 @@ const LOGINFAIL = [
   /Too many guests are connected now\./
 ];
 
+const UnicodeMap = {
+  "\u2013": '-',
+  "\u2014": '-',
+  "\u2018": '\'',
+  "\u2019": '\'',
+  "\u201B": '\'',
+  "\u201C": '"',
+  "\u201D": '"',
+  "\u201F": '"',
+  "\u2032": '\'',
+  "\u2033": '"',
+  "\u2035": '\'',
+  "\u2036": '"',
+}
+
 class Client {
 
   constructor() {
@@ -69,7 +84,7 @@ class Client {
       // sidebar navigation
       sidebarOpen: true,
       sidebarAnchor: "left",
-      sidebarWidth: "192px",
+      sidebarDense: false,
       sidebarAlwaysShow: false,
       sidebarShowPlayers: true,
       sidebarShowThings: true,
@@ -87,7 +102,8 @@ class Client {
       historySize: 1000,
       historySpawnSize: 100,
       // mobile settings
-      mobileAutoHide: true,
+      mobileHideTaskbar: true,
+      mobileHideStatusbar: true,
     };
     this.settings = null;
     
@@ -212,9 +228,10 @@ class Client {
         break;
       }
     }
+    
     if (script && script.text !== "") {
       try {
-        eval(script.text);
+        eval(this.filterUnicode(script.text));
       } catch (e) {
         client.debugActions && console.log("Error executing `" + name + "'.");
       }
@@ -227,7 +244,7 @@ class Client {
     const Window = (w,c,e) => this.getSpawn(w,c,e);
     
     try {
-      eval(txt);
+      eval(this.filterUnicode(txt));
     } catch (e) {
       client.settings.debugActions && console.log("Error executing action:", e);
     }
@@ -589,10 +606,16 @@ class Client {
   replaceArgs(args, text) {
     let newText = text.slice();
     for (let i = args.length-1; i > -1; i--) {
-      let re = new RegExp('(^|[^\\%])%'+i, 'g');
-      let escre = new RegExp('["\'`]', 'g');
-      let esc = args[i].replace(escre, '\\$&');
-      newText = newText.replace(re, '$1'+esc);
+      let tmp = args[i] || "";
+      
+      try {
+        let re = new RegExp('(^|[^\\%])%'+i, 'g');
+        let escre = new RegExp('["\'`]', 'g');
+        let esc = tmp.replace(escre, '\\$&');
+        newText = newText.replace(re, '$1'+esc);
+      } catch (e) {
+        this.settings.debugActions && console.log("Unable to compile regular expression:", e);
+      }
     }
     return newText;
   }
@@ -727,7 +750,7 @@ class Client {
     var config = cfg || {};
     
     if (!config.id) {
-      config.id = id;
+      config.id = id.toLowerCase();
     }
     
     if (!config.headerTitle) {
@@ -756,7 +779,7 @@ class Client {
     let ref = React.createRef();
     config.callback = (container) => {
       container.content.style.backgroundColor = this.theme.palette.background.paper;
-      let child = React.createElement(el, { innerRef: ref, id: id, panel: container, ...config.props }, null);
+      let child = React.createElement(el, { innerRef: ref, id: id.toLowerCase(), panel: container, ...config.props }, null);
       ReactDOM.render(React.createElement(MuiThemeProvider, { theme: this.theme }, child), container.content, () => {
         // add the helpText() controlbar icon
         let obj = ref.current;
@@ -797,8 +820,9 @@ class Client {
   // delete spawn window from internal list
   delSpawn(id) {
     const spawns = this.react.spawns;
+    const lower = id.toLowerCase();
     for (let i=0; i < spawns.length; i++) {
-      if (spawns[i] && spawns[i].props.id === id) {
+      if (spawns[i] && spawns[i].props.id === lower) {
         spawns.splice(i, 1);
       }
     }
@@ -807,8 +831,9 @@ class Client {
   // find spawn window in internal list
   findSpawn(id) {
     const spawns = this.react.spawns;
+    const lower = id.toLowerCase();
     for (let i=0; i < spawns.length; i++) {
-      if (spawns[i] && spawns[i].props.id === id) {
+      if (spawns[i] && spawns[i].props.id.toLowerCase() === lower) {
         return spawns[i];
       }
     }
@@ -1036,8 +1061,19 @@ class Client {
     this.conn && this.conn.close();
   }
   
+  filterUnicode(text) {
+    if (!text) return "";
+    try {
+      let re = new RegExp("[\u2013\u2014\u2018\u2019\u201B\u201C\u201D\u201F\u2032\u2033\u2035\u2036]","g");
+      return text.replace(re, code => UnicodeMap[code]);
+    } catch (e) {
+      this.settings.debugActions && console.log("Unable to filter Unicode:", e);
+    }
+    return text;
+  }
+
   sendText(data) {
-    this.conn && this.conn.sendText(data);
+    this.conn && this.conn.sendText(this.filterUnicode(data));
   }
   
   /////////////////////////////////////////////////////////////////////////////////////////////////

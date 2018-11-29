@@ -58,6 +58,9 @@ const styles = theme => ({
   },
   bodytext: {
     flex: 1,
+    [theme.breakpoints.down('sm')]: {
+      fontSize: '16pt',
+    },
   },
   actions: {
     "justify-content": "space-evenly",
