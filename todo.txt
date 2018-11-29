@@ -1,6 +1,6 @@
 BUGS
 ------------------
-  None (really I double checked.)
+  Sidebar width with showing all icons at full size
 
 TODO
 ------------------

@@ -8,7 +8,7 @@ setup_git() {
 
 commit_website_files() {
   git add build
-  git commit --message "Travis build: $TRAVIS_BUILD_NUMBER [ci skip]"
+  git commit --message "Travis build: $TRAVIS_BUILD_NUMBER [skip ci]"
 }
 
 upload_files() {
