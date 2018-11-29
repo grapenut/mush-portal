@@ -20,7 +20,8 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "npm run clean && react-scripts build",
+    "clean": "rm -rf build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
