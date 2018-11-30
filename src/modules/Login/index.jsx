@@ -2,7 +2,6 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
-import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -11,6 +10,7 @@ import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import IconButton from '@material-ui/core/IconButton';
 import Tooltip from '@material-ui/core/Tooltip';
+import Fab from '@material-ui/core/Fab';
 
 import PersonIcon from '@material-ui/icons/Person';
 import PersonOutlineIcon from '@material-ui/icons/PersonOutline';
@@ -172,18 +172,18 @@ class Login extends React.Component {
           />
         </DialogContent>
         <DialogActions>
-          <Button className={classes.left} classes={{ label: classes.block }} onClick={this.submitCreate} color="primary" variant="extendedFab">
+          <Fab className={classes.left} classes={{ label: classes.block }} onClick={this.submitCreate} color="primary" variant="extended">
             <PersonAddIcon />
             Register
-          </Button>
-          <Button classes={{ label: classes.block }} onClick={this.submitGuest} color="primary" variant="extendedFab">
+          </Fab>
+          <Fab classes={{ label: classes.block }} onClick={this.submitGuest} color="primary" variant="extended">
             <PersonOutlineIcon />
             Guest
-          </Button>
-          <Button classes={{ label: classes.block }} onClick={this.submitLogin} color="primary" variant="extendedFab" aria-label="login">
+          </Fab>
+          <Fab classes={{ label: classes.block }} onClick={this.submitLogin} color="primary" variant="extended" aria-label="login">
             <PersonIcon />
             Login
-          </Button>
+          </Fab>
         </DialogActions>
       </Dialog>
     );
