@@ -64,6 +64,10 @@ class Login extends React.Component {
     window.client.focus();
   };
   
+  setMessage = (msg) => {
+    this.setState({ msg: msg });
+  };
+  
   submitLogin = () => {
     var username = document.getElementById('username').value;
     var password = document.getElementById('password').value;
