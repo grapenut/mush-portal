@@ -15,3 +15,6 @@ after_success:
   - git commit -m 'Automatic build [skip travis]'
   - git remote add secret "https://${GH_TOKEN}@github.com/grapenut/mush-portal.git" > /dev/null 2>&1
   - git push -u secret HEAD:master
+branches:
+  only:
+  - master
