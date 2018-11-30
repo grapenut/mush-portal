@@ -4,6 +4,15 @@ class Templates {
   constructor() {
     // blank triggers, timers, macros, and keybindings
     this.empty = {
+      buttons: {
+        name: "",
+        text: "",
+        javascript: false,
+        icon: "widgets",
+        count: "0",
+        tooltip: "",
+        
+      },
       triggers: {
         name: "",
         text: "",
@@ -47,6 +56,66 @@ class Templates {
     };
     
     this.saved = {
+      buttons: [
+        {
+          name: "look",
+          text: "look",
+          javascript: false,
+          icon: "remove_red_eye",
+          count: "",
+          tooltip: "Look around.",
+        },
+        {
+          name: "inventory",
+          text: "inventory",
+          javascript: false,
+          icon: "business_center",
+          count: "",
+          tooltip: "What am I carrying?",
+        },
+        {
+          name: "who",
+          text: "who",
+          javascript: false,
+          icon: "people",
+          count: "",
+          tooltip: "Who's online?",
+        },
+        {
+          name: "Mailbox",
+          text: "SendAPI(\"maillist\");",
+          javascript: true,
+          icon: "mail",
+          count: "client.react.taskbar.state.unreadMail",
+          tooltip: "@mail Inbox",
+        },
+        {
+          name: "BBoard",
+          text: "SendAPI(\"boardlist\");",
+          javascript: true,
+          icon: "forum",
+          count: "client.react.taskbar.state.unreadBB",
+          tooltip: "Bulletin Boards",
+        },
+        {
+          name: "help",
+          text: "client.react.taskbar.showHelp(event);",
+          javascript: true,
+          icon: "search",
+          count: "",
+          tooltip: "Search help files",
+        },
+/*
+        {
+          name: "",
+          text: "",
+          javascript: false,
+          icon: "widgets",
+          count: "",
+          tooltip: "",
+        },
+*/        
+      ],
       triggers: [
 /*
         {

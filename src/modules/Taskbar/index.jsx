@@ -1,7 +1,9 @@
+/* eslint no-eval: 0 */
 
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
+
 import SwipeableDrawer from '@material-ui/core/SwipeableDrawer';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -138,9 +140,9 @@ const styles = theme => ({
 
 
 function BadgeIcon(props) {
-  var count = props.count ? props.count() : 0;
+  var count = props.count ? props.count : 0;
 
-  if (count > 0) {
+  if (count && count !== "") {
     return (
       <Badge badgeContent={count} color="error">
         <Icon>{props.children}</Icon>
@@ -194,7 +196,6 @@ class Taskbar extends React.Component {
       open: false,
       title: props.title,
       taskbar: [ ],
-      buttons: [ ],
       unreadBB: 0,
       unreadMail: 0,
       menuAnchor: null,
@@ -211,6 +212,7 @@ class Taskbar extends React.Component {
     this.history = null;
     this.frame = React.createRef();
     
+    window.client.react.taskbar = this;
   }
 
   openDrawer = () => {
@@ -254,12 +256,6 @@ class Taskbar extends React.Component {
     this.setState({unreadBB: u});
   };
 
-  addButton = (button) => {
-    const { buttons } = this.state;
-    buttons.push(button);
-    this.setState({ buttons });
-  };
-  
   // wrapper that scrolls the output
   scrollIfNeeded() {
     window.client.output.scrollDown();
@@ -315,7 +311,7 @@ class Taskbar extends React.Component {
   
   showHelp = event => {
     this.help = null;
-    this.setState({ helpAnchor: event.currentTarget });
+    this.setState({ helpAnchor: event ? event.currentTarget : null });
   };
   
   closeHelp = () => {
@@ -455,8 +451,32 @@ class Taskbar extends React.Component {
     }
   }
   
+  pushButton = button => event => {
+    if (button && button.text && button.text !== "") {
+      if (button.javascript) {
+        window.client.execActionScript(button.text, event);
+      } else {
+        window.client.sendText(button.text);
+      }
+    }
+  }
+  
+  showCount = button => {
+    if (button && button.count && button.count !== "") {
+      try {
+        var val = eval(button.count);
+        if (val) {
+          return val;
+        }
+      } catch (e) {
+        window.client.settings.debugActions && console.log("Unable to execute button count expression:", e);
+      }
+    }
+    
+    return 0;
+  };
+  
   componentDidMount() {
-    window.client.react.taskbar = this;
   }
 
   componentWillUnmount() {
@@ -466,10 +486,12 @@ class Taskbar extends React.Component {
   render() {
     const input = window.client.input;
     const { classes } = this.props;
-    const { title, taskbar, open, buttons, historyAnchor,
+    const { title, taskbar, open, historyAnchor,
             menuAnchor, uploadAnchor, helpAnchor, logAnchor } = this.state;
     const { sidebarOpen, sidebarAnchor, mobileHideTaskbar } = window.client.settings;
     
+    const buttons = window.client.buttons;
+
     var rev = input && Boolean(historyAnchor) ? input.history.slice().reverse() : [];
     
     return (
@@ -501,10 +523,10 @@ class Taskbar extends React.Component {
                 </Tooltip>
               ))}
               <div className={classes.tasksep}></div>
-              {buttons.map((button,i) => (
-                <Tooltip key={i} title={button.title}>
-                  <Button aria-label={button.ariaLabel} onClick={button.action}>
-                    <BadgeIcon count={button.count}>
+              {buttons.map((button,i) => !button.disabled && (
+                <Tooltip key={i} title={button.tooltip}>
+                  <Button aria-label={button.name} onClick={this.pushButton(button)}>
+                    <BadgeIcon count={this.showCount(button)}>
                       {button.icon}
                     </BadgeIcon>
                   </Button>
@@ -646,12 +668,12 @@ class Taskbar extends React.Component {
           <div className={classes.sectionMobile}>
             <AppBar position="relative">
               <Tabs value={false} indicatorColor="primary" scrollable scrollButtons="on" ScrollButtonComponent={TabButton} classes={{ scrollButtons: classes.scrollButtons }}>
-                {buttons.length > 0 && buttons.map((button,i) => (
-                  <Tooltip key={i} title={button.title}>
+                {buttons.length > 0 && buttons.map((button,i) => !button.disabled && (
+                  <Tooltip key={i} title={button.tooltip}>
                     <Tab key={i} classes={{ wrapper: classes.tasklabel }}
-                      aria-label={button.ariaLabel} 
-                      icon={(<BadgeIcon count={button.count}>{button.icon}</BadgeIcon>)}
-                      onClick={button.action}
+                      aria-label={button.name} 
+                      icon={(<BadgeIcon count={this.showCount(button)}>{button.icon}</BadgeIcon>)}
+                      onClick={this.pushButton(button)}
                     />
                   </Tooltip>
                 ))}

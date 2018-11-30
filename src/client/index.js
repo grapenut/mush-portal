@@ -120,6 +120,7 @@ class Client {
     
     this.templates = new Templates();
     
+    this.buttons = [];
     this.triggers = [];
     this.timers = [];
     this.macros = [];
@@ -128,6 +129,7 @@ class Client {
     this.css = [{ name: "ansi.css", text: "" },
                 { name: "inverse.css", text: "" }];
     
+    this.loadButtons();
     this.loadTriggers();
     this.loadTimers();
     this.loadMacros();
@@ -221,6 +223,9 @@ class Client {
     // load user customization file
     const client = this;
     const Window = (w,c,e) => this.getSpawn(w,c,e);
+    const SendAPI = (cmd) => this.sendAPI(cmd);
+    const SendCommand = (cmd) => this.sendCommand(cmd);
+    const SendText = (cmd) => this.sendText(cmd);
     
     var script = null;
     for (let i=0; i < client.scripts.length; i++) {
@@ -240,9 +245,12 @@ class Client {
   }
   
   // evaluate an action javascript with a limited context
-  execActionScript(txt) {
+  execActionScript(txt, event) {
     const client = this;
     const Window = (w,c,e) => this.getSpawn(w,c,e);
+    const SendAPI = (cmd) => this.sendAPI(cmd);
+    const SendCommand = (cmd) => this.sendCommand(cmd);
+    const SendText = (cmd) => this.sendText(cmd);
     
     try {
       eval(this.filterUnicode(txt));
@@ -421,6 +429,73 @@ class Client {
     }
   }
   
+  // add a default button object
+  addDefaultButton(button) {
+    if (button && button.name) {
+      let exists = this.findButton(button.name);
+      if (exists) {
+        if (!exists.defaults) {
+          return;
+        } else {
+          this.buttons.splice(this.buttons.indexOf(exists), 1);
+        }
+      }
+      let empty = Object.assign({}, exists || this.templates.empty.buttons);
+      empty.defaults = true;
+      this.buttons.push(Object.assign(empty, button));
+      this.saveButtons();
+    }
+  }
+  
+  // delete a button by name
+  delDefaultButton(name) {
+    const lower = name.toLowerCase();
+    for (let i=0; i < this.buttons.length; i++) {
+      if (this.buttons[i].name.toLowerCase() === lower && this.buttons[i].defaults) {
+        this.buttons.splice(i, 1);
+        this.saveButtons();
+        return true;
+      }
+    }
+    
+    return false;
+  }
+  
+  // find a button by name
+  findButton(name) {
+    const lower = name.toLowerCase();
+    for (let i=0; i < this.buttons.length; i++) {
+      if (this.buttons[i].name.toLowerCase() === lower) {
+        return this.buttons[i];
+      }
+    }
+    
+    return null;
+  }
+  
+  // activate a button
+  pushButton(name) {
+    const lower = name.toLowerCase();
+    const button = this.findButton(name);
+    
+    if (button && button.text && button.text !== "") {
+      if (button.javascript) {
+        this.execActionScript(button.text);
+      } else {
+        this.sendText(button.text);
+      }
+      
+      return true;
+    }
+    
+    return false;
+  }
+  
+  // load user defined taskbar buttons
+  loadButtons() {
+    this.loadLocalStorage(this.buttons, "buttons");
+  }
+  
   // load regex/wildcard pattern triggers
   loadTriggers() {
     this.loadLocalStorage(this.triggers, "triggers");
@@ -471,6 +546,13 @@ class Client {
     } else {
       this.unloadStyle('./inverse.css');
     }
+  }
+  
+  // save user defined taskbar buttons
+  saveButtons() {
+    this.clearLocalStorage("buttons");
+    this.saveLocalStorage(this.buttons, "buttons");
+    this.react.taskbar && this.react.taskbar.forceUpdate();
   }
   
   // save regex/wildcard pattern triggers
@@ -546,7 +628,7 @@ class Client {
     this.clearLocalStorage("settings");
     this.saveLocalStorage(this.settings, "settings");
   }
-
+  
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // miscellaneous logging and command links

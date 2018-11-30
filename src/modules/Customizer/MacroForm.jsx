@@ -52,6 +52,10 @@ class MacroForm extends React.Component {
     };
   }
   
+  static save() {
+    window.client.saveMacros();
+  }
+  
   componentDidMount() {
   }
   

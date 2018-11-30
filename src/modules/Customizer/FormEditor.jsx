@@ -270,7 +270,7 @@ class FormEditor extends React.Component {
   };
   
   onSubmit = (e) => {
-    const { list, listName, selected, immutable } = this.props;
+    const { list, listName, selected, immutable, Form } = this.props;
     const { item } = this.state;
     const client = window.client;
     const css = item.name.endsWith('.css');
@@ -294,6 +294,7 @@ class FormEditor extends React.Component {
     }
     
     this.setStatus(false, "Saved." );
+    item.defaults = false;
     
     if (selected > -1) {
       list[selected] = item;
@@ -303,7 +304,9 @@ class FormEditor extends React.Component {
       client.react.customizer.setState({ selected: list.length-1 });
     }
     
-    if (css) {
+    if (Form && Form.save) {
+      Form.save();
+    } else if (css) {
       client.saveCSS();
     } else {
       client.saveLocalStorage(list, listName);

@@ -30,6 +30,7 @@ import TriggerForm from './TriggerForm';
 import TimerForm from './TimerForm';
 import MacroForm from './MacroForm';
 import KeyForm from './KeyForm';
+import ButtonForm from './ButtonForm';
 
 
 //////////////////////////////////////////////////////////////////////
@@ -145,6 +146,12 @@ class Customizer extends React.Component {
     
     this.tabs = [
       {
+        list: client.buttons,
+        listName: "Buttons",
+        Form: ButtonForm,
+        immutable: false,
+      },
+      {
         list: client.triggers,
         listName: "Triggers",
         Form: TriggerForm,
@@ -217,9 +224,12 @@ class Customizer extends React.Component {
     const css = item.name.endsWith('.css');
     
     item.disabled = !e.target.checked;
+    item.defaults = false;
     this.forceUpdate();
     
-    if (css) {
+    if (tab.Form && tab.Form.save) {
+      tab.Form.save();
+    } else if (css) {
       window.client.saveCSS();
     } else {
       window.client.saveLocalStorage(tab.list, tab.listName);

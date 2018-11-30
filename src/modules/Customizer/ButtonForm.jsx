@@ -3,9 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
-import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
-import Switch from '@material-ui/core/Switch';
 
 
 //////////////////////////////////////////////////////////////////////
@@ -44,7 +42,7 @@ const styles = theme => ({
 //////////////////////////////////////////////////////////////////////
 
 
-class TriggerForm extends React.Component {
+class ButtonForm extends React.Component {
   constructor(props) {
     super(props);
     
@@ -53,7 +51,7 @@ class TriggerForm extends React.Component {
   }
   
   static save() {
-    window.client.saveTriggers();
+    window.client.saveButtons();
   }
   
   componentDidMount() {
@@ -63,28 +61,19 @@ class TriggerForm extends React.Component {
   }
 
   render() {
-    const { classes, item, handleChange, handleSwitch } = this.props;
+    const { classes, item, handleChange } = this.props;
     
     return (
       <div className={classes.frame}>
-        <TextField label="Matching pattern" fullWidth value={item.pattern} onChange={handleChange('pattern')} inputProps={{ classes: { input: classes.inputBase } }} />
-        <div className={classes.row}>
-          <span className={classes.switchText}>
-            <Typography>Wildcard</Typography>
-            <Switch checked={item.regex} color="default" onChange={handleSwitch('regex')} classes={{ switchBase: classes.switchBase }} />
-            <Typography>RegExp</Typography>
-          </span>
-          <span className={classes.switchText}>
-            <Typography>Suppress terminal output?</Typography>
-            <Switch checked={item.suppress} onChange={handleSwitch('suppress')} classes={{ switchBase: classes.switchBase }} />
-          </span>
-        </div>
+        <TextField label="Icon" fullWidth value={item.icon} onChange={handleChange('icon')} inputProps={{ classes: { input: classes.inputBase } }} />
+        <TextField label="Badge Expression" fullWidth value={item.count} onChange={handleChange('count')} inputProps={{ classes: { input: classes.inputBase } }} />
+        <TextField label="Tooltip" fullWidth value={item.tooltip} onChange={handleChange('tooltip')} inputProps={{ classes: { input: classes.inputBase } }} />
       </div>
     );
   }
 }
 
-TriggerForm.propTypes = {
+ButtonForm.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
   item: PropTypes.object.isRequired,
@@ -93,5 +82,5 @@ TriggerForm.propTypes = {
   handleSwitch: PropTypes.func.isRequired,
 };
 
-export default withStyles(styles, { withTheme: true })(TriggerForm);
+export default withStyles(styles, { withTheme: true })(ButtonForm);
 

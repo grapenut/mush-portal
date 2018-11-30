@@ -86,50 +86,68 @@ panelConfig.position = {
 // Taskbar buttons
 /////////////////////////////////////////////////////////////////////
 
-client.react.taskbar.addButton({
-  title: "Look around.",
-  ariaLabel: "send-look",
-  action: function() { client.sendCommand("look"); client.sendAPI("listcontents"); },
+/* Example buttons implementing common MUSH tasks */
+/*   name	: string, the button id
+/*   text	: string, the commands, macros, or javascript to execute
+/*   javascript	: boolean, true=javascript false=mush commands
+/*   icon	: string, icon name. see https://material.io/tools/icons/
+/*   count	: string, javascript expression, contents of icon badge
+/*   tooltip	: string, text of the hover tooltip
+/* */
+client.addDefaultButton({
+  name: "look",
+  text: "look",
+  javascript: false,
   icon: "remove_red_eye",
+  count: "",
+  tooltip: "Look around.",
 });
-
-client.react.taskbar.addButton({
-  title: "What am I carrying?",
-  ariaLabel: "send-inventory",
-  action: function() { client.sendCommand("inventory"); },
+/* */
+/*
+client.addDefaultButton({
+  name: "inventory",
+  text: "inventory",
+  javascript: false,
   icon: "business_center",
-
+  count: "",
+  tooltip: "What am I carrying?",
 });
-
-client.react.taskbar.addButton({
-  title: "Who's online?",
-  ariaLabel: "send-who",
-  action: function() { client.sendCommand("who"); },
+/* */
+client.addDefaultButton({
+  name: "who",
+  text: "who",
+  javascript: false,
   icon: "people",
-
+  count: "",
+  tooltip: "Who's online?",
 });
-
-client.react.taskbar.addButton({
-  title: "Bulletin Boards",
-  ariaLabel: "open-bbs",
-  action: function() { client.sendAPI("boardlist"); },
-  count: function() { return client.react.taskbar.state.unreadBB; },
-  icon: "forum",
-});
-
-client.react.taskbar.addButton({
-  title: "@mail Inbox",
-  ariaLabel: "open-mail",
-  action: function() { client.sendAPI("maillist"); },
-  count: function() { return client.react.taskbar.state.unreadMail; },
+/* */
+client.addDefaultButton({
+  name: "Mailbox",
+  text: "SendAPI(\"maillist\");",
+  javascript: true,
   icon: "mail",
+  count: "client.react.taskbar.state.unreadMail",
+  tooltip: "@mail Inbox",
 });
-
-client.react.taskbar.addButton({
-  title: "Need help?",
-  ariaLabel: "help",
-  action: function(e) { client.react.taskbar.showHelp(e); },
+/* */
+/*
+client.addDefaultButton({
+  name: "BBoard",
+  text: "SendAPI(\"boardlist\");",
+  javascript: true,
+  icon: "forum",
+  count: "client.react.taskbar.state.unreadBB",
+  tooltip: "Bulletin Boards",
+});
+/* */
+client.addDefaultButton({
+  name: "help",
+  text: "client.react.taskbar.showHelp(event);",
+  javascript: true,
   icon: "search",
+  count: "",
+  tooltip: "Search help files",
 });
 
 

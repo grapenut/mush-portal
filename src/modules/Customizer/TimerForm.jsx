@@ -49,6 +49,10 @@ class TimerForm extends React.Component {
     };
   }
   
+  static save() {
+    window.client.saveTimers();
+  }
+  
   componentDidMount() {
   }
   

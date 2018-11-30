@@ -49,6 +49,10 @@ class KeyForm extends React.Component {
     };
   }
   
+  static save() {
+    window.client.saveKeys();
+  }
+  
   componentDidMount() {
   }
   

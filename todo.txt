@@ -1,12 +1,16 @@
 BUGS
 ------------------
-  Sidebar width with showing all icons at full size
+
+  Terminal wrap width isn't work. Output is full width.
 
 TODO
 ------------------
 
 Customizer
   Edit taskbar buttons using customizer!
+  Allow reordering of the lists.
+  Fix the concept of default buttons.
+  Check that this is 100% done.
 
 BBoard
   Navigation icons (back, reload)

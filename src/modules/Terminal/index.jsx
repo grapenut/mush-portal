@@ -116,8 +116,8 @@ class Terminal extends React.Component {
     client.sendText("SCREENHEIGHT " + Math.floor(client.output.root.parentNode.clientHeight / client.output.dims.height));
     client.output.scrollDown();
     
-    client.mobile = !window.matchMedia(this.props.theme.breakpoints.up('md').substring(7)).matches
-
+    client.mobile = !window.matchMedia(this.props.theme.breakpoints.up('md').substring(7)).matches;
+    
     this.onChange();
   };
 
