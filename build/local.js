@@ -259,7 +259,7 @@ client.events.on('delobject', function(obj) {
 
 // open login dialog
 client.events.on('connect', function(obj) {
-  client.react.login && client.react.login.openLogin(obj.msg);
+  client.react.login && client.react.login.setMessage(obj.msg);
   client.react.statusbar && client.react.statusbar.setStatus("Connecting...");
 });
 
