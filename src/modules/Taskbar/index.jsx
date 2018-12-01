@@ -1,6 +1,7 @@
 /* eslint no-eval: 0 */
 
 import React from 'react';
+import classNames from 'classnames';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
@@ -55,7 +56,7 @@ const styles = theme => ({
     width: "100%",
   },
   title: {
-    margin: '0 20px',
+    margin: '0 ' + theme.spacing.unit + 'px',
     flex: 1,
   },
   tasksep: {
@@ -136,20 +137,27 @@ const styles = theme => ({
   emptyText: {
     textAlign: "center",
   },
+  buttonBar: {
+    justifyContent: "space-evenly",
+  },
+  sidebarButton: {
+    minWidth: 24,
+    padding: theme.spacing.unit,
+  },
 });
 
 
 function BadgeIcon(props) {
   var count = props.count ? props.count : 0;
-
+  
   if (count && count !== "") {
     return (
       <Badge badgeContent={count} color="error">
-        <Icon>{props.children}</Icon>
+        <Icon className={props.children}>{props.children}</Icon>
       </Badge>
     );
   }
-  return (<Icon>{props.children}</Icon>);
+  return (<Icon className={props.children}>{props.children}</Icon>);
 };
 
 
@@ -498,13 +506,15 @@ class Taskbar extends React.Component {
       <div className={classes.frame}>
         <AppBar className={classes.root} position="static" onClick={() => window.client.focus()}>
           <Toolbar disableGutters={!this.state.open}>
-            {sidebarAnchor === "left" && (
-              <Tooltip title={sidebarOpen ? "Open sidebar." : "Close sidebar."}>
-                <Button aria-label="open-left-sidebar" onClick={this.toggleSidebar}>
-                  {sidebarOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-                </Button>
-              </Tooltip>
-            )}
+            <Tooltip title={sidebarOpen ? "Open sidebar." : "Close sidebar."}>
+              <Button className={classes.sidebarButton} aria-label="open-sidebar" onClick={this.toggleSidebar}>
+                {sidebarAnchor === "left" ? (
+                  sidebarOpen ? <ChevronLeftIcon /> : <ChevronRightIcon />
+                ) : (
+                  sidebarOpen ? <ChevronRightIcon /> : <ChevronLeftIcon />
+                )}
+              </Button>
+            </Tooltip>
             
             <Typography variant="h6" color="inherit" noWrap className={classes.title}>
               {title}
@@ -516,7 +526,7 @@ class Taskbar extends React.Component {
                 <Tooltip key={i} title={task.headertitle.innerText}>
                   <Button key={task.id} classes={{ label: classes.tasklabel }} className={classes.taskbutton} aria-label="open-task" onClick={() => this.popTask(task)}>
                     <BadgeWrapper count={() => task.count}>
-                      <Icon className={classes.taskicon}>{task.headerlogo.innerText}</Icon>
+                      <Icon className={classNames(classes.taskicon, task.headerlogo.innerText)}>{task.headerlogo.innerText}</Icon>
                       {!window.client.mobile && task.headertitle.innerText}
                     </BadgeWrapper>
                   </Button>
@@ -539,14 +549,6 @@ class Taskbar extends React.Component {
                 <MenuIcon />
               </Button>
             </Tooltip>
-            
-            {sidebarAnchor === "right" && (
-              <Tooltip title={sidebarOpen ? "Open sidebar." : "Close sidebar."}>
-                <Button aria-label="open-right-sidebar" onClick={this.toggleSidebar}>
-                  {sidebarOpen ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-                </Button>
-              </Tooltip>
-            )}
             
             <SwipeableDrawer
               variant="temporary"
@@ -667,7 +669,7 @@ class Taskbar extends React.Component {
         {(!mobileHideTaskbar || buttons.length > 0) && (
           <div className={classes.sectionMobile}>
             <AppBar position="relative">
-              <Tabs value={false} indicatorColor="primary" scrollable scrollButtons="on" ScrollButtonComponent={TabButton} classes={{ scrollButtons: classes.scrollButtons }}>
+              <Tabs value={false} indicatorColor="primary" scrollable scrollButtons="on" ScrollButtonComponent={TabButton} classes={{ scrollButtons: classes.scrollButtons, flexContainer: classes.buttonBar }}>
                 {buttons.length > 0 && buttons.map((button,i) => !button.disabled && (
                   <Tooltip key={i} title={button.tooltip}>
                     <Tab key={i} classes={{ wrapper: classes.tasklabel }}
@@ -693,7 +695,7 @@ class Taskbar extends React.Component {
                       label={(
                         <span>
                           <BadgeWrapper count={() => task.count}>
-                            <Icon className={classes.taskicon}>{task.headerlogo.innerText}</Icon>
+                            <Icon className={classNames(classes.taskicon, task.headerlogo.innerText)}>{task.headerlogo.innerText}</Icon>
                           </BadgeWrapper>
                           {task.headertitle.innerText}
                         </span>

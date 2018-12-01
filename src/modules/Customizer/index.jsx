@@ -19,17 +19,22 @@ import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import Switch from '@material-ui/core/Switch';
+import Tooltip from '@material-ui/core/Tooltip';
 
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
+//import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import ReorderIcon from '@material-ui/icons/Reorder';
+import SortIcon from '@material-ui/icons/Sort';
 
 import FormEditor from './FormEditor';
 import TriggerForm from './TriggerForm';
-import TimerForm from './TimerForm';
+//import TimerForm from './TimerForm';
 import MacroForm from './MacroForm';
-import KeyForm from './KeyForm';
+//import KeyForm from './KeyForm';
 import ButtonForm from './ButtonForm';
 
 
@@ -48,7 +53,7 @@ const styles = theme => ({
     padding: theme.spacing.unit,
     flex: 1,
     display: "flex",
-    "flex-flow": "row nowrap",
+    "flex-flow": "row wrap",
     [theme.breakpoints.up('md')]: {
       padding: 3*theme.spacing.unit,
     },
@@ -109,6 +114,17 @@ const styles = theme => ({
       alignSelf: "center",
     }
   },
+  subHeader: {
+    width: "100%",
+    flex: 1,
+    display: "flex",
+    justifyContent: "space-between",
+  },
+  arrowButton: {
+    flex: '0 0 24px',
+    padding: 0,
+    alignSelf: "flex-end",
+  },
   switchBase: {
     [theme.breakpoints.down('sm')]: {
       height: "24px",
@@ -150,43 +166,52 @@ class Customizer extends React.Component {
         listName: "Buttons",
         Form: ButtonForm,
         immutable: false,
+        sortable: true,
       },
       {
         list: client.triggers,
         listName: "Triggers",
         Form: TriggerForm,
         immutable: false,
+        sortable: true,
       },
       {
         list: client.macros,
         listName: "Macros",
         Form: MacroForm,
         immutable: false,
+        sortable: true,
       },
       {
         list: client.css,
         listName: "CSS",
         Form: null,
         immutable: true,
+        sortable: false,
       },
       {
         list: client.scripts,
         listName: "Scripts",
         Form: null,
         immutable: true,
+        sortable: false,
       },
+/*
       {
         list: client.timers,
         listName: "Timers",
         Form: TimerForm,
         immutable: false,
+        sortable: true,
       },
       {
         list: client.keys,
         listName: "Keys",
         Form: KeyForm,
         immutable: false,
+        sortable: true,
       },
+*/
     ];
     
     this.state = {
@@ -196,8 +221,13 @@ class Customizer extends React.Component {
       menuAnchor: null,
       template: null,
       helpText: null,
+      sortList: false,
     };
   }
+
+
+  ///////////////////////////////////////////////////////////////////
+
 
   changeTab = (event, tab) => {
     this.setState({ tab, selected: -1, edit: false, template: null });
@@ -220,12 +250,13 @@ class Customizer extends React.Component {
   };
   
   handleSwitch = (item) => (e) => {
-    const tab = this.tabs[this.state.tab];
-    const css = item.name.endsWith('.css');
-    
     item.disabled = !e.target.checked;
-    item.defaults = false;
-    this.forceUpdate();
+    this.saveList();
+  };
+  
+  saveList = () => {
+    const tab = this.tabs[this.state.tab];
+    const css = tab.listName === "CSS";
     
     if (tab.Form && tab.Form.save) {
       tab.Form.save();
@@ -234,6 +265,42 @@ class Customizer extends React.Component {
     } else {
       window.client.saveLocalStorage(tab.list, tab.listName);
     }
+    
+    this.forceUpdate();
+  };
+  
+  toggleSort = (e) => {
+    this.setState({ sortList: !this.state.sortList });
+  };
+  
+  moveItemUp = (list, i) => {
+    if (i === 0) return;
+    
+    var tmp = list[i-1];
+    list[i-1] = list[i];
+    list[i] = tmp;
+    
+    if (i === this.state.selected) {
+      this.setState({ selected: i-1 });
+    }
+
+    this.saveList();
+  };
+  
+  moveItemDown = (list, i) => {
+    if (i === list.length-1) return;
+    
+    var tmp = list[i+1];
+    list[i+1] = list[i];
+    list[i] = tmp;
+    
+    if (i === this.state.selected) {
+      this.setState({ selected: i+1 });
+    } else if (i+1 === this.state.selected) {
+      this.setState({ selected: i });
+    }
+
+    this.saveList();
   };
   
   componentDidMount() {
@@ -250,7 +317,7 @@ class Customizer extends React.Component {
   
   render() {
     const { classes, panel } = this.props;
-    const { selected, edit, helpText, menuAnchor, template } = this.state;
+    const { selected, edit, helpText, menuAnchor, template, sortList } = this.state;
     
     const tab = this.tabs[this.state.tab];
     const smallName = tab.listName.toLowerCase();
@@ -267,17 +334,34 @@ class Customizer extends React.Component {
           <div className={classes.left}>
             <span className={edit || selected > -1 ? classes.mobileClose : classes.mobileOpen}>
               <div className={classes.overflow}>
-                <List disablePadding dense subheader={<ListSubheader>{tab.listName}</ListSubheader>}>
+                <List disablePadding dense subheader={
+                  <ListSubheader disableGutters className={classes.subHeader}>
+                    {tab.listName}
+                    <Tooltip title="Reorder list.">
+                      <IconButton disabled={!tab.sortable} onClick={this.toggleSort}>
+                        {sortList ? (<SortIcon />) : (<ReorderIcon />)}
+                      </IconButton>
+                    </Tooltip>
+                  </ListSubheader>
+                }>
                   {tab.list.map((item, i) => (
                     <ListItem key={i} dense button divider selected={selected === i} onClick={this.onSelect(i)} className={i % 2 === 0 ? classes.even : classes.odd}>
-                      <ListItemIcon className={classes.listNum}><span>{i+1}</span></ListItemIcon>
+                      <ListItemIcon className={classes.listNum}>
+                          <span>{i+1}</span>
+                      </ListItemIcon>
                       <ListItemText className={classes.listText} primary={item.name} />
                       {!tab.immutable && (
                         <ListItemSecondaryAction>
-                          <Switch checked={!item.disabled}
-                            classes={{ switchBase: classes.switchBase }}
-                            onChange={this.handleSwitch(item)}
-                          />
+                          {sortList ? (
+                            <IconButton classes={{ root: classes.arrowButton }} disabled={i === tab.list.length-1} onClick={() => this.moveItemDown(tab.list, i)}>
+                              <KeyboardArrowDownIcon />
+                            </IconButton>
+                          ) : (
+                            <Switch checked={!item.disabled}
+                              classes={{ switchBase: classes.switchBase }}
+                              onChange={this.handleSwitch(item)}
+                            />
+                          )}
                         </ListItemSecondaryAction>
                       )}
                     </ListItem>
@@ -306,9 +390,9 @@ class Customizer extends React.Component {
             </span>
           </div>
           <div className={classes.right}>
-            <span className={edit || selected > -1 ? classes.mobileOpen : classes.mobileClose}>
+            <div className={edit || selected > -1 ? classes.mobileOpen : classes.mobileClose}>
               <FormEditor list={tab.list} listName={smallName} template={template} selected={selected} panel={panel} Form={tab.Form} immutable={tab.immutable} />
-            </span>
+            </div>
           </div>
         </Typography>
         

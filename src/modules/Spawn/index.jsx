@@ -40,7 +40,7 @@ const styles = theme => ({
     padding: "0.25em 0.5em",
   },
   bottom: {
-    "background-color": theme.palette.primary.main,
+    "background-color": theme.palette.background.paper,
     display: "flex",
   },
   input: {
@@ -56,8 +56,11 @@ const styles = theme => ({
     "font-weight": "normal",
     "font-size": "16pt",
     [theme.breakpoints.down('sm')]: {
-      height: "1em",
+      height: "1.5em",
     },
+  },
+  prefix: {
+    width: "5em",
   },
 });
 
@@ -165,7 +168,15 @@ class Spawn extends React.Component {
     }
     
     return this;
-  }
+  };
+  
+  Focus = () => {
+    
+    window.client.react.taskbar.popTask(this.props.panel);
+    this.props.panel.normalize();
+    
+    return this;
+  };
   
   // wrapper that scrolls the output if needed
   scrollIfNeeded(fun) {
@@ -224,7 +235,7 @@ class Spawn extends React.Component {
           <div ref={this.refoutput} className={classNames(classes.output, ansiFG, ansiBG)} style={font}></div>
         </div>
         <div className={classes.bottom}>
-          <TextField label="Command Prefix" value={prefix} onChange={this.changePrefix} />
+          <TextField label="Prefix" classes={{ root: classes.prefix }} value={prefix} onChange={this.changePrefix} />
           <textarea ref={this.refinput} className={classNames(classes.input, ansiFG, ansiBG)} style={inputFont}  autoComplete="off"></textarea>
         </div>
       </div>

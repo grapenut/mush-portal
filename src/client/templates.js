@@ -168,7 +168,7 @@ class Templates {
 */
         {
           name: "OpenWindow",
-          text: "Window(\"%2\").SaveHistory().Prefix(\"+%2 \");",
+          text: "Window(\"%2\").SaveHistory().Prefix(\"+%2 \").Focus();",
           javascript: true,
           pattern: "/win(dow)? (.*)",
           regex: true,

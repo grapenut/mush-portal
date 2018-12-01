@@ -1,31 +1,33 @@
-BUGS
+KNOWN BUGS
 ------------------
 
-  Terminal wrap width isn't work. Output is full width.
+  Terminal wrap width isn't working. Output is full width.
 
-TODO
+
+CURRENT TODOS
 ------------------
-
-Customizer
-  Edit taskbar buttons using customizer!
-  Allow reordering of the lists.
-  Fix the concept of default buttons.
-  Check that this is 100% done.
 
 BBoard
   Navigation icons (back, reload)
   +bbpost front-end
 
-Colormap
-  In CSS editor show color picker when clicking on a color
-
 User-defined Actions
   Setup automatic timers to execute code/macros.
   Bind control keys to execute code/macros.
+  In CSS editor show color picker to select colors
 
-Google Speech API
-  Voice dictated input
-  Text2speech for emails/channels/etc.
+
+FUTURE IDEAS
+------------------
+
+Server Proxy
+  Stand-alone server that can relay SSL and WS connections to telnet servers
+  
+
+Routing API
+  Server controlled routing API to display static content
+  Respond to JSON events to open windows and edit content
+  Softcode utilities to manipulate the display content
 
 Ace Editor
   Design custom light/dark themes.
@@ -41,7 +43,7 @@ Phaser
   Click navigation and interaction.
 
 
-DONE
+ALREADY DONE
 ------------------
 
 Sidebar
@@ -53,6 +55,7 @@ Command History
   Show command history popover.
   Click to roll the input buffer back to that line.
   Fix input focus after click.
+  Save/reload command history using localStorage.
 
 JSONAPI
   EXEC Execute arbitrary softcode as the player. Use a unique key to set an
@@ -74,6 +77,8 @@ Taskbar
   Reorganize commands, icons and popovers for customization later.
 
 User-defined Actions
+  Allow reordering of the lists.
+  Modify taskbar buttons.
   Macros execute a block of commands at once, with some string insertion tokens.
   Match incoming lines against wildcard/regexp and execute code/macros.
 
@@ -93,6 +98,9 @@ History Buffer
 
 SavedTemplates
   Saved versions of actions that can be easily cloned.
+
+Input
+  History up/down icons
 
 
 

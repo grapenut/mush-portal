@@ -67,6 +67,11 @@ const UnicodeMap = {
 class Client {
 
   constructor() {
+    // Client colors and theme
+    this.colors = Colors;
+    this.theme = this.createTheme();
+    this.mobile = !window.matchMedia(this.theme.breakpoints.up('md').substring(7)).matches;
+    
     // client settings
     this.defaultSettings = {
       // font
@@ -83,8 +88,8 @@ class Client {
       decompileKey: 'FugueEdit > ',
       // sidebar navigation
       sidebarOpen: true,
-      sidebarAnchor: "left",
-      sidebarDense: false,
+      sidebarAnchor: "right",
+      sidebarDense: this.mobile,
       sidebarAlwaysShow: false,
       sidebarShowPlayers: true,
       sidebarShowThings: true,
@@ -102,6 +107,10 @@ class Client {
       // history settings
       historySize: 1000,
       historySpawnSize: 100,
+      // command recall
+      recallButtons: true,
+      recallAnchor: "right",
+      recallSize: 1000,
       // mobile settings
       mobileHideTaskbar: true,
       mobileHideStatusbar: true,
@@ -139,11 +148,6 @@ class Client {
     
     // must come after client .css definitions
     this.loadSettings();
-    
-    // Client colors and theme
-    this.colors = Colors;
-    this.theme = this.createTheme();
-    this.mobile = !window.matchMedia(this.theme.breakpoints.up('md').substring(7)).matches;
     
     // Terminal UI elements
     this.output = null;
@@ -226,6 +230,7 @@ class Client {
     const SendAPI = (cmd) => this.sendAPI(cmd);
     const SendCommand = (cmd) => this.sendCommand(cmd);
     const SendText = (cmd) => this.sendText(cmd);
+    const Output = (text) => this.output.appendText(text);
     
     var script = null;
     for (let i=0; i < client.scripts.length; i++) {
@@ -251,6 +256,7 @@ class Client {
     const SendAPI = (cmd) => this.sendAPI(cmd);
     const SendCommand = (cmd) => this.sendCommand(cmd);
     const SendText = (cmd) => this.sendText(cmd);
+    const Output = (text) => this.output.appendText(text);
     
     try {
       eval(this.filterUnicode(txt));
@@ -429,68 +435,6 @@ class Client {
     }
   }
   
-  // add a default button object
-  addDefaultButton(button) {
-    if (button && button.name) {
-      let exists = this.findButton(button.name);
-      if (exists) {
-        if (!exists.defaults) {
-          return;
-        } else {
-          this.buttons.splice(this.buttons.indexOf(exists), 1);
-        }
-      }
-      let empty = Object.assign({}, exists || this.templates.empty.buttons);
-      empty.defaults = true;
-      this.buttons.push(Object.assign(empty, button));
-      this.saveButtons();
-    }
-  }
-  
-  // delete a button by name
-  delDefaultButton(name) {
-    const lower = name.toLowerCase();
-    for (let i=0; i < this.buttons.length; i++) {
-      if (this.buttons[i].name.toLowerCase() === lower && this.buttons[i].defaults) {
-        this.buttons.splice(i, 1);
-        this.saveButtons();
-        return true;
-      }
-    }
-    
-    return false;
-  }
-  
-  // find a button by name
-  findButton(name) {
-    const lower = name.toLowerCase();
-    for (let i=0; i < this.buttons.length; i++) {
-      if (this.buttons[i].name.toLowerCase() === lower) {
-        return this.buttons[i];
-      }
-    }
-    
-    return null;
-  }
-  
-  // activate a button
-  pushButton(name) {
-    const lower = name.toLowerCase();
-    const button = this.findButton(name);
-    
-    if (button && button.text && button.text !== "") {
-      if (button.javascript) {
-        this.execActionScript(button.text);
-      } else {
-        this.sendText(button.text);
-      }
-      
-      return true;
-    }
-    
-    return false;
-  }
-  
   // load user defined taskbar buttons
   loadButtons() {
     this.loadLocalStorage(this.buttons, "buttons");
@@ -546,6 +490,18 @@ class Client {
     } else {
       this.unloadStyle('./inverse.css');
     }
+  }
+  
+  // load command recall history
+  loadRecallHistory() {
+    this.loadLocalStorage(this.input.history, "recall_history");
+  }
+  
+  // save command recall history
+  saveRecallHistory() {
+    const { recallSize } = this.settings;
+    this.clearLocalStorage("recall_history");
+    this.saveLocalStorage(this.input.history.slice(-recallSize), "recall_history");
   }
   
   // save user defined taskbar buttons
@@ -719,6 +675,7 @@ class Client {
     // Input window
     if (input !== null) {
       this.input = new UserInput(input);
+      this.loadRecallHistory();
 
       // enter key passthrough from UserInput.pressKey
       this.input.onEnter = (cmd) => { this.sendCommand(cmd); this.prompt && this.prompt.clear(); };
@@ -842,7 +799,13 @@ class Client {
     
     if (!config.headerLogo) {
       var icon = config.icon || "tab";
-      config.headerLogo = "<i class='material-icons' style='margin-left: "+this.theme.spacing.unit+"px'>"+icon+"</i>";
+      var gameicon = icon.startsWith('icon-');
+      
+      if (gameicon) {
+        config.headerLogo = "<i class='" + icon + "' style='margin-left: "+this.theme.spacing.unit+"px'>"+icon+"</i>";
+      } else {
+        config.headerLogo = "<i class='material-icons' style='margin-left: "+this.theme.spacing.unit+"px'>"+icon+"</i>";
+      }
     }
     
     if (!config.panelSize) {
@@ -1175,6 +1138,7 @@ class Client {
     
     this.sendMacro(cmd);
     this.scrollIfNeeded(() => this.appendMessage('localEcho', cmd));
+    this.saveRecallHistory();
   }
     
   sendMacro(cmds) {

@@ -264,16 +264,30 @@ class FormEditor extends React.Component {
     this.setState({ item });
   };
 
+  save = () => {
+    const { list, listName, Form } = this.props;
+    const css = listName === "CSS";
+  
+    if (Form && Form.save) {
+      Form.save();
+    } else if (css) {
+      window.client.saveCSS();
+    } else {
+      window.client.saveLocalStorage(list, listName);
+    }
+    
+    window.client.react.taskbar.forceUpdate();
+  };
+
   onResize = () => {
     this.setState({ needsToResize: false });
     this.editor.current.editor.resize();
   };
   
   onSubmit = (e) => {
-    const { list, listName, selected, immutable, Form } = this.props;
+    const { list, selected, immutable } = this.props;
     const { item } = this.state;
     const client = window.client;
-    const css = item.name.endsWith('.css');
 
     e.preventDefault();
 
@@ -294,7 +308,6 @@ class FormEditor extends React.Component {
     }
     
     this.setStatus(false, "Saved." );
-    item.defaults = false;
     
     if (selected > -1) {
       list[selected] = item;
@@ -304,20 +317,13 @@ class FormEditor extends React.Component {
       client.react.customizer.setState({ selected: list.length-1 });
     }
     
-    if (Form && Form.save) {
-      Form.save();
-    } else if (css) {
-      client.saveCSS();
-    } else {
-      client.saveLocalStorage(list, listName);
-    }
+    this.save();
+    
   };
   
   onDelete = () => {
     const { list, listName, selected, immutable } = this.props;
-    const { item } = this.state;
     const client = window.client;
-    const css = item.name.endsWith('.css');
     
     if (window.confirm("Do you really want to delete that?") && list && selected > -1) {
       if (immutable) {
@@ -331,12 +337,8 @@ class FormEditor extends React.Component {
       }
       
       this.setStatus(false, "Deleted." );
-
-      if (css) {
-        client.saveCSS();
-      } else {
-        client.saveLocalStorage(list, listName);
-      }
+      
+      this.save();
     }
   };
   

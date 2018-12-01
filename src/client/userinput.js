@@ -159,7 +159,6 @@ class UserInput {
   // clear the command history
   clearHistory() {
     this.history = [];
-    this.ncommand = 0;
     this.save_current = '';
     this.current = -1;
   }
@@ -168,8 +167,7 @@ class UserInput {
   // push a command onto the history list and clear the input box
   saveCommand() {
     if (this.root.value !== '') {
-      this.history[this.ncommand] = this.root.value;
-      this.ncommand++;
+      this.history[this.history.length] = this.root.value;
       this.save_current = '';
       this.current = -1;
       this.root.value = '';
@@ -185,9 +183,9 @@ class UserInput {
     }
     
     // cycle command history backward
-    if (this.current < this.ncommand - 1) {
+    if (this.current < this.history.length - 1) {
       this.current++;
-      this.root.value = this.history[this.ncommand - this.current - 1];
+      this.root.value = this.history[this.history.length - this.current - 1];
     }
   }
   
@@ -197,7 +195,7 @@ class UserInput {
     // cycle command history forward
     if (this.current > 0) {
       this.current--;
-      this.root.value = this.history[this.ncommand - this.current - 1];
+      this.root.value = this.history[this.history.length - this.current - 1];
     } else if (this.current === 0) {
       // recall the current entry if they had typed something already
       this.current = -1;

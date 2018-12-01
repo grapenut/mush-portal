@@ -4,6 +4,9 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 
 import TextField from '@material-ui/core/TextField';
+import Icon from '@material-ui/core/Icon';
+import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
 
 
 //////////////////////////////////////////////////////////////////////
@@ -63,9 +66,16 @@ class ButtonForm extends React.Component {
   render() {
     const { classes, item, handleChange } = this.props;
     
+    const icon = item.icon.startsWith('icon-');
+    
     return (
       <div className={classes.frame}>
-        <TextField label="Icon" fullWidth value={item.icon} onChange={handleChange('icon')} inputProps={{ classes: { input: classes.inputBase } }} />
+        <Tooltip title="Button preview.">
+          <IconButton>
+            <Icon className={icon ? item.icon : null}>{!icon && item.icon}</Icon>
+          </IconButton>
+        </Tooltip>
+        <TextField label="Icon" value={item.icon} onChange={handleChange('icon')} inputProps={{ classes: { input: classes.inputBase } }} />
         <TextField label="Badge Expression" fullWidth value={item.count} onChange={handleChange('count')} inputProps={{ classes: { input: classes.inputBase } }} />
         <TextField label="Tooltip" fullWidth value={item.tooltip} onChange={handleChange('tooltip')} inputProps={{ classes: { input: classes.inputBase } }} />
       </div>
