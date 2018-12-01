@@ -94,61 +94,97 @@ panelConfig.position = {
 /*   count	: string, javascript expression, contents of icon badge
 /*   tooltip	: string, text of the hover tooltip
 /* */
-client.addDefaultButton({
-  name: "look",
-  text: "look",
-  javascript: false,
-  icon: "remove_red_eye",
-  count: "",
-  tooltip: "Look around.",
-});
+if (client.buttons.length === 0) {
+  client.buttons = [{
+    name: "look",
+    text: "look",
+    javascript: false,
+    icon: "remove_red_eye",
+    count: "",
+    tooltip: "Look around.",
+  },
+  /* */
+  /*
+  {
+    name: "inventory",
+    text: "inventory",
+    javascript: false,
+    icon: "business_center",
+    count: "",
+    tooltip: "What am I carrying?",
+  },
+  /* */
+  {
+    name: "who",
+    text: "who",
+    javascript: false,
+    icon: "people",
+    count: "",
+    tooltip: "Who's online?",
+  },
+  /* */
+  {
+    name: "Mailbox",
+    text: "SendAPI(\"maillist\");",
+    javascript: true,
+    icon: "mail",
+    count: "client.react.taskbar.state.unreadMail",
+    tooltip: "@mail Inbox",
+  },
+  /* */
+  /*
+  {
+    name: "BBoard",
+    text: "SendAPI(\"boardlist\");",
+    javascript: true,
+    icon: "forum",
+    count: "client.react.taskbar.state.unreadBB",
+    tooltip: "Bulletin Boards",
+  },
+  /* */
+  {
+    name: "help",
+    text: "client.react.taskbar.showHelp(event);",
+    javascript: true,
+    icon: "search",
+    count: "",
+    tooltip: "Search help files",
+  }];
+  client.saveButtons();
+}
+
 /* */
 /*
-client.addDefaultButton({
-  name: "inventory",
-  text: "inventory",
-  javascript: false,
-  icon: "business_center",
-  count: "",
-  tooltip: "What am I carrying?",
-});
+if (client.triggers.length === 0) {
+  client.triggers = [{
+    name: "AllChannels",
+    text: "Window(\"Channels\").SaveHistory().append(\"%0\");",
+    javascript: true,
+    pattern: "<*> *",
+    regex: false,
+    suppress: true,
+  }];
+  client.saveTriggers();
+}
 /* */
-client.addDefaultButton({
-  name: "who",
-  text: "who",
-  javascript: false,
-  icon: "people",
-  count: "",
-  tooltip: "Who's online?",
-});
-/* */
-client.addDefaultButton({
-  name: "Mailbox",
-  text: "SendAPI(\"maillist\");",
-  javascript: true,
-  icon: "mail",
-  count: "client.react.taskbar.state.unreadMail",
-  tooltip: "@mail Inbox",
-});
-/* */
-/*
-client.addDefaultButton({
-  name: "BBoard",
-  text: "SendAPI(\"boardlist\");",
-  javascript: true,
-  icon: "forum",
-  count: "client.react.taskbar.state.unreadBB",
-  tooltip: "Bulletin Boards",
-});
-/* */
-client.addDefaultButton({
-  name: "help",
-  text: "client.react.taskbar.showHelp(event);",
-  javascript: true,
-  icon: "search",
-  count: "",
-  tooltip: "Search help files",
-});
+
+
+
+/////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////
+// Default macros
+/////////////////////////////////////////////////////////////////////
+
+if (client.macros.length === 0) {
+  client.macros = [{
+    name: "OpenWindow",
+    text: "Window(\"%2\").SaveHistory().Prefix(\"+%2 \").Focus();",
+    javascript: true,
+    pattern: "/win(dow)? (.*)",
+    regex: true,
+  }];
+  client.saveMacros();
+}
 
 
 /////////////////////////////////////////////////////////////////////
