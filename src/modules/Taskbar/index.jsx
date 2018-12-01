@@ -526,7 +526,7 @@ class Taskbar extends React.Component {
                 <Tooltip key={i} title={task.headertitle.innerText}>
                   <Button key={task.id} classes={{ label: classes.tasklabel }} className={classes.taskbutton} aria-label="open-task" onClick={() => this.popTask(task)}>
                     <BadgeWrapper count={() => task.count}>
-                      <Icon className={classNames(classes.taskicon, task.headerlogo.innerText)}>{task.headerlogo.innerText}</Icon>
+                      <Icon className={classNames(classes.taskicon, task.options.icon)}>{task.options.icon}</Icon>
                       {!window.client.mobile && task.headertitle.innerText}
                     </BadgeWrapper>
                   </Button>
@@ -695,7 +695,7 @@ class Taskbar extends React.Component {
                       label={(
                         <span>
                           <BadgeWrapper count={() => task.count}>
-                            <Icon className={classNames(classes.taskicon, task.headerlogo.innerText)}>{task.headerlogo.innerText}</Icon>
+                            <Icon className={classNames(classes.taskicon, task.options.icon)}>{task.options.icon}</Icon>
                           </BadgeWrapper>
                           {task.headertitle.innerText}
                         </span>
