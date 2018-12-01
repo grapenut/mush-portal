@@ -802,7 +802,7 @@ class Client {
       var gameicon = icon.startsWith('icon-');
       
       if (gameicon) {
-        config.headerLogo = "<i class='" + icon + "' style='margin-left: "+this.theme.spacing.unit+"px'>"+icon+"</i>";
+        config.headerLogo = "<i class='" + icon + "' style='margin-left: "+this.theme.spacing.unit+"px'></i>";
       } else {
         config.headerLogo = "<i class='material-icons' style='margin-left: "+this.theme.spacing.unit+"px'>"+icon+"</i>";
       }
