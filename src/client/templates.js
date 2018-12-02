@@ -25,6 +25,7 @@ class Templates {
         name: "",
         text: "",
         javascript: false,
+        disabled: true,
         delay: 0,
         repeat: false,
         times: 0,
@@ -117,16 +118,6 @@ class Templates {
 */        
       ],
       triggers: [
-/*
-        {
-          name: "",
-          text: "",
-          javascript: false,
-          pattern: "",
-          regex: false,
-          suppress: false,
-        }
-*/
         {
           name: "PerChannel",
           text: "Window(\"%1\").SaveHistory().Prefix(\"+%1 \").AutoHide().append(\"%0\");",
@@ -143,20 +134,6 @@ class Templates {
           regex: false,
           suppress: true,
         },
-      ],
-      timers: [
-/*
-        {
-          name: "",
-          text: "",
-          javascript: false,
-          delay: 0,
-          repeat: false,
-          times: 0,
-        },
-*/
-      ],
-      macros: [
 /*
         {
           name: "",
@@ -164,8 +141,33 @@ class Templates {
           javascript: false,
           pattern: "",
           regex: false,
+          suppress: false,
+        }
+*/
+      ],
+      timers: [
+        {
+          name: "EveryMinute",
+          text: "th DING!",
+          javascript: false,
+          disabled: true,
+          delay: 60,
+          repeat: true,
+          times: -1,
+        },
+/*
+        {
+          name: "",
+          text: "",
+          javascript: false,
+          disabled: true,
+          delay: 0,
+          repeat: false,
+          times: 0,
         },
 */
+      ],
+      macros: [
         {
           name: "OpenWindow",
           text: "Window(\"%2\").SaveHistory().Prefix(\"+%2 \").Focus();",
@@ -180,6 +182,15 @@ class Templates {
           pattern: "/recall *",
           regex: false,
         },
+/*
+        {
+          name: "",
+          text: "",
+          javascript: false,
+          pattern: "",
+          regex: false,
+        },
+*/
       ],
       keys: [
 /*

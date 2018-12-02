@@ -13,7 +13,8 @@ import Mailbox from '../modules/Mailbox';
 import Sendmail from '../modules/Sendmail';
 import BBoard from '../modules/BBoard';
 import Upload from '../modules/Upload';
-import Customizer from '../modules/Customizer';
+import Backup from '../modules/Backup';
+import Configure from '../modules/Configure';
 import Spawn from '../modules/Spawn';
 
 import Connection from './connection';
@@ -82,14 +83,15 @@ class Client {
       ansiBG: 'ansi-40',
       invertHighlight: false,
       // terminal settings
-      wrapWidth: 100,
+      terminalWidth: 100,
+      terminalAutoScroll: true,
       // upload editor
       decompileEditor: true,
       decompileKey: 'FugueEdit > ',
       // sidebar navigation
       sidebarOpen: true,
       sidebarAnchor: "right",
-      sidebarDense: this.mobile,
+      sidebarDense: true,
       sidebarAlwaysShow: false,
       sidebarShowPlayers: true,
       sidebarShowThings: true,
@@ -112,8 +114,11 @@ class Client {
       recallAnchor: "right",
       recallSize: 1000,
       // mobile settings
+      mobileFontSize: 6,
       mobileHideTaskbar: true,
       mobileHideStatusbar: true,
+      // user defined actions
+      timersEnabled: false,
     };
     this.settings = null;
     
@@ -123,7 +128,8 @@ class Client {
       "Sendmail": Sendmail,
       "BBoard": BBoard,
       "Upload": Upload,
-      "Customizer": Customizer,
+      "Backup": Backup,
+      "Configure": Configure,
       "Spawn": Spawn,
     };
     
@@ -171,7 +177,8 @@ class Client {
       sendmail: null,
       bboard: null,
       upload: null,
-      customizer: null,
+      backup: null,
+      configure: null,
       spawns: [],
     };
     
@@ -205,6 +212,9 @@ class Client {
     
     // render the app
     this.render();
+    
+    // start cron timer loop
+    this.startTimers();
   }
   
   ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -361,6 +371,105 @@ class Client {
   ///////////////////////////////////////////////////////////////////////////////////////////////////
   // save and load objects from localStorage
   
+  // save a text string to a local file
+  saveText(filename, text, type) {
+    if (!type) {
+      type = "text/plain";
+    }
+    
+    if (text.length > 0) {
+      var blob = new Blob([text], { type });
+      saveAs(blob, filename);
+      return true;
+    } else {
+      return false;
+    }
+  }
+  
+  // convert local storage to text
+  localStorageToText(indent) {
+    const store = window.localStorage;
+    var keys = { };
+    Object.keys(store).forEach(key => { keys[key] = store[key]; });
+    
+    if (indent) {
+      return JSON.stringify(keys, (key,value) => {
+        switch (key) {
+          case 'buttons':
+          case 'triggers':
+          case 'timers':
+          case 'macros':
+          case 'keys':
+          case 'css':
+          case 'scripts':
+          case 'settings':
+          case 'recall_history':
+            return JSON.parse(value);
+          default:
+            return value;
+        }
+      }, indent);
+    } else {
+      return JSON.stringify(keys);
+    }
+  }
+    
+  // restore window.localStorage from a string
+  restoreLocalStorage(text) {
+    var store;
+    try {
+      store = JSON.parse(text, (key,value) => {
+        switch (key) {
+          case 'buttons':
+          case 'triggers':
+          case 'timers':
+          case 'macros':
+          case 'keys':
+          case 'css':
+          case 'scripts':
+          case 'settings':
+          case 'recall_history':
+            return JSON.stringify(value);
+          default:
+            return value;
+        }
+      });
+    } catch (e) {
+      alert("Failed to parse local storage file!");
+      return false;
+    }
+    
+    if (store) {
+      Object.keys(store).forEach(key => {
+        window.localStorage[key] = store[key];
+        
+        if (key === "output_history") {
+          this.output.loadHistory(key);
+        } else if (key.startsWith("output_history_")) {
+          let name = key.split('_').slice(2).join('_');
+          let panel = this.findSpawn(name);
+          panel && panel.react && panel.react.output.loadHistory(key);
+        }
+      });
+      
+      this.loadRecallHistory();
+      this.loadButtons();
+      this.loadTriggers();
+      this.loadTimers();
+      this.loadMacros();
+      this.loadKeys();
+      this.loadCSS();
+      this.loadScripts();
+      this.loadSettings();
+      
+      this.react.portal.forceUpdate();
+    } else {
+      alert("Failed to parse local storage file!");
+      return false;
+    }
+    return true;
+  }
+  
   // load object from localstorage
   loadLocalStorage(obj, key) {
     if (window.localStorage.hasOwnProperty(key)) {
@@ -427,17 +536,24 @@ class Client {
       } else {
         this.unloadStyle('./inverse.css');
       }
-    } else if (key === 'wrapWidth') {
+    } else if (key === 'terminalWidth') {
       // send the screen dimensions
       this.output.calcDimensions();
-      this.sendText("SCREENWIDTH " + this.settings.wrapWidth);
+      this.sendText("SCREENWIDTH " + this.settings.terminalWidth);
       this.sendText("SCREENHEIGHT " + Math.floor(this.output.root.parentNode.clientHeight / this.output.dims.height));
+    } else if (key === 'timersEnabled') {
+      if (this.settings[key]) {
+        this.startTimers();
+      } else {
+        this.stopTimers();
+      }
     }
   }
   
   // load user defined taskbar buttons
   loadButtons() {
     this.loadLocalStorage(this.buttons, "buttons");
+//    this.react.taskbar && this.react.taskbar.forceUpdate();
   }
   
   // load regex/wildcard pattern triggers
@@ -678,7 +794,11 @@ class Client {
       this.loadRecallHistory();
 
       // enter key passthrough from UserInput.pressKey
-      this.input.onEnter = (cmd) => { this.sendCommand(cmd); this.prompt && this.prompt.clear(); };
+      this.input.onEnter = (cmd) => {
+        this.sendCommand(cmd);
+        this.prompt && this.prompt.clear();
+        this.settings.terminalAutoScroll && this.output.scrollDown();
+      };
 
       // escape key passthrough from UserInput.pressKey
       this.input.onEscape = () => { this.input.clear(); };
@@ -797,14 +917,17 @@ class Client {
       config.headerTitle = id;
     }
     
+    if (!config.icon) {
+      config.icon = "tab";
+    }
+    
     if (!config.headerLogo) {
-      var icon = config.icon || "tab";
-      var gameicon = icon.startsWith('icon-');
+      var gameicon = config.icon.startsWith('icon-');
       
       if (gameicon) {
-        config.headerLogo = "<i class='" + icon + "' style='margin-left: "+this.theme.spacing.unit+"px'></i>";
+        config.headerLogo = "<i class='" + config.icon + "' style='margin-left: "+this.theme.spacing.unit+"px'></i>";
       } else {
-        config.headerLogo = "<i class='material-icons' style='margin-left: "+this.theme.spacing.unit+"px'>"+icon+"</i>";
+        config.headerLogo = "<i class='material-icons' style='margin-left: "+this.theme.spacing.unit+"px'>" + config.icon + "</i>";
       }
     }
     
@@ -825,8 +948,8 @@ class Client {
     let ref = React.createRef();
     config.callback = (container) => {
       container.content.style.backgroundColor = this.theme.palette.background.paper;
-      let child = React.createElement(el, { innerRef: ref, id: id.toLowerCase(), panel: container, ...config.props }, null);
-      ReactDOM.render(React.createElement(MuiThemeProvider, { theme: this.theme }, child), container.content, () => {
+      config.react = React.createElement(el, { innerRef: ref, id: id.toLowerCase(), panel: container, ...config.props }, null);
+      ReactDOM.render(React.createElement(MuiThemeProvider, { theme: this.theme }, config.react), container.content, () => {
         // add the helpText() controlbar icon
         let obj = ref.current;
         if (obj && obj.helpText) {
@@ -933,6 +1056,7 @@ class Client {
     // just log a standard message on these socket status events
     this.conn.onOpen = function (evt) {
       client.appendMessage('logMessage', '%% Connected.');
+      client.conn.hasData = false;
       client.reconnectCount = 0;
     };
     
@@ -953,7 +1077,7 @@ class Client {
         client.react.login && client.react.login.openLogin();
         
         // send the screen dimensions
-        client.sendText("SCREENWIDTH " + client.settings.wrapWidth);
+        client.sendText("SCREENWIDTH " + client.settings.terminalWidth);
         client.sendText("SCREENHEIGHT " + Math.floor(client.output.root.parentNode.clientHeight / client.output.dims.height));
       }
       
@@ -1222,11 +1346,16 @@ class Client {
     if (!this.output) return;
     var node = this.output.root;
     var text = (node.innerText || node.textContent);
-    if (text.length > 0) {
-      var blob = new Blob([text], {type: "text/html;charset=utf-8"});
-      saveAs(blob, filename);
-    } else {
+    if (!this.saveText(filename, text, "text/html;charset=utf-8")) {
       alert("File not saved! The current output is empty.");
+    }
+  }
+  
+  // save the current local storage to a backup
+  saveBackup(filename) {
+    var text = this.localStorageToText(2);
+    if (!this.saveText(filename, text)) {
+      alert("File not saved! Local storage is empty.");
     }
   }
   
@@ -1312,6 +1441,81 @@ class Client {
       window.client.input.resetCursor();
     };
   }
+  
+  
+  /////////////////////////////////////////////////////////
+  
+  enableTimers = () => {
+    if (this.settings.timersEnabled) return;
+    
+    this.changeSetting("timersEnabled", true);
+  };
+  
+  disableTimers = () => {
+    if (!this.settings.timersEnabled) return;
+    
+    this.changeSetting("timersEnabled", false);
+  };
+  
+  startTimers = () => {
+    if (this.settings.timersEnabled) {
+      clearTimeout(this.runTimers);
+      setTimeout(this.runTimers,  1000);
+    }
+  };
+  
+  stopTimers = () => {
+    clearTimeout(this.runTimers);
+  };
+  
+  runTimers = () => {
+    if (!this.settings.timersEnabled) return;
+    
+    for (let i = 0; i < this.timers.length; i++) {
+      const timer = this.timers[i];
+      if (timer.disabled) {
+        if (timer.timeleft) {
+          delete timer.timeleft;
+        }
+        
+        continue;
+      }
+      
+      if (typeof(timer.timeleft) === "undefined") {
+        // set initial time
+        timer.timeleft = Math.max(1, timer.delay);
+      }
+      
+      if (timer.timeleft > 0) {
+        // subtract time
+        timer.timeleft--;
+      } else {
+        // execute timer
+        if (timer.javascript) {
+          this.execActionScript(timer.text);
+        } else {
+          this.sendText(timer.text);
+        }
+        
+        if (timer.repeat && timer.times !== 0) {
+          // repeat timer, reset time left
+          if (timer.times > 0) {
+            timer.times--;
+          }
+          timer.timeleft = timer.delay;
+        } else {
+          // don't repeat, disable timer
+          delete timer.timeleft;
+          timer.disabled = true;
+        }
+      }
+    }
+  
+    setTimeout(this.runTimers, 1000);
+  };
+
+
+
 }
 
 

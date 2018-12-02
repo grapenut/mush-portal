@@ -3,7 +3,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { withStyles } from '@material-ui/core/styles';
+
 import Typography from '@material-ui/core/Typography';
+import Tooltip from '@material-ui/core/Tooltip';
 
 
 //////////////////////////////////////////////////////////////////////
@@ -66,6 +68,9 @@ const styles = theme => ({
   lineheight: {
     lineHeight: 1,
   },
+  noPadding: {
+    padding: 0,
+  },
 });
 
 
@@ -112,7 +117,7 @@ class Terminal extends React.Component {
   doResize = () => {
     const client = window.client;
     client.output.calcDimensions();
-    client.sendText("SCREENWIDTH " + Math.min(client.settings.wrapWidth, Math.floor(window.client.output.root.parentNode.clientWidth / window.client.output.dims.width)));
+    client.sendText("SCREENWIDTH " + Math.min(client.settings.terminalWidth, Math.floor(window.client.output.root.parentNode.clientWidth / window.client.output.dims.width)));
     client.sendText("SCREENHEIGHT " + Math.floor(client.output.root.parentNode.clientHeight / client.output.dims.height));
     client.output.scrollDown();
     
@@ -132,15 +137,19 @@ class Terminal extends React.Component {
   linesOfScroll() {
     return window.client.output.linesOfScroll();
   }
+  
+  scrollDown() {
+    window.client.output.scrollDown();
+  }
 
   render() {
     const { classes, width, ansiFG, ansiBG, containerRef } = this.props;
     const { lines } = this.state;
-    const { fontFamily, fontSize } = window.client.settings;
+    const { fontFamily, fontSize, mobileFontSize } = window.client.settings;
     
     const font = {
       fontFamily: "'" + fontFamily + "', monospace",
-      fontSize: (window.client.mobile ? fontSize/2 : fontSize) + "pt",
+      fontSize: (window.client.mobile ? mobileFontSize : fontSize) + "pt",
     };
     
     var dim;
@@ -158,9 +167,11 @@ class Terminal extends React.Component {
         <div className={classes.taskbar}>
           <div ref={this.prompt} className={classNames(classes.prompt, ansiFG, ansiBG)}></div>
           <div className={classes.scrollcount}>
-            <Typography color="error" align="right" variant="caption" className={classes.lineheight}>
-              {lines > 0 && "...and "+lines+" more lines..."}
-            </Typography>
+            <Tooltip title="Click to scroll down.">
+              <Typography color="error" align="right" variant="caption" className={classes.lineheight} onClick={this.scrollDown}>
+                {lines > 0 && "...and "+lines+" more lines..."}
+              </Typography>
+            </Tooltip>
           </div>
         </div>
       </div>

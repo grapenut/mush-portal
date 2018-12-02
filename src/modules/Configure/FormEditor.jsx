@@ -77,13 +77,10 @@ const styles = theme => ({
     width: "100%",
   },
   middle: {
-    display: 'none',
-    [theme.breakpoints.up('md')]: {
-      display: "flex",
-      flexFlow: "row nowrap",
-      flex: 1,
-      alignItems: "center",
-    },
+    display: "flex",
+    flexFlow: "row nowrap",
+    flex: 1,
+    alignItems: "center",
   },
   align: {
     width: "100%",
@@ -227,13 +224,14 @@ class FormEditor extends React.Component {
   }
 
   setStatus = (error, status) => {
-    this.setState({ error: error, status: status });
+    this.setState({ error, status });
     clearTimeout(this.clearStatus);
     setTimeout(this.clearStatus, 3000);
   };
 
   clearStatus = () => {
     this.setState({ error: false, status: "" });
+    this.onResize();
   };
   
   handleChange = (key) => (e) => {
@@ -275,8 +273,6 @@ class FormEditor extends React.Component {
     } else {
       window.client.saveLocalStorage(list, listName);
     }
-    
-    window.client.react.taskbar.forceUpdate();
   };
 
   onResize = () => {
@@ -310,11 +306,11 @@ class FormEditor extends React.Component {
     this.setStatus(false, "Saved." );
     
     if (selected > -1) {
-      list[selected] = item;
-      client.react.customizer.setState({ selected: selected });
+      list[selected] = Object.assign({}, item);
+      client.react.configure.setState({ selected: selected });
     } else {
       list.push(item);
-      client.react.customizer.setState({ selected: list.length-1 });
+      client.react.configure.setState({ selected: list.length-1 });
     }
     
     this.save();
@@ -333,7 +329,7 @@ class FormEditor extends React.Component {
         this.setState({ item: Object.assign({}, list[selected]) });
       } else {
         list.splice(selected, 1);
-        client.react.customizer.setState({ selected: -1 });
+        client.react.configure.setState({ selected: -1 });
       }
       
       this.setStatus(false, "Deleted." );
@@ -375,7 +371,7 @@ class FormEditor extends React.Component {
   
   render() {
     const { classes, selected, Form, immutable } = this.props;
-    const { item, error, status } = this.state;
+    const { item } = this.state;
     
     var ltype = "MushCode";
     var rtype = "JavaScript";
@@ -423,7 +419,7 @@ class FormEditor extends React.Component {
                 theme="tomorrow_night_bright"
                 value={item.text}
                 onChange={this.changeText}
-                wrapEnabled={true}
+                wrapEnabled={!window.client.mobile}
                 highlightActiveLine={false}
                 editorProps={{ $blockScrolling: Infinity }}
               />
@@ -431,25 +427,25 @@ class FormEditor extends React.Component {
           </div>
           
           <div className={classes.bottom}>
-            <Button className={classes.mobileOnly} classes={{ label: classes.block }} onClick={() => window.client.react.customizer.setState({ edit: false, selected: -1 })}>
-              <CloseIcon /><span className={classes.desktopOnly}>Close</span>
+            <Button className={classes.mobileOnly} classes={{ label: classes.block }} onClick={() => window.client.react.configure.setState({ edit: false, selected: -1 })}>
+              <CloseIcon />Close
             </Button>
             <Button onClick={this.onDelete} classes={{ label: classes.block }} disabled={selected === -1}>
-              <DeleteIcon /><span className={classes.desktopOnly}>Delete</span>
+              <DeleteIcon />Delete
             </Button>
             <span className={classes.middle}>
+{/*
               <Typography className={classes.align} color={error ? "error" : "default"}>
-                {status}
+                {status !== "" ? status : (selected ? "Save." : "Create.")}
               </Typography>
+*/}
             </span>
             <Button onClick={this.onSubmit} classes={{ label: classes.block }} disabled={immutable && selected === -1}>
-              <SaveIcon /><span className={classes.desktopOnly}>Save</span>
+              <SaveIcon />Save
             </Button>
             <Button onClick={this.onReset} classes={{ label: classes.block }} disabled={immutable && selected === -1}>
               {immutable && item.text === "" ? (<CloudDownloadIcon />) : (<UndoIcon />)}
-              <span className={classes.desktopOnly}>
-                {immutable && item.text === "" ? "Source" : "Reset"}
-              </span>
+              {immutable && item.text === "" ? "Source" : "Undo"}
             </Button>
           </div>
           

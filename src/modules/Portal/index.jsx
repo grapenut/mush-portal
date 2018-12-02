@@ -85,7 +85,7 @@ class Portal extends React.Component {
   render() {
     const { classes } = this.props;
     const { theme } = this.state;
-    const { sidebarOpen, sidebarAnchor, ansiFG, ansiBG, wrapWidth,
+    const { sidebarOpen, sidebarAnchor, ansiFG, ansiBG, terminalWidth,
       sidebarAlwaysShow, sidebarShowExits, sidebarShowPlayers,
       sidebarShowThings, sidebarShowCompass, sidebarDense,
       sidebarLargeCompass } = window.client.settings;
@@ -109,7 +109,7 @@ class Portal extends React.Component {
           </div>
           <div className={classes.middle} ref={this.middle}>
             {left && sidebar}
-            <Terminal width={wrapWidth} ansiFG={ansiFG} ansiBG={ansiBG} containerRef={this.terminal} />
+            <Terminal width={terminalWidth} ansiFG={ansiFG} ansiBG={ansiBG} containerRef={this.terminal} />
             {right && sidebar}
           </div>
           <div className={classes.bottom}>

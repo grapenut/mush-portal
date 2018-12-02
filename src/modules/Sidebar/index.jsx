@@ -216,7 +216,7 @@ class Sidebar extends React.Component {
     return (
       <Tooltip disabled={disabled} title={exit}>
         <span>
-          <IconButton classes={(window.client.mobile || sidebarDense) ? { root: classes.smallIcons } : null} onClick={this.go(exit)} disabled={disabled}>
+          <IconButton classes={(sidebarDense) ? { root: classes.smallIcons } : null} onClick={this.go(exit)} disabled={disabled}>
             {COMPASS[uc]}
           </IconButton>
         </span>
@@ -301,7 +301,7 @@ class Sidebar extends React.Component {
 
     var width;
     var numicons = sidebarShowCompass ? (sidebarLargeCompass ? 4 : 3) : 0;
-    if (window.client.mobile || sidebarDense) {
+    if (sidebarDense) {
       width = (24 + this.props.theme.spacing.unit) * numicons;
     } else {
       width = 48 * numicons;

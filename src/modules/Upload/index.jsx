@@ -9,7 +9,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import PauseIcon from '@material-ui/icons/Pause';
-import RedoIcon from '@material-ui/icons/Redo';
+import UndoIcon from '@material-ui/icons/Redo';
 
 import AceEditor from 'react-ace';
 import 'brace/mode/mushcode';
@@ -47,6 +47,10 @@ const styles = theme => ({
   },
   padded: {
     margin: theme.spacing.unit,
+  },
+  block: {
+    display: "flex",
+    "flex-direction": "column",
   },
 });
 
@@ -173,7 +177,7 @@ class Upload extends React.Component {
           value={text}
           onChange={this.changeText}
           readOnly={uploading}
-          wrapEnabled={true}
+          wrapEnabled={!window.client.mobile}
           highlightActiveLine={false}
           editorProps={{ $blockScrolling: Infinity }}
         />
@@ -185,20 +189,22 @@ class Upload extends React.Component {
           { !uploading ? (
             <div className={classes.stretchflex}>
               <Tooltip title="Start uploading.">
-                <Button className={classes.stretch} onClick={this.startUpload}>
+                <Button className={classes.stretch} classes={{ label: classes.block }} onClick={this.startUpload}>
                   <CloudUploadIcon />
+                  Upload
                 </Button>
               </Tooltip>
               <Tooltip title="Reset partially uploaded text.">
-                <Button className={classes.stretch} onClick={this.resetText}>
-                  <RedoIcon />
+                <Button className={classes.stretch} classes={{ label: classes.block }} onClick={this.resetText}>
+                  <UndoIcon />
+                  Reset
                 </Button>
               </Tooltip>
             </div>
           ) : (
             <div className={classes.stretchflex}>
               <Tooltip title="Pause uploading.">
-                <Button className={classes.stretch} onClick={this.pauseUpload}>
+                <Button className={classes.stretch} classes={{ label: classes.block }} onClick={this.pauseUpload}>
                   <PauseIcon />
                 </Button>
               </Tooltip>

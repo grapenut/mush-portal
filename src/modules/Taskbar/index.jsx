@@ -24,6 +24,7 @@ import Icon from '@material-ui/core/Icon';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import IconButton from '@material-ui/core/IconButton';
+import Divider from '@material-ui/core/Divider';
 
 import MenuIcon from '@material-ui/icons/Menu';
 import BackspaceIcon from '@material-ui/icons/Backspace';
@@ -38,6 +39,7 @@ import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
+import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 
 import Settings from '../Settings';
 
@@ -144,6 +146,10 @@ const styles = theme => ({
     minWidth: 24,
     padding: theme.spacing.unit,
   },
+  backup: {
+    display: "flex",
+    flexFlow: "row wrap",
+  },
 });
 
 
@@ -211,12 +217,14 @@ class Taskbar extends React.Component {
       helpAnchor: null,
       logAnchor: null,
       historyAnchor: null,
+      backupAnchor: null,
     };
     
     this.help = "";
     this.url = "";
     this.file = "";
     this.logname = "";
+    this.backupname = "";
     this.history = null;
     this.frame = React.createRef();
     
@@ -404,8 +412,8 @@ class Taskbar extends React.Component {
     this.url = event.target.value;
   };
 
-  openCustomizer = () => {
-    window.client.addPanel("Customizer", { icon: 'build' });
+  openConfigure = () => {
+    window.client.addPanel("Configure", { icon: 'build' });
   };
   
   previewUpload = () => {
@@ -414,6 +422,8 @@ class Taskbar extends React.Component {
     if (this.file && this.file.length > 0) {
       window.client.react.upload.setText(this.file);
     }
+    
+    this.file = null;
     
     this.closeUpload();
   };
@@ -444,6 +454,81 @@ class Taskbar extends React.Component {
         if (req.status === 200) {
           this.file = req.responseText;
           this.previewUpload();
+        } else {
+          alert("Unable to download URL! See console for more information.");
+        }
+      }
+    };
+    req.open("GET", this.url);
+    req.send();
+  };
+  
+  showBackup = event => {
+    this.backupname = null;
+    this.closeMenu();
+    this.setState({ backupAnchor: event.currentTarget });
+  };
+  
+  closeBackup = () => {
+    this.setState({ backupAnchor: null });
+    window.client.focus(true);
+  };
+  
+  typeBackup = event => {
+    this.backupname = event.target.value;
+  };
+  
+  saveBackup = event => {
+    event.preventDefault();
+    
+    if (!this.backupname || !(this.backupname.length > 0)) return;
+    
+    window.client.saveBackup(this.backupname+".txt");
+    
+    this.closeBackup();
+  };
+  
+  previewBackup = () => {
+    const client = window.client;
+    client.addPanel("Backup", { icon: 'save' });
+
+    if (this.file && this.file.length > 0) {
+      client.react.backup.setText(this.file);
+    } else {
+      client.react.backup.setText(client.localStorageToText(2));
+    }
+    
+    this.file = null;
+    
+    this.closeBackup();
+  };
+  
+  handleBackupFile = event => {
+    event.preventDefault();
+    const files = event.target.files;
+    
+    if (files.length > 0) {
+      var reader = new FileReader();
+      reader.onload = () => {
+        this.file = reader.result;
+        this.previewBackup();
+      };
+      reader.readAsText(files[0]);
+    }
+  };
+  
+  handleBackupURL = event => {
+    event.preventDefault();
+    
+    if (!this.url || !this.url.startsWith("http")) return;
+
+    var req = new window.XMLHttpRequest();
+    req.onreadystatechange = () => {
+      if (req.readyState === 4) {
+        // The request is done; did it work?
+        if (req.status === 200) {
+          this.file = req.responseText;
+          this.previewBackup();
         } else {
           alert("Unable to download URL! See console for more information.");
         }
@@ -494,7 +579,7 @@ class Taskbar extends React.Component {
   render() {
     const input = window.client.input;
     const { classes } = this.props;
-    const { title, taskbar, open, historyAnchor,
+    const { title, taskbar, open, historyAnchor, backupAnchor,
             menuAnchor, uploadAnchor, helpAnchor, logAnchor } = this.state;
     const { sidebarOpen, sidebarAnchor, mobileHideTaskbar } = window.client.settings;
     
@@ -602,7 +687,40 @@ class Taskbar extends React.Component {
                 </Button>
               </label>
               <Button onClick={this.previewUpload}>
-                Paste Text
+                Edit Commands
+              </Button>
+            </Popover>
+            
+            <Popover id="taskbar.backup" className={classes.backup} anchorEl={backupAnchor} open={Boolean(backupAnchor)} onClose={this.closeBackup}>
+              <form onSubmit={this.saveBackup} className={classNames(classes.padded, classes.backup)}>
+                <TextField label="File Name" variant="outlined" onChange={this.typeBackup} autoFocus
+                  InputProps={{ inputProps: { style: { textAlign: 'right' }}, endAdornment: <InputAdornment position="end">.txt</InputAdornment> }}
+                />
+                <Button className={classes.flex} onClick={this.saveBackup}>
+                  Backup To File
+                </Button>
+              </form>
+              <Divider variant="fullWidth" />
+              <form onSubmit={this.handleBackupURL} className={classes.padded}>
+                <TextField type="url" fullWidth label="Insert URL" variant="outlined" onChange={this.typeURL} />
+              </form>
+              <Button onClick={this.handleBackupURL}>
+                Restore URL
+              </Button>
+              <input
+                accept="text/plain"
+                className={classes.fileinput}
+                id="file.backup"
+                type="file"
+                onChange={this.handleBackupFile}
+              />
+              <label htmlFor="file.backup">
+                <Button component="span">
+                  Restore File
+                </Button>
+              </label>
+              <Button onClick={this.previewBackup}>
+                Edit Settings
               </Button>
             </Popover>
             
@@ -630,18 +748,23 @@ class Taskbar extends React.Component {
                   <SettingsIcon />
                 </Tooltip>
               </MenuItem>
-              <MenuItem onClick={this.openCustomizer}>
-                <Tooltip title="Client customization.">
+              <MenuItem onClick={this.openConfigure}>
+                <Tooltip title="Configure client.">
                   <BuildIcon />
                 </Tooltip>
               </MenuItem>
               <MenuItem aria-owns={uploadAnchor ? 'taskbar.upload' : null} aria-label="open-upload" aria-haspopup="true" onClick={this.showUpload}>
-                <Tooltip title="Upload file/URL.">
+                <Tooltip title="Upload commands.">
                   <CloudUploadIcon />
                 </Tooltip>
               </MenuItem>
               <MenuItem aria-owns={logAnchor ? 'taskbar.log' : null} aria-label="open-log" aria-haspopup="true" onClick={this.showLog}>
-                <Tooltip title="Save display log.">
+                <Tooltip title="Download display log.">
+                  <CloudDownloadIcon />
+                </Tooltip>
+              </MenuItem>
+              <MenuItem aria-owns={backupAnchor ? 'taskbar.backup' : null} aria-label="open-backup" aria-haspopup="true" onClick={this.showBackup}>
+                <Tooltip title="Backup & restore settings.">
                   <SaveIcon />
                 </Tooltip>
               </MenuItem>

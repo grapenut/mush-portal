@@ -25,6 +25,7 @@ import BugReportIcon from '@material-ui/icons/BugReport';
 import PaletteIcon from '@material-ui/icons/Palette';
 import WrapTextIcon from '@material-ui/icons/WrapText';
 import EditIcon from '@material-ui/icons/Edit';
+import TextRotateVerticalIcon from '@material-ui/icons/TextRotateVertical';
 import CodeIcon from '@material-ui/icons/Code';
 import BorderLeftIcon from '@material-ui/icons/BorderLeft';
 import BorderRightIcon from '@material-ui/icons/BorderRight';
@@ -44,6 +45,8 @@ import MobileScreenShareIcon from '@material-ui/icons/MobileScreenShare';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import UnfoldMoreIcon from '@material-ui/icons/UnfoldMore';
 import RepeatIcon from '@material-ui/icons/Repeat';
+import TimerIcon from '@material-ui/icons/Timer';
+import TimerOffIcon from '@material-ui/icons/TimerOff';
 
 
 //////////////////////////////////////////////////////////////////////
@@ -181,11 +184,11 @@ class Settings extends React.Component {
 
   render() {
     const { classes, closeDrawer } = this.props;
-    const { expanded, expandAll, debugEvents, decompileEditor, decompileKey, ansiFG, ansiBG, wrapWidth,
+    const { expanded, expandAll, debugEvents, decompileEditor, decompileKey, ansiFG, ansiBG, terminalWidth,
       invertHighlight, debugActions, serverAddress, serverPort, serverSSL, sidebarLargeCompass, recallButtons,
       historySize, historySpawnSize, mobileHideTaskbar, mobileHideStatusbar, allowServerChange, recallAnchor,
-      sidebarOpen, sidebarAnchor, sidebarAlwaysShow, sidebarShowPlayers, fontFamily, fontSize, recallSize,
-      sidebarShowThings, sidebarShowExits, sidebarShowCompass, sidebarDense } = this.state;
+      sidebarOpen, sidebarAnchor, sidebarAlwaysShow, sidebarShowPlayers, fontFamily, fontSize, recallSize, mobileFontSize,
+      sidebarShowThings, sidebarShowExits, sidebarShowCompass, sidebarDense, timersEnabled, terminalAutoScroll } = this.state;
     const isMobile = window.client.mobile;
    
     var debugging = (
@@ -274,13 +277,13 @@ class Settings extends React.Component {
           </ListItemSecondaryAction>
         </ListItem>
         
-        <ListItem dense disabled={!recallButtons} className={classes.leftright}>
+        <ListItem dense className={classes.leftright}>
           <Icon color="action">
             <BorderLeftIcon />
           </Icon>
           <Typography>Left</Typography>
           <Switch checked={recallAnchor === "right"}
-            color="default" disabled={!recallButtons}
+            color="default"
             value={recallAnchor === "right" ? "left" : "right"}
             onChange={this.handleValue('recallAnchor')}
           />
@@ -292,15 +295,29 @@ class Settings extends React.Component {
       </List>
     );
 
-    var display = (
+    var terminal = (
       <List className={classes.list} disablePadding dense subheader={!isMobile && (<ListSubheader>Terminal Display</ListSubheader>)}>
         <ListItem dense>
           <ListItemIcon>
             <WrapTextIcon />
           </ListItemIcon>
-          <TextField label="Terminal Width" value={wrapWidth} onChange={this.handleValue('wrapWidth')} type="number" />
+          <TextField label="Terminal Width" value={terminalWidth} onChange={this.handleValue('terminalWidth')} type="number" />
         </ListItem>
         
+        <ListItem dense>
+          <ListItemIcon>
+            <TextRotateVerticalIcon />
+          </ListItemIcon>
+          <ListItemText className={classes.switchText} primary="Scroll to bottom on command input?" />
+          <ListItemSecondaryAction>
+            <Switch checked={terminalAutoScroll} value="terminalAutoScroll" onChange={this.handleSwitch('terminalAutoScroll')} />
+          </ListItemSecondaryAction>
+        </ListItem>
+      </List>
+    );
+        
+    var font = (
+      <List className={classes.list} disablePadding dense subheader={!isMobile && (<ListSubheader>Terminal Font</ListSubheader>)}>
         <ListItem dense>
           <ListItemIcon>
             <FontDownloadIcon />
@@ -366,6 +383,20 @@ class Settings extends React.Component {
       </List>
     );
     
+    var actions = (
+      <List className={classes.list} disablePadding dense subheader={!isMobile && (<ListSubheader>User-defined Actions</ListSubheader>)}>
+        <ListItem dense>
+          <ListItemIcon>
+            {timersEnabled ? (<TimerIcon />) : (<TimerOffIcon />)}
+          </ListItemIcon>
+          <ListItemText className={classes.switchText} primary="Enable timers?" />
+          <ListItemSecondaryAction>
+            <Switch checked={timersEnabled} value="timersEnabled" onChange={this.handleSwitch('timersEnabled')} />
+          </ListItemSecondaryAction>
+        </ListItem>
+      </List>
+    );
+    
     var sidebarDisplay = (
       <List className={classes.list} disablePadding dense subheader={!isMobile && (<ListSubheader>Sidebar Display</ListSubheader>)}>
         <ListItem dense>
@@ -378,23 +409,23 @@ class Settings extends React.Component {
           </ListItemSecondaryAction>
         </ListItem>
         
-        <ListItem dense disabled={!sidebarOpen}>
+        <ListItem dense>
           <ListItemIcon>
             <PictureInPictureIcon />
           </ListItemIcon>
           <ListItemText className={classes.switchText} primary="Keep panels off sidebar?" />
           <ListItemSecondaryAction>
-            <Switch disabled={!sidebarOpen} checked={sidebarAlwaysShow} value="sidebarAlwaysShow" onChange={this.handleSwitch('sidebarAlwaysShow')} />
+            <Switch checked={sidebarAlwaysShow} value="sidebarAlwaysShow" onChange={this.handleSwitch('sidebarAlwaysShow')} />
           </ListItemSecondaryAction>
         </ListItem>
         
-        <ListItem dense disabled={!sidebarOpen} className={classes.leftright}>
+        <ListItem dense className={classes.leftright}>
           <Icon color="action">
             <BorderLeftIcon />
           </Icon>
           <Typography>Left</Typography>
           <Switch checked={sidebarAnchor === "right"}
-            color="default" disabled={!sidebarOpen}
+            color="default"
             value={sidebarAnchor === "right" ? "left" : "right"}
             onChange={this.handleValue('sidebarAnchor')}
           />
@@ -404,13 +435,13 @@ class Settings extends React.Component {
           </Icon>
         </ListItem>
         
-        <ListItem dense disabled={!sidebarOpen}>
+        <ListItem dense>
           <ListItemIcon>
             <FormatIndentDecreaseIcon />
           </ListItemIcon>
           <ListItemText className={classes.switchText} primary="Use small sidebar icons?" />
           <ListItemSecondaryAction>
-            <Switch disabled={!sidebarOpen} checked={sidebarDense} value="sidebarDense" onChange={this.handleSwitch('sidebarDense')} />
+            <Switch checked={sidebarDense} value="sidebarDense" onChange={this.handleSwitch('sidebarDense')} />
           </ListItemSecondaryAction>
         </ListItem>
         
@@ -418,78 +449,85 @@ class Settings extends React.Component {
     );
     
     var sidebarContent = (
-      <List className={classes.list} disabled={!sidebarOpen} disablePadding dense subheader={!isMobile && (<ListSubheader>Sidebar Content</ListSubheader>)}>
-        <ListItem dense disabled={!sidebarOpen}>
+      <List className={classes.list} disablePadding dense subheader={!isMobile && (<ListSubheader>Sidebar Content</ListSubheader>)}>
+        <ListItem dense>
           <ListItemIcon>
             <AccountCircleIcon />
           </ListItemIcon>
           <ListItemText className={classes.switchText} primary="Show players?" />
           <ListItemSecondaryAction>
-            <Switch disabled={!sidebarOpen} checked={sidebarShowPlayers} value="sidebarShowPlayers" onChange={this.handleSwitch('sidebarShowPlayers')} />
+            <Switch checked={sidebarShowPlayers} value="sidebarShowPlayers" onChange={this.handleSwitch('sidebarShowPlayers')} />
           </ListItemSecondaryAction>
         </ListItem>
         
-        <ListItem dense disabled={!sidebarOpen}>
+        <ListItem dense>
           <ListItemIcon>
             <GroupWorkIcon />
           </ListItemIcon>
           <ListItemText className={classes.switchText} primary="Show things?" />
           <ListItemSecondaryAction>
-            <Switch disabled={!sidebarOpen} checked={sidebarShowThings} value="sidebarShowThings" onChange={this.handleSwitch('sidebarShowThings')} />
+            <Switch checked={sidebarShowThings} value="sidebarShowThings" onChange={this.handleSwitch('sidebarShowThings')} />
           </ListItemSecondaryAction>
         </ListItem>
         
-        <ListItem dense disabled={!sidebarOpen}>
+        <ListItem dense>
           <ListItemIcon>
             <ExploreIcon />
           </ListItemIcon>
           <ListItemText className={classes.switchText} primary="Show exits?" />
           <ListItemSecondaryAction>
-            <Switch checked={sidebarShowExits} disabled={!sidebarOpen} value="sidebarShowExits" onChange={this.handleSwitch('sidebarShowExits')} />
+            <Switch checked={sidebarShowExits} value="sidebarShowExits" onChange={this.handleSwitch('sidebarShowExits')} />
           </ListItemSecondaryAction>
         </ListItem>
         
-        <ListItem dense disabled={!sidebarOpen || !sidebarShowExits}>
+        <ListItem dense>
           <ListItemIcon>
             <ExploreIcon />
           </ListItemIcon>
           <ListItemText className={classes.switchText} primary="Show compass?" />
           <ListItemSecondaryAction>
-            <Switch disabled={!sidebarOpen || !sidebarShowExits} checked={sidebarShowCompass} value="sidebarShowCompass" onChange={this.handleSwitch('sidebarShowCompass')} />
+            <Switch checked={sidebarShowCompass} value="sidebarShowCompass" onChange={this.handleSwitch('sidebarShowCompass')} />
           </ListItemSecondaryAction>
         </ListItem>
         
-        <ListItem dense disabled={!sidebarOpen || !sidebarShowExits || !sidebarShowCompass}>
+        <ListItem dense>
           <ListItemIcon>
             <ExploreIcon />
           </ListItemIcon>
           <ListItemText className={classes.switchText} primary="Show in, out, up, & down?" />
           <ListItemSecondaryAction>
-            <Switch disabled={!sidebarOpen || !sidebarShowExits || !sidebarShowCompass} checked={sidebarLargeCompass} value="sidebarLargeCompass" onChange={this.handleSwitch('sidebarLargeCompass')} />
+            <Switch checked={sidebarLargeCompass} value="sidebarLargeCompass" onChange={this.handleSwitch('sidebarLargeCompass')} />
           </ListItemSecondaryAction>
         </ListItem>
       </List>
     );
     
     var mobile = (
-      <List className={classes.list} disabled={!isMobile} disablePadding dense subheader={!isMobile && (<ListSubheader>Mobile Only</ListSubheader>)}>
-        <ListItem dense disabled={!isMobile}>
+      <List className={classes.list} disablePadding dense subheader={!isMobile && (<ListSubheader>Mobile Display</ListSubheader>)}>
+        <ListItem dense>
+          <ListItemIcon>
+            <FormatSizeIcon />
+          </ListItemIcon>
+          <TextField label="Terminal Font Size" value={mobileFontSize} onChange={this.handleValue('mobileFontSize')} type="number" />
+        </ListItem>
+        
+        <ListItem dense>
           <ListItemIcon>
             <MobileScreenShareIcon />
           </ListItemIcon>
           <ListItemText className={classes.switchText} primary="Auto hide mobile taskbar when empty?" />
           <ListItemSecondaryAction>
-            <Switch disabled={!isMobile} checked={mobileHideTaskbar} value="mobileHideTaskbar" onChange={this.handleSwitch('mobileHideTaskbar')} />
+            <Switch checked={mobileHideTaskbar} value="mobileHideTaskbar" onChange={this.handleSwitch('mobileHideTaskbar')} />
           </ListItemSecondaryAction>
         </ListItem>
         
-        <ListItem dense disabled={!isMobile}>
+        <ListItem dense>
           <ListItemIcon>
             <MobileScreenShareIcon />
           </ListItemIcon>
           <ListItemText className={classes.switchText} primary="Hide the status bar to save screen space?" />
           <ListItemSecondaryAction>
-            <Switch disabled={!isMobile} checked={mobileHideStatusbar} value="mobileHideStatusbar" onChange={this.handleSwitch('mobileHideStatusbar')} />
+            <Switch checked={mobileHideStatusbar} value="mobileHideStatusbar" onChange={this.handleSwitch('mobileHideStatusbar')} />
           </ListItemSecondaryAction>
         </ListItem>
       </List>
@@ -507,17 +545,6 @@ class Settings extends React.Component {
               </ExpansionPanel>
             )}
           
-            {isMobile ? (
-              <ExpansionPanel className={classes.panel} expanded={expandAll || expanded === 'debugging'} onChange={this.handleExpand('debugging')}>
-                <ExpansionPanelSummary classes={{ root: classes.noPadding }} expandIcon={<ExpandMoreIcon />}>
-                  <Typography className={classes.summaryText}>Debugging Console</Typography>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails classes={{ root: classes.noPadding }}>
-                  {debugging}
-                </ExpansionPanelDetails>
-              </ExpansionPanel>
-            ) : ( <span>{debugging}</span> )}
-            
             {isMobile ? (
               <ExpansionPanel className={classes.panel} expanded={expandAll || expanded === 'connection'} onChange={this.handleExpand('connection')}>
                 <ExpansionPanelSummary classes={{ root: classes.noPadding }} expandIcon={<ExpandMoreIcon />}>
@@ -552,15 +579,26 @@ class Settings extends React.Component {
             ) : ( <span>{input}</span> )}
             
             {isMobile ? (
-              <ExpansionPanel className={classes.panel} expanded={expandAll || expanded === 'display'} onChange={this.handleExpand('display')}>
+              <ExpansionPanel className={classes.panel} expanded={expandAll || expanded === 'terminal'} onChange={this.handleExpand('terminal')}>
                 <ExpansionPanelSummary classes={{ root: classes.noPadding }} expandIcon={<ExpandMoreIcon />}>
-                  <Typography className={classes.summaryText}>Display & Font</Typography>
+                  <Typography className={classes.summaryText}>Terminal Display</Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails classes={{ root: classes.noPadding }}>
-                  {display}
+                  {terminal}
                 </ExpansionPanelDetails>
               </ExpansionPanel>
-            ) : ( <span>{display}</span> )}
+            ) : ( <span>{terminal}</span> )}
+              
+            {isMobile ? (
+              <ExpansionPanel className={classes.panel} expanded={expandAll || expanded === 'font'} onChange={this.handleExpand('font')}>
+                <ExpansionPanelSummary classes={{ root: classes.noPadding }} expandIcon={<ExpandMoreIcon />}>
+                  <Typography className={classes.summaryText}>Terminal Font</Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails classes={{ root: classes.noPadding }}>
+                  {font}
+                </ExpansionPanelDetails>
+              </ExpansionPanel>
+            ) : ( <span>{font}</span> )}
               
             {isMobile ? (
               <ExpansionPanel className={classes.panel} expanded={expandAll || expanded === 'color'} onChange={this.handleExpand('color')}>
@@ -573,17 +611,6 @@ class Settings extends React.Component {
               </ExpansionPanel>
             ) : ( <span>{color}</span> )}
             
-            {isMobile ? (
-              <ExpansionPanel className={classes.panel} expanded={expandAll || expanded === 'upload'} onChange={this.handleExpand('upload')}>
-                <ExpansionPanelSummary classes={{ root: classes.noPadding }} expandIcon={<ExpandMoreIcon />}>
-                  <Typography className={classes.summaryText}>@decompile/tf</Typography>
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails classes={{ root: classes.noPadding }}>
-                  {upload}
-                </ExpansionPanelDetails>
-              </ExpansionPanel>
-            ) : ( <span>{upload}</span> )}
-
             {isMobile ? (
               <ExpansionPanel className={classes.panel} expanded={expandAll || expanded === 'sidebarDisplay'} onChange={this.handleExpand('sidebarDisplay')}>
                 <ExpansionPanelSummary classes={{ root: classes.noPadding }} expandIcon={<ExpandMoreIcon />}>
@@ -607,9 +634,42 @@ class Settings extends React.Component {
             ) : ( <span>{sidebarContent}</span> )}
             
             {isMobile ? (
+              <ExpansionPanel className={classes.panel} expanded={expandAll || expanded === 'upload'} onChange={this.handleExpand('upload')}>
+                <ExpansionPanelSummary classes={{ root: classes.noPadding }} expandIcon={<ExpandMoreIcon />}>
+                  <Typography className={classes.summaryText}>@decompile/tf</Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails classes={{ root: classes.noPadding }}>
+                  {upload}
+                </ExpansionPanelDetails>
+              </ExpansionPanel>
+            ) : ( <span>{upload}</span> )}
+
+            {isMobile ? (
+              <ExpansionPanel className={classes.panel} expanded={expandAll || expanded === 'actions'} onChange={this.handleExpand('actions')}>
+                <ExpansionPanelSummary classes={{ root: classes.noPadding }} expandIcon={<ExpandMoreIcon />}>
+                  <Typography className={classes.summaryText}>User-defined Actions</Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails classes={{ root: classes.noPadding }}>
+                  {actions}
+                </ExpansionPanelDetails>
+              </ExpansionPanel>
+            ) : ( <span>{actions}</span> )}
+
+            {isMobile ? (
+              <ExpansionPanel className={classes.panel} expanded={expandAll || expanded === 'debugging'} onChange={this.handleExpand('debugging')}>
+                <ExpansionPanelSummary classes={{ root: classes.noPadding }} expandIcon={<ExpandMoreIcon />}>
+                  <Typography className={classes.summaryText}>Debugging Console</Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails classes={{ root: classes.noPadding }}>
+                  {debugging}
+                </ExpansionPanelDetails>
+              </ExpansionPanel>
+            ) : ( <span>{debugging}</span> )}
+            
+            {isMobile ? (
               <ExpansionPanel className={classes.panel} expanded={expandAll || expanded === 'mobile'} onChange={this.handleExpand('mobile')}>
                 <ExpansionPanelSummary classes={{ root: classes.noPadding }} expandIcon={<ExpandMoreIcon />}>
-                  <Typography className={classes.summaryText}>Mobile Only</Typography>
+                  <Typography className={classes.summaryText}>Mobile Display</Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails classes={{ root: classes.noPadding }}>
                   {mobile}

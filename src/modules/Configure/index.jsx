@@ -27,12 +27,12 @@ import KeyboardArrowLeftIcon from '@material-ui/icons/KeyboardArrowLeft';
 import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 //import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
-import ReorderIcon from '@material-ui/icons/Reorder';
-import SortIcon from '@material-ui/icons/Sort';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ExpandLessIcon from '@material-ui/icons/ExpandLess';
 
 import FormEditor from './FormEditor';
 import TriggerForm from './TriggerForm';
-//import TimerForm from './TimerForm';
+import TimerForm from './TimerForm';
 import MacroForm from './MacroForm';
 //import KeyForm from './KeyForm';
 import ButtonForm from './ButtonForm';
@@ -154,7 +154,7 @@ function TabButton(props) {
 //////////////////////////////////////////////////////////////////////
 
 
-class Customizer extends React.Component {
+class Configure extends React.Component {
   constructor(props) {
     super(props);
     
@@ -183,6 +183,13 @@ class Customizer extends React.Component {
         sortable: true,
       },
       {
+        list: client.timers,
+        listName: "Timers",
+        Form: TimerForm,
+        immutable: false,
+        sortable: true,
+      },
+      {
         list: client.css,
         listName: "CSS",
         Form: null,
@@ -197,13 +204,6 @@ class Customizer extends React.Component {
         sortable: false,
       },
 /*
-      {
-        list: client.timers,
-        listName: "Timers",
-        Form: TimerForm,
-        immutable: false,
-        sortable: true,
-      },
       {
         list: client.keys,
         listName: "Keys",
@@ -304,11 +304,11 @@ class Customizer extends React.Component {
   };
   
   componentDidMount() {
-    window.client.react.customizer = this;
+    window.client.react.configure = this;
   }
   
   componentWillUnmount() {
-    window.client.react.customizer = null;
+    window.client.react.configure = null;
   }
   
   helpText(anchor) {
@@ -339,7 +339,7 @@ class Customizer extends React.Component {
                     {tab.listName}
                     <Tooltip title="Reorder list.">
                       <IconButton disabled={!tab.sortable} onClick={this.toggleSort}>
-                        {sortList ? (<SortIcon />) : (<ReorderIcon />)}
+                        {sortList ? (<ExpandLessIcon />) : (<ExpandMoreIcon />)}
                       </IconButton>
                     </Tooltip>
                   </ListSubheader>
@@ -415,11 +415,11 @@ class Customizer extends React.Component {
   }
 }
 
-Customizer.propTypes = {
+Configure.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
   panel: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles, { withTheme: true })(Customizer);
+export default withStyles(styles, { withTheme: true })(Configure);
 

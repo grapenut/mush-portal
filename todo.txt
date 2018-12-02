@@ -7,22 +7,23 @@ KNOWN BUGS
 CURRENT TODOS
 ------------------
 
+User-defined Actions
+  Bind control keys to execute code/macros.
+
 BBoard
   Navigation icons (back, reload)
   +bbpost front-end
-
-User-defined Actions
-  Setup automatic timers to execute code/macros.
-  Bind control keys to execute code/macros.
-  In CSS editor show color picker to select colors
 
 
 FUTURE IDEAS
 ------------------
 
+Client-side Execution
+  Allow server to request client to execute javascript string
+  jsonapi/exec <shortid>=<return string>
+
 Server Proxy
   Stand-alone server that can relay SSL and WS connections to telnet servers
-  
 
 Routing API
   Server controlled routing API to display static content
@@ -81,8 +82,10 @@ User-defined Actions
   Modify taskbar buttons.
   Macros execute a block of commands at once, with some string insertion tokens.
   Match incoming lines against wildcard/regexp and execute code/macros.
+  Setup automatic timers to execute code/macros.
 
 Settings
+  Backup/restore localStorage configs to file
   Server host, port, and SSL.
   Font size and family
 
@@ -101,6 +104,11 @@ SavedTemplates
 
 Input
   History up/down icons
+
+Icons
+  Game-Icons.net font
+  Google Material Icons font
+  See /icons.html for a complete list of over 4400 icons
 
 
 

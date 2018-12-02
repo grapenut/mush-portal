@@ -126,7 +126,6 @@ class Login extends React.Component {
       <Dialog
         className={classes.frame}
         open={open}
-        fullScreen={window.client.mobile}
         onEscapeKeyDown={() => window.client.react.taskbar.openDrawer()}
         onClose={this.closeLogin}
         aria-labelledby="responsive-dialog-title"
