@@ -95,7 +95,7 @@ The _MUSH Portal_ website at <http://www.mushportal.com> connects to _grapenut's
 
 **NOTE: When hosting the website on HTTPS clients may only connect to MUSH servers on the SSL port due to browser security rules. When hosting on HTTP you can connect to either the standard telnet port or the encrypted SSL port.**
 
-**A proxy may be configured in your HTTP/HTTPS server to relay WebSocket SSL connections to a non-secure standard telnet port, useful for tunneling through corporate firewalls. Examples for _grapenut's_ development MUSH can bee seen using <http://www.mushportal.com?mushportal.com:80> for HTTP or <https://mushportal.com?mushportal.com:443> for HTTPS/SSL.**
+**A proxy may be configured in your HTTP/HTTPS server to relay WebSocket SSL connections to a non-secure standard telnet port, useful for tunneling through corporate firewalls. Examples for _grapenut's_ development MUSH can be seen using <http://www.mushportal.com?mushportal.com:80> for HTTP or <https://mushportal.com?mushportal.com:443> for HTTPS/SSL.**
 
 After cloning the repository with
 ```
