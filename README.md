@@ -25,9 +25,10 @@ The _MUSH Portal_ website at <http://www.mushportal.com> connects to _grapenut's
 >   - Override ANSI color CSS and onLoad scripts for complete customization.
 >   - Load pre-made examples of typical user-defined actions to use as templates.
 
-> - Sidebar Navigation
+> - Sidebar
 >   - Configurable docked panel with interactive context command buttons.
 >   - Show basic information about the room (contents, players, exits).
+>   - Sidebar automatically updates when you or another object moves using _JSON API_.
 
 > - Spawn Windows
 >   - Append text, e.g. from matched triggers, with full 256-color support.
