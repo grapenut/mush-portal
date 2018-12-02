@@ -1,4 +1,4 @@
-# [![][logo] MUSH Portal](#top)
+# <a name="top">![][logo] MUSH Portal</a>
 
 [logo]: https://github.com/grapenut/mush-portal/raw/master/build/favicon-32x32.png "MUSH Portal"
 
@@ -8,7 +8,7 @@ See the [installation instructions](#install) below for information about hostin
 
 ------------------------------------------------------------------
 
-## [Demo](#demo)
+## <a name="demo">Demo</a>
 
 The _MUSH Portal_ website at <http://www.mushportal.com> connects to _grapenut's_ _JSON API_-enhanced development MUSH by default, but can easily be connected to any PennMUSH server with WebSockets. See <http://www.mushportal.com?mush.pennmush.org:4201> to connect to the standard, un-enhanced M\*U\*S\*H development server.
 
@@ -17,7 +17,7 @@ The _MUSH Portal_ website at <http://www.mushportal.com> connects to _grapenut's
 
 ------------------------------------------------------------------
 
-## [Feature List](#features)
+## <a name="features">Feature List</a>
 
 > - User-defined Configuration
 >   - Create and modify taskbar buttons, text triggers, command macros, and timers.
@@ -82,7 +82,7 @@ The _MUSH Portal_ website at <http://www.mushportal.com> connects to _grapenut's
 
 ------------------------------------------------------------------
 
-## [Adding MUSH Portal To Your Website](#install)
+## <a name="install">Adding MUSH Portal To Your Website</a>
 
 **NOTE: When hosting the website on HTTPS clients may only connect to MUSH servers on the SSL port due to browser security rules. When hosting on HTTP you can connect to either the standard telnet port or the encrypted SSL port.**
 
@@ -130,7 +130,7 @@ HTTPS=true npm start
 
 ------------------------------------------------------------------
 
-###### [Directory Listing](#files)
+###### <a name="files">Directory Listing</a>
 
 > - ```public/``` contains the source for files that get copied directly to ```build/``` like styles, fonts, mobile configuration files, and the local client customization file ```local.js```.
 
