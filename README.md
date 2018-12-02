@@ -82,7 +82,7 @@ The _MUSH Portal_ website at <http://www.mushportal.com> connects to _grapenut's
 
 ------------------------------------------------------------------
 
-## <a name="install">Adding MUSH Portal To Your Website</a>
+## <a name="install">Adding _MUSH Portal_ To Your Website</a>
 
 **NOTE: When hosting the website on HTTPS clients may only connect to MUSH servers on the SSL port due to browser security rules. When hosting on HTTP you can connect to either the standard telnet port or the encrypted SSL port.**
 
@@ -97,8 +97,11 @@ you can find the pre-built app in ```build/```. Many customizations can be achie
 cp -r mush-portal/build/* /your/html/directory/
 ```
 
-**Edit the default ```local.js``` file for site-specific configuration.** Change the default server address, theme, and color settings. You can also set default taskbar buttons, text triggers, command macros, and timers. _JSON API_ event handlers are defined to handle JSON objects received from the server.
+#### **Edit the default ```local.js``` file for site-specific configuration.** Change the default server address, theme, and color settings. You can also set default taskbar buttons, text triggers, command macros, and timers. _JSON API_ event handlers are defined to handle JSON objects received from the server.
+
 ------------------------------------------------------------------
+
+#### <a name="build">Rebuilding _MUSH Portal_ From Source</a>
 
 If you plan to modify and build the source code you must have an updated [NodeJS](https://nodejs.org/en/download/) installation with ```npm``` to install the Javascript dependencies.
 ```
