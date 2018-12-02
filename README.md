@@ -17,6 +17,14 @@ The _MUSH Portal_ website at <http://www.mushportal.com> connects to _grapenut's
 
 ------------------------------------------------------------------
 
+## <a name="bugs">Known Bugs</a>
+
+> - Terminal width setting no longer works. Output text spans the full width
+>   of the output window. client.output.calcDimensions() gives invalid
+>   results.
+
+------------------------------------------------------------------
+
 ## <a name="features">Feature List</a>
 
 > - User-defined Configuration

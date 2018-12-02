@@ -7,6 +7,19 @@ KNOWN BUGS
 CURRENT TODOS
 ------------------
 
+Help Text and Documentation
+  Help text for Configure window explaining the user-defined action API
+  Help text for Upload window explaining upload/reset/command delay
+  Help text for Backup window.
+  Help text for Mailbox window.
+  Help text for Sendmail window.
+  Help text for BBoard window.
+  Help text for BBPost window.
+  Help text for Spawn window.
+  Wiki documentation for Client API.
+  Wiki documentation for UI windows.
+  Wiki documentation for React Components.
+
 User-defined Actions
   Bind control keys to execute code/macros.
 
@@ -42,73 +55,5 @@ Phaser
   Start with generic player/object avatars.
   Eventually load custom graphics for room tilemaps and players/objects.
   Click navigation and interaction.
-
-
-ALREADY DONE
-------------------
-
-Sidebar
-  Configurable docked panel to show ferquently updated information.
-  Show basic information about the room (contents, players, exits).
-  Update online friends list.
-
-Command History
-  Show command history popover.
-  Click to roll the input buffer back to that line.
-  Fix input focus after click.
-  Save/reload command history using localStorage.
-
-JSONAPI
-  EXEC Execute arbitrary softcode as the player. Use a unique key to set an
-       event for the return value.
-  PMATCH Validate player name matching (for mail sending).
-
-Activity Notification
-  Fix activity bubble to hide/unhide properly.
-
-Mailbox
-  Use a terminal emulator instead of <pre> tags for the message body.
-  Use an ace editor in the @mail composer.
-
-Color Picker
-  Custom color picker with ANSI color grid 8 rows, 34 cols
-
-Taskbar
-  Reorganize how windows are spawned and kept track of.
-  Reorganize commands, icons and popovers for customization later.
-
-User-defined Actions
-  Allow reordering of the lists.
-  Modify taskbar buttons.
-  Macros execute a block of commands at once, with some string insertion tokens.
-  Match incoming lines against wildcard/regexp and execute code/macros.
-  Setup automatic timers to execute code/macros.
-
-Settings
-  Backup/restore localStorage configs to file
-  Server host, port, and SSL.
-  Font size and family
-
-Spawn windows
-  Spawn output window for triggered text
-  Activity badge on updates
-  Command window with custom chat prefix (so you don't have to type +p, etc)
-
-History Buffer
-  Save to localStorage and restore on load
-  Add configurable buffer sizes to Settings
-  Buffers output for main terminal and spawns
-
-SavedTemplates
-  Saved versions of actions that can be easily cloned.
-
-Input
-  History up/down icons
-
-Icons
-  Game-Icons.net font
-  Google Material Icons font
-  See /icons.html for a complete list of over 4400 icons
-
 
 
