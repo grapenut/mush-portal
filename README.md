@@ -5,19 +5,20 @@
 The _MUSH Portal_ is an integrated web platform for PennMUSH servers (**PennMUSH v1.8.7p0 or higher required**). The web client has a fully customizable 256-color terminal emulator designed with a **responsive mobile-friendly** UI. The Javascript controlled user interface is completely user configurable using the editing tools. It can integrate with the provided server-side JSON event handler and command API to provide unprecedented interactivity. Automatic _JSON API_ fallbacks executed by the client's player provide enhanced functionality on standard servers without the _JSON API_ installed.
 
 See the [installation instructions](#install) below for information about hosting _MUSH Portal_ on your own website.
+See the [build instructions](#build) if you are interested in modifying the source code.
 
 ------------------------------------------------------------------
 
-## <a name="demo">Demo</a>
+#### <a name="demos">Demo Games</a>
 
 The _MUSH Portal_ website at <http://www.mushportal.com> connects to _grapenut's_ _JSON API_-enhanced development MUSH by default, but can easily be connected to any PennMUSH server with WebSockets. See <http://www.mushportal.com?mush.pennmush.org:4201> to connect to the standard, un-enhanced M\*U\*S\*H development server.
 
 ###### Active Games with MUSH Portals
-- [Blood of Dragons](http://westeros.org/BoD/Portal/)
+- [Blood of Dragons](http://westeros.org/BoD/Portal/) _(enhanced)_
 
 ------------------------------------------------------------------
 
-## <a name="features">Feature List</a>
+# <a name="features">Feature List</a>
 
 > - User-defined Configuration
 >   - Create and modify taskbar buttons, text triggers, command macros, and timers.
@@ -91,7 +92,7 @@ The _MUSH Portal_ website at <http://www.mushportal.com> connects to _grapenut's
 
 ------------------------------------------------------------------
 
-## <a name="install">Adding _MUSH Portal_ To Your Website</a>
+# <a name="install">Adding _MUSH Portal_ To Your Website</a>
 
 **NOTE: When hosting the website on HTTPS clients may only connect to MUSH servers on the SSL port due to browser security rules. When hosting on HTTP you can connect to either the standard telnet port or the encrypted SSL port.**
 
@@ -110,7 +111,7 @@ cp -r mush-portal/build/* /your/html/directory/
 
 ------------------------------------------------------------------
 
-## <a name="build">Rebuilding _MUSH Portal_ From Source</a>
+# <a name="build">Rebuilding _MUSH Portal_ From Source</a>
 
 If you plan to modify and build the source code you must have an updated [NodeJS](https://nodejs.org/en/download/) installation with ```npm``` to install the Javascript dependencies.
 ```

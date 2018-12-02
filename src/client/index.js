@@ -40,6 +40,11 @@ const EventEmitter = require('events');
 const TinyCon = require('tinycon');
 const Colors = require('@material-ui/core/colors');
 
+/**
+ * List of standard server login failure messages.
+ *
+ * @const {string[]}
+ */
 const LOGINFAIL = [
   /There is no player with that name\./,
   /That is not the correct password\./,
@@ -50,6 +55,11 @@ const LOGINFAIL = [
   /Too many guests are connected now\./
 ];
 
+/**
+ * Maps Unicode characters to ASCII characters.
+ *
+ * @const {Object.<string, string>}
+ */
 const UnicodeMap = {
   "\u2013": '-',
   "\u2014": '-',
@@ -65,8 +75,14 @@ const UnicodeMap = {
   "\u2036": '"',
 }
 
+
 class Client {
 
+
+  /**
+   * The main Client class controls and links together everything.
+   * @constructor
+   */
   constructor() {
     // Client colors and theme
     this.colors = Colors;
@@ -220,12 +236,15 @@ class Client {
   ///////////////////////////////////////////////////////////////////////////////////////////////////
   // rendering, themeing, and styling react components
   
-  // render the main react component
+  /** Render the main React component. */
   render() {
     ReactDOM.render(React.createElement(Portal, { theme: this.theme }, null), document.getElementById('root'));
   }
   
-  // load additional scripts for custom events
+  /**
+   * Load a script from the source URL by appending a <script> tag to the body.
+   * @param {string} src - The URL of the script to load.
+   */
   loadScript(src) {
     var tag = document.createElement('script');
     tag.async = false;
@@ -233,15 +252,13 @@ class Client {
     document.getElementsByTagName('body')[0].appendChild(tag);
   }
   
+  /**
+   * Find and execute a user-defined script by name.
+   * @param {string} name - Name of the script to execute.
+   */
   execUserScript(name) {
     // load user customization file
     const client = this;
-    const Window = (w,c,e) => this.getSpawn(w,c,e);
-    const SendAPI = (cmd) => this.sendAPI(cmd);
-    const SendCommand = (cmd) => this.sendCommand(cmd);
-    const SendText = (cmd) => this.sendText(cmd);
-    const Output = (text) => this.output.appendText(text);
-    
     var script = null;
     for (let i=0; i < client.scripts.length; i++) {
       if (client.scripts[i].name === name) {
@@ -251,15 +268,15 @@ class Client {
     }
     
     if (script && script.text !== "") {
-      try {
-        eval(this.filterUnicode(script.text));
-      } catch (e) {
-        client.debugActions && console.log("Error executing `" + name + "'.");
-      }
+      this.execActionScript(script.text);
     }
   }
   
-  // evaluate an action javascript with a limited context
+  /**
+   * Evaluate a fragment of Javascript code.
+   * @param {string} txt - The code to execute.
+   * @param {Event} [event] - The event, if present.
+   */
   execActionScript(txt, event) {
     const client = this;
     const Window = (w,c,e) => this.getSpawn(w,c,e);
@@ -275,7 +292,10 @@ class Client {
     }
   }
   
-  // load custom CSS style sheet
+  /**
+   * Load custom CSS style sheet from the source URL by appending a <link> tag to the head.
+   * @param {string} src - The URL of the CSS file to load.
+   */
   loadStyle(src) {
     const file = src.split('/').slice(-1)[0];
 
@@ -303,7 +323,12 @@ class Client {
     document.head.appendChild(style);
   }
   
-  // update the css object's rules on its <style> element 
+  /**
+   * Update the CSS definition object's rules on its <style> element.
+   * @param {Object.<string, string>} css - The CSS definition object.
+   * @param {boolean} [erase=false] - Erase the existing style first.
+   * @return {HTMLElement} - The <style> tag with CSS added.
+   */
   updateCSS(css, erase=false) {
     if (!css) return null;
     
@@ -326,7 +351,10 @@ class Client {
     return style;
   }
   
-  // unload custom CSS style sheet
+  /**
+   * Uunload custom CSS style sheet loading from source URL.
+   * @param {string} src - The source URL of the CSS file to unload.
+   */
   unloadStyle(src) {
     // remove the <link> if it exists
     var links = document.getElementsByTagName("link");
@@ -352,7 +380,11 @@ class Client {
     }
   }
   
-  // create a theme
+  /**
+   * Create a new Material-UI theme from a theme configuration object.
+   * @param {Object.<string,*>} [theme] - The theme configuration object.
+   * @return {MuiTheme} - The new theme object.
+   */
   createTheme(theme) {
     const defaultTheme = {
       typography: {
@@ -371,7 +403,13 @@ class Client {
   ///////////////////////////////////////////////////////////////////////////////////////////////////
   // save and load objects from localStorage
   
-  // save a text string to a local file
+  /**
+   * Save a text string to a local file.
+   * @param {string} filename - The name of the file to save.
+   * @param {string} text - The text of the file to save.
+   * @param {string} [type=text/plain] - The MIME type of the file Blob.
+   * @return {boolean} - Whether the save was successful or not.
+   */
   saveText(filename, text, type) {
     if (!type) {
       type = "text/plain";
@@ -386,7 +424,11 @@ class Client {
     }
   }
   
-  // convert local storage to text
+  /**
+   * Convert localStorage to JSON object text.
+   * @param {string} [indent=0] - If indent != 0 we use a pretty printer. If 0 or undefined we minify.
+   * @return {string} - The JSON.stringified object text.
+   */
   localStorageToText(indent) {
     const store = window.localStorage;
     var keys = { };
@@ -414,7 +456,11 @@ class Client {
     }
   }
     
-  // restore window.localStorage from a string
+  /**
+   * Restore localStorage from a string.
+   * @param {string} text - The string from which to restore localStorage.
+   * @return {boolean} - Whether the text was succesfully parsed and merged with localStorage.
+   */
   restoreLocalStorage(text) {
     var store;
     try {
@@ -470,24 +516,39 @@ class Client {
     return true;
   }
   
-  // load object from localstorage
+  /**
+   * Load a configuration object string from localStorage.
+   * @param {Object.<string.*>} obj - The reference onto which to store the retrieved object.
+   * @param {string} key - The key of the object on localStorage.
+   */
   loadLocalStorage(obj, key) {
     if (window.localStorage.hasOwnProperty(key)) {
       obj = Object.assign(obj, JSON.parse(window.localStorage[key]));
     }
   }
   
-  // clear localStorage keys starting with prefix
+  /**
+   * Delete a configuration object from localStorage.
+   * @param {string} key - The key of the object on localStorage.
+   */
   clearLocalStorage(key) {
     delete window.localStorage[key];
   }
   
-  // save object to localstorage
+  /**
+   * Save a configuration object to localStorage.
+   * @param {Object.<string,*>} obj - The object to be stored.
+   * @param {string} key - The key of the object on localStorage.
+   */
   saveLocalStorage(obj, key) {
     window.localStorage[key] = JSON.stringify(obj);
   }
   
-  // load a string directly from localstorage
+  /**
+   * Load a history buffer string from localStorage.
+   * @param {string} key - The key of the buffer on localStorage.
+   * @return {string} - The buffer string.
+   */
   loadHistoryBuffer(key) {
     if (window.localStorage.hasOwnProperty(key)) {
       return window.localStorage[key];
@@ -495,12 +556,21 @@ class Client {
     return "";
   }
   
-  // save a string directly to localstorage
+  /**
+   * Save a history buffer string to localStorage.
+   * @param {string} key - The key of the buffer on localStorage.
+   * @param {string} text - The value of the buffer.
+   */
   saveHistoryBuffer(key, text) {
     window.localStorage[key] = text;
   }
   
-  // casting a string argument to the correct type
+  /**
+   * Set a value on an object, converting the argument to the correct type.
+   * @param {Object.<string,*>} obj - The object on which to store the value.
+   * @param {string} key - The key of the value to store on the object.
+   * @param {*} value - The value to be stored.
+   */
   castString(obj, key, value) {
     if (!obj.hasOwnProperty(key)) return;
     
@@ -526,7 +596,11 @@ class Client {
     }
   }
   
-  // change a setting, performing a secondary action if necessary
+  /**
+   * Change a setting, updating the UI if necessary.
+   * @param {string} key - The key of the setting to change.
+   * @param {string} value - The new value of the setting.
+   */
   changeSetting(key, value) {
     this.castString(this.settings, key, value);
     
@@ -550,33 +624,33 @@ class Client {
     }
   }
   
-  // load user defined taskbar buttons
+  /** Load user-defined taskbar buttons. */
   loadButtons() {
     this.loadLocalStorage(this.buttons, "buttons");
 //    this.react.taskbar && this.react.taskbar.forceUpdate();
   }
   
-  // load regex/wildcard pattern triggers
+  /** Load regex/wildcard pattern triggers. */
   loadTriggers() {
     this.loadLocalStorage(this.triggers, "triggers");
   }
   
-  // load automatic timers
+  /** Load automatic timers. */
   loadTimers() {
     this.loadLocalStorage(this.timers, "timers");
   }
   
-  // load slash command macros
+  /** Load slash command macros. */
   loadMacros() {
     this.loadLocalStorage(this.macros, "macros");
   }
   
-  // load custom keybindings
+  /** Load custom keybindings. */
   loadKeys() {
     this.loadLocalStorage(this.keys, "keys");
   }
   
-  // load custom css overrides
+  /** Load custom css overrides. */
   loadCSS() {
     this.loadLocalStorage(this.css, "css");
     
@@ -591,12 +665,12 @@ class Client {
     }
   }
   
-  // load custom scrips
+  /** Load custom scripts. */
   loadScripts() {
     this.loadLocalStorage(this.scripts, "scripts");
   }
   
-  // load client settings
+  /** Load client settings. */
   loadSettings() {
     this.settings = Object.assign({}, this.defaultSettings);
     this.loadLocalStorage(this.settings, "settings");
@@ -608,50 +682,50 @@ class Client {
     }
   }
   
-  // load command recall history
+  /** Load command recall history. */
   loadRecallHistory() {
     this.loadLocalStorage(this.input.history, "recall_history");
   }
   
-  // save command recall history
+  /** Save command recall history. */
   saveRecallHistory() {
     const { recallSize } = this.settings;
     this.clearLocalStorage("recall_history");
     this.saveLocalStorage(this.input.history.slice(-recallSize), "recall_history");
   }
   
-  // save user defined taskbar buttons
+  /** Save user-defined taskbar buttons. */
   saveButtons() {
     this.clearLocalStorage("buttons");
     this.saveLocalStorage(this.buttons, "buttons");
     this.react.taskbar && this.react.taskbar.forceUpdate();
   }
   
-  // save regex/wildcard pattern triggers
+  /** Save regex/wildcard pattern triggers. */
   saveTriggers() {
     this.clearLocalStorage("triggers");
     this.saveLocalStorage(this.triggers, "triggers");
   }
   
-  // save automatic timers
+  /** Save automatic timers. */
   saveTimers() {
     this.clearLocalStorage("timers");
     this.saveLocalStorage(this.timers, "timers");
   }
   
-  // save slash command macros
+  /** Save command macros. */
   saveMacros() {
     this.clearLocalStorage("macros");
     this.saveLocalStorage(this.macros, "macros");
   }
   
-  // save custom keybindings
+  /** Save custom keybindings. */
   saveKeys() {
     this.clearLocalStorage("keys");
     this.saveLocalStorage(this.keys, "keys");
   }
   
-  // save custom css overrides
+  /** Save custom css overrides. */
   saveCSS() {
     this.clearLocalStorage("css");
     this.saveLocalStorage(this.css, "css");
@@ -689,13 +763,13 @@ class Client {
     }
   }
   
-  // save custom css overrides
+  /** Save custom css overrides. */
   saveScripts() {
     this.clearLocalStorage("scripts");
     this.saveLocalStorage(this.css, "scripts");
   }
   
-  // save client settings
+  /** Save client settings. */
   saveSettings() {
     this.clearLocalStorage("settings");
     this.saveLocalStorage(this.settings, "settings");
@@ -705,7 +779,11 @@ class Client {
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // miscellaneous logging and command links
 
-  // detect if more user input is required for a pueblo command
+  /**
+   * Detect if more user input is required for a pueblo command.
+   * @param {string} command - The command string to parse for '??' tokens.
+   * @return {string} - The command string with '??' tokens replace by user input.
+   */
   parseCommand(command) {
     var cmd = command;
     var regex = new RegExp('\\?\\?');
@@ -726,12 +804,19 @@ class Client {
     return cmd;
   }
   
-  // pueblo command links, prompt for user input and replace ?? token if present
+  /**
+   * Execute a Pueblo command link, checking if it requires user input.
+   * @param {string} cmd - The command string.
+   */
   onCommand(cmd) {
     this.sendCommand && this.sendCommand(this.parseCommand(cmd));
   }
 
-  // log messages to the output terminal
+  /**
+   * Log messages to the output terminal.
+   * @param {string} classid - The CSS class id of the log message.
+   * @param {string} msg - The message to append to the terminal.
+   */
   appendMessage(classid, msg) {
     var scroll = false;
     if (this.output) {
@@ -749,7 +834,13 @@ class Client {
   
   
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  // manage triggers, timers, macros, and keys
+  
+  /**
+   * Create a new RegExp pattern, creating one from a glob wildcard pattern if necessary.
+   * @param {boolean} regex - Is the pattern already a regex? If not we will make one.
+   * @param {string} pattern - The pattern string.
+   * @return {RegExp} - The compiled regular expression.
+   */
   createPattern(regex, pattern) {
     if (regex) {
       return new RegExp('^' + pattern + '$');
@@ -758,6 +849,12 @@ class Client {
     }
   }
   
+  /**
+   * Replace %-tokens in a text string with match argument strings.
+   * @param {array[string]} args - The arguments array, element 0 is the full string.
+   * @param {string} text - The text to be scanned for %number tokens which are replaced by args[number].
+   * @return {string} - The new text with arguments replaced if they are present.
+   */
   replaceArgs(args, text) {
     let newText = text.slice();
     for (let i = args.length-1; i > -1; i--) {
@@ -779,14 +876,17 @@ class Client {
   /////////////////////////////////////////////////////////////////////////////////////////////////
   // initialize terminal elements (input, output, prompt) and clear them
   
-  // clear terminal
+  /** Clear the terminal. */
   clear() {
     this.output && this.output.clear();
     this.prompt && this.prompt.clear();
     this.input && this.input.clear();
   }
 
-  // initialize terminal input window
+  /**
+   * Initialize the terminal input window.
+   * @param {HTMLElement} input - The HTML element to which the Input object is attached.
+   */
   initInput(input) {
     // Input window
     if (input !== null) {
@@ -811,7 +911,11 @@ class Client {
     }
   }
 
-  // initialize terminal output window
+  /**
+   * Initialize the terminal output window.
+   * @param {HTMLElement} output - The HTML element to which the Emulator object is attached.
+   * @param {HTMLElement} [container=null] - The output elements container.
+   */
   initOutput(output, container=null) {
     // Output window
     if (output !== null) {
@@ -824,7 +928,10 @@ class Client {
     }
   }
   
-  // initialize command prompt
+  /**
+   * Initialize the command prompt.
+   * @param {HTMLElement} prompt - The HTML element to which the Emulator object is attached.
+   */
   initPrompt(prompt) {
     // Prompt window
     if (prompt !== null) {
@@ -836,7 +943,10 @@ class Client {
   // handle input window focus and output window scrolling
   
   //////////////////////////////////////////////////////
-  // animate scrolling the terminal window to the bottom
+  /**
+   * Scroll the terminal output window down the very bottom of the current view.
+   * @param {HTMLElement} root - The HTML element to be scrolled down.
+   */
   scrollDown(root) {
     if (!root) {
       return;
@@ -866,13 +976,23 @@ class Client {
 */
   }
   
-  // input focus passthrough
+  /**
+   * Passthrough for focusing the Input root.
+   * @param {boolean} force - Whether to force the Input element to focus even if the normal rules determine it shouldn't.
+   */
   focus(force) {
     if (this.mobile) return;
     this.input && this.input.focus(force);
   }
   
-  // wrapper that scrolls the output if needed
+  /**
+   * @callback appendCallback
+   */
+   
+  /**
+   * Wrapper for appending text that scrolls the output afterwards if needed.
+   * @param {appendCallback} fun - The wrapper function that appends text. 
+   */
   scrollIfNeeded(fun) {
     var scroll = false;
     
@@ -891,7 +1011,13 @@ class Client {
 
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  // spawn, focus and close window panels
+  /**
+   * Add a window panel with the given id and configuration, using a particular React component if provided.
+   * @param {string} id - The window id.
+   * @param {Object.<string.*>} cfg - The panel configuration.
+   * @param {React.Component} [component=Spawn] - The React component that serves as a base.
+   * @return {Object} - A reference to the panel if it already exists, or undefined if not.
+   */
   addPanel(id, cfg, component) {
     var spawn = this.findSpawn(id);
     
@@ -977,8 +1103,13 @@ class Client {
     return ref.current;
   }
   
-  // create a Spawn window
-  // don't focus if it already exists
+  /** 
+   * Create a new window with addPanel if one is not found with findSpawn.
+   * @param {string} id - The window id.
+   * @param {Object.<string,*>} cfg - The panel configuration object.
+   * @param {HTMLElemet} el - The element to create inside the window.
+   * @return {jsPanel} - The window panel that was found, or the new one created.
+   */
   getSpawn(id, cfg, el) {
     let spawn = this.findSpawn(id);
     if (spawn) return spawn;
@@ -986,7 +1117,10 @@ class Client {
     return this.addPanel(id, cfg, el);
   }
   
-  // delete spawn window from internal list
+  /**
+   * Delete spawn window from internal list.
+   * @param {string} id - The window id.
+   */
   delSpawn(id) {
     const spawns = this.react.spawns;
     const lower = id.toLowerCase();
@@ -997,7 +1131,11 @@ class Client {
     }
   }
   
-  // find spawn window in internal list
+  /**
+   * Find spawn window in internal list.
+   * @param {string} id - The window id.
+   * @return {jsPanel} - The window panel if found, or null.
+   */
   findSpawn(id) {
     const spawns = this.react.spawns;
     const lower = id.toLowerCase();
@@ -1009,7 +1147,10 @@ class Client {
     return null;
   }
   
-  // find and close a panel
+  /**
+   * Find and close a window panel.
+   * @param {string} id - The window id.
+   */
   closePanel(id) {
     var panels = this.panels.getPanels(function() {
       return (this.id === id || this.headertitle.innerText === id);
@@ -1023,7 +1164,10 @@ class Client {
     }
   }
   
-  // bring a panel into focus
+  /**
+   * Bring a window panel into focus.
+   * @param {string} id - The window id.
+   */
   focusPanel(id) {
     var panels = this.panels.getPanels(function() {
       return (this.id === id || this.headertitle.innerText === id);
@@ -1041,7 +1185,9 @@ class Client {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // connect to the game server and setup message handlers
+  /**
+   * Connect to the game server and setup message handlers.
+   */
   connect() {
     var client = this;
 
@@ -1070,7 +1216,7 @@ class Client {
       setTimeout(() => { client.reconnect() }, (client.serverSSL ? 2.0 : 1.0) * client.reconnectTimer);
     };
     
-    // onMessage callback before data handler
+    /** onMessage callback before data handler */
     this.conn.onUpdate = function(channel, data) {
       if (!client.conn.hasData) {
         // this is the first update, show the login screen
@@ -1092,7 +1238,7 @@ class Client {
       }
     }
     
-    // handle incoming text
+    /** handle incoming text */
     this.conn.onText = function (text) {
       if (!client.loggedIn) {
         // match some login error conditions
@@ -1165,21 +1311,21 @@ class Client {
       client.scrollIfNeeded(() => client.output.appendText(text));
     };
     
-    // handle incoming html
+    /** handle incoming html */
     this.conn.onHTML = function (fragment) {
       if (client.output) {
         client.scrollIfNeeded(() => client.output.appendHTML(fragment));
       }
     };
     
-    // handle incoming pueblo
+    /** handle incoming pueblo */
     this.conn.onPueblo = function (tag, attrs) {
       if (client.output) {
         client.scrollIfNeeded(() => client.output.appendPueblo(tag, attrs));
       }
     };
     
-    // handle incoming command prompts
+    /** handle incoming command prompts */
     this.conn.onPrompt = function (text) {
       if (client.prompt !== null) {
         client.prompt.clear();
@@ -1187,8 +1333,8 @@ class Client {
       }
     };
 
-    // handle incoming JSON objects
-    // use the Events handler collection
+    /** handle incoming JSON objects */
+    /** use the Events handler collection */
     this.conn.onObject = function (obj) {
       var op = "";
       if (obj.hasOwnProperty('gmcp')) {
@@ -1248,7 +1394,10 @@ class Client {
   
   /////////////////////////////////////////////////////////////////////////////////////////////////
 
-  // function to send a user input command string to the server
+  /**
+   * Send a command string to the server, check macros for a match and append a local echo.
+   * @param {string} cmd - The command string to send.
+   */
   sendCommand(cmd) {
   
     if (!this.isConnected()) {
@@ -1264,7 +1413,11 @@ class Client {
     this.scrollIfNeeded(() => this.appendMessage('localEcho', cmd));
     this.saveRecallHistory();
   }
-    
+  
+  /**
+   * Check a string for multiple commands and match them against the list of macros.
+   * @param {string} cmds - A string of one or more commands separated by newlines.
+   */
   sendMacro(cmds) {
     let matched = false;
     this.macros.forEach((m) => {
@@ -1294,7 +1447,11 @@ class Client {
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
   
-  // send an API command, falling back to the raw softcode if the server doesn't support it
+  /**
+   * Send an API command, falling back to player-executed softcode if the server doesn't support it.
+   * @param {string} cmd - The API command name.
+   * @param {string[]} args - An array of string arguments to pass to the API command.
+   */
   sendAPI(cmd, args) {
     if (this.jsonapi) {
       var str = String(cmd);
@@ -1314,6 +1471,16 @@ class Client {
     }
   }
   
+  /**
+   * @callback execCallback
+   * @param {string} result
+   */
+  
+  /**
+   * Execute a MUSH softcode string and return the result as a string in a JSON object.
+   * @param {string} code - The code string to execute.
+   * @param {execCallback} callback - The callback function to execute when we receive the return value.
+   */
   execString(code, callback) {
     var id = "exec_"+shortid.generate();
     var cmd = "th null(oob(%#,"+id+",json(object,result,json(string,"+code+"))))";
@@ -1326,6 +1493,11 @@ class Client {
     this.sendText(cmd);
   }
 
+  /**
+   * Execute a MUSH softcode string that creates a JSON object and return it.
+   * @param {string} code - The code string to execute.
+   * @param {execCallback} callback - The callback function to execute when we receive the return object.
+   */
   execJSON(code, callback) {
     var id = "exec_"+shortid.generate();
     var cmd = "th null(oob(%#,"+id+","+code+"))";
@@ -1341,7 +1513,10 @@ class Client {
   
   /////////////////////////////////////////////////////////////////////////////////////////////////
   
-  // save the current display to a log file
+  /**
+   * Save the current display to a log file.
+   * @param {string} filename - The name of the log file to save.
+   */
   saveLog(filename) {
     if (!this.output) return;
     var node = this.output.root;
@@ -1351,7 +1526,10 @@ class Client {
     }
   }
   
-  // save the current local storage to a backup
+  /**
+   * Save the entire localStorage to a backup file.
+   * @param {string} filename - The name of the backup file to save.
+   */
   saveBackup(filename) {
     var text = this.localStorageToText(2);
     if (!this.saveText(filename, text)) {
@@ -1362,7 +1540,7 @@ class Client {
   
   /////////////////////////////////////////////////////////////////////////////////////////////////
   
-  
+  /** Set the activity count when the browser tab is out of view. */
   setBubble = () => {
     if (this.hidden) {
       this.tinycon.setBubble(this.updateCounter);
@@ -1371,6 +1549,7 @@ class Client {
     }
   };
   
+  /** Initialize the browser activity notification events. */
   initNotifications() {
     // Set the name of the hidden property and the change event for visibility
     var hidden, visibilityChange; 
@@ -1409,7 +1588,7 @@ class Client {
     });
   }
 
-  // set panel default parameters and event handlers
+  /** Set window panel default parameters and event handlers. */
   initPanels() {
     this.panels.defaults.minimizeTo = false;
     this.panels.defaults.onminimized = function(container) {
@@ -1445,18 +1624,21 @@ class Client {
   
   /////////////////////////////////////////////////////////
   
+  /** Enable timers, only if not already enabled. */
   enableTimers = () => {
     if (this.settings.timersEnabled) return;
     
     this.changeSetting("timersEnabled", true);
   };
   
+  /** Disable timers, only if already enabled. */
   disableTimers = () => {
     if (!this.settings.timersEnabled) return;
     
     this.changeSetting("timersEnabled", false);
   };
   
+  /** Start the master timer loop, if timers are enabled. */
   startTimers = () => {
     if (this.settings.timersEnabled) {
       clearTimeout(this.runTimers);
@@ -1464,10 +1646,12 @@ class Client {
     }
   };
   
+  /** Stop the master timer loop. */
   stopTimers = () => {
     clearTimeout(this.runTimers);
   };
   
+  /** The master timer loop. */
   runTimers = () => {
     if (!this.settings.timersEnabled) return;
     
