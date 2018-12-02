@@ -17,14 +17,6 @@ The _MUSH Portal_ website at <http://www.mushportal.com> connects to _grapenut's
 
 ------------------------------------------------------------------
 
-## <a name="bugs">Known Bugs</a>
-
-> - Terminal width setting no longer works. Output text spans the full width
->   of the output window. client.output.calcDimensions() gives invalid
->   results.
-
-------------------------------------------------------------------
-
 ## <a name="features">Feature List</a>
 
 > - User-defined Configuration
@@ -88,6 +80,14 @@ The _MUSH Portal_ website at <http://www.mushportal.com> connects to _grapenut's
 > - Over 4300+ Icons Available
 >   - Choose any icon from Game-Icons.net and Google Material Icons.
 >   - See <http://www.mushportal.com/icons.html> for a complete list of icons.
+
+------------------------------------------------------------------
+
+#### <a name="bugs">Known Bugs</a>
+
+> - Terminal width setting no longer works. Output text spans the full width
+>   of the output window. client.output.calcDimensions() gives invalid
+>   results.
 
 ------------------------------------------------------------------
 
