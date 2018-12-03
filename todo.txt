@@ -20,12 +20,18 @@ Help Text and Documentation
   Wiki documentation for UI windows.
   Wiki documentation for React Components.
 
-User-defined Actions
-  Bind control keys to execute code/macros.
+Bottom Navigation Bar
+  Option to replace the status bar with the action button bar.
+
+Configure
+  Clean up mobile layout of lists on left
+  Stretch them full width in mobile mode
+  Flex template & new item buttons side by side in mobile only view
 
 BBoard
   Navigation icons (back, reload)
   +bbpost front-end
+  Fix the CSS after I "upgraded" it with new stuff from the Mailbox
 
 
 FUTURE IDEAS

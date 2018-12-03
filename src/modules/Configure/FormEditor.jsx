@@ -286,12 +286,32 @@ class FormEditor extends React.Component {
     const client = window.client;
 
     e.preventDefault();
-
+    
     if (item.name === "") {
       this.setStatus(true, "Name must not be blank." );
       return;
     }
     
+    // filter unicode punctuation
+    item.name = client.filterUnicode(item.name);
+    item.text = client.filterUnicode(item.text);
+    
+    if (item.pattern) {
+      item.pattern = client.filterUnicode(item.pattern);
+    }
+    
+    if (item.tooltip) {
+      item.tooltip = client.filterUnicode(item.tooltip);
+    }
+    
+    if (item.icon) {
+      item.icon = client.filterUnicode(item.icon);
+    }
+    
+    if (item.count) {
+      item.count = client.filterUnicode(item.count);
+    }
+
     var match = list.map((item) => item.name).indexOf(item.name);
     if (match > -1 && match !== selected) {
       this.setStatus(true, "Name already saved, choose another.");

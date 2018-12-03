@@ -21,7 +21,7 @@ The _MUSH Portal_ website at <http://www.mushportal.com> connects to _grapenut's
 # <a name="features">Feature List</a>
 
 > - User-defined Configuration
->   - Create and modify taskbar buttons, text triggers, command macros, and timers.
+>   - Create and modify taskbar buttons, text triggers, command macros, key binds and timers.
 >   - Execute MUSH commands or Javascript code on activation.
 >   - Override ANSI color CSS and onLoad scripts for complete customization.
 >   - Load pre-made examples of typical user-defined actions to use as templates.
@@ -107,7 +107,7 @@ you can find the pre-built app in ```build/```. Many customizations can be achie
 cp -r mush-portal/build/* /your/html/directory/
 ```
 
-### **Edit the default ```local.js``` file for site-specific configuration.** Change the default server address, theme, and color settings. You can also set default taskbar buttons, text triggers, command macros, and timers. _JSON API_ event handlers are defined to handle JSON objects received from the server.
+### **Edit the default ```local.js``` file for site-specific configuration.** Change the default server address, theme, and color settings. You can also set default taskbar buttons, text triggers, command macros, key binds and timers. _JSON API_ event handlers are defined to handle JSON objects received from the server.
 
 ------------------------------------------------------------------
 

@@ -231,6 +231,9 @@ class Client {
     
     // start cron timer loop
     this.startTimers();
+    
+    // bind keys
+    this.bindKeys();
   }
   
   ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -283,12 +286,15 @@ class Client {
     const client = this;
     const Window = (w,c,e) => this.getSpawn(w,c,e);
     const SendAPI = (cmd) => this.sendAPI(cmd);
-    const SendCommand = (cmd) => this.sendCommand(cmd);
+    const Send = (cmd) => this.sendCommand(cmd);
     const SendText = (cmd) => this.sendText(cmd);
-    const Output = (text) => this.output.appendText(text);
+    const Append = (text) => this.output.appendText(text);
+    const Output = this.output;
+    const Input = this.input;
+    const UI = this.react;
     
     try {
-      eval(this.filterUnicode(txt));
+      eval(txt);
     } catch (e) {
       client.settings.debugActions && console.log("Error executing action:", e);
     }
@@ -1391,7 +1397,7 @@ class Client {
   }
 
   sendText(data) {
-    this.conn && this.conn.sendText(this.filterUnicode(data));
+    this.conn && this.conn.sendText(data);
   }
   
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1410,7 +1416,8 @@ class Client {
     }
     
     if (cmd === '') return;
-    
+
+    cmd = this.filterUnicode(cmd);
     this.sendMacro(cmd);
     this.scrollIfNeeded(() => this.appendMessage('localEcho', cmd));
     this.saveRecallHistory();
@@ -1699,6 +1706,95 @@ class Client {
   
     setTimeout(this.runTimers, 1000);
   };
+
+  /////////////////////////////////////////////////////////
+
+  /** Bind key press and key release event handlers. */
+  bindKeys() {
+    document.addEventListener("keydown", this.keyPress);
+    document.addEventListener("keyup", this.keyRelease);
+  }
+  
+  /** Unbind key press and key release event handlers. */
+  unbindKeys() {
+    document.removeEventListener("keydown", this.keyPress);
+    document.removeEventListener("keyup", this.keyRelease);
+  }
+
+  /**
+   * Handle key press events.
+   * @param {Event} event - The key press event object.
+   */
+  keyPress = (event) => {
+    var key = { code: (event.keyCode ? event.keyCode : event.which),
+                ctrl: event.ctrlKey,
+                shift: event.shiftKey,
+                alt: event.altKey };
+
+    var prevent = false;
+    
+    for (let i=0; i < this.keys.length; i++) {
+      let k = this.keys[i];
+      if (k.disabled || k.release) continue;
+      
+      if ((k.code === key.code) && (k.ctrl === key.ctrl) &&
+          (k.alt === key.alt) && (k.shift === key.shift)) {
+        if (k.javascript) {
+          this.execActionScript(k.text);
+        } else {
+          this.sendText(k.text);
+        }
+        
+        if (k.prevent) {
+          prevent = true;
+        }
+        
+        break;
+      }
+    }
+    
+    if (prevent) {
+      event.preventDefault();
+    }
+  };
+  
+  /**
+   * Handle key release events.
+   * @param {Event} event - The key release event object.
+   */
+  keyRelease = (event) => {
+    var key = { code: (event.keyCode ? event.keyCode : event.which),
+                ctrl: event.ctrlKey,
+                shift: event.shiftKey,
+                alt: event.altKey };
+    
+    var prevent = false;
+
+    for (let i=0; i < this.keys.length; i++) {
+      let k = this.keys[i];
+      if (k.disabled || !k.release) continue;
+      
+      if ((k.code === key.code) && (k.ctrl === key.ctrl) &&
+          (k.alt === key.alt) && (k.shift === key.shift)) {
+        if (k.javascript) {
+          this.execActionScript(k.text, event);
+        } else {
+          this.sendText(k.text);
+        }
+        
+        if (k.prevent) {
+          prevent = true;
+        }
+        
+        break;
+      }
+    }
+    
+    if (prevent) {
+      event.preventDefault();
+    }
+  };
+
 
 
 

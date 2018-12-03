@@ -34,7 +34,7 @@ import FormEditor from './FormEditor';
 import TriggerForm from './TriggerForm';
 import TimerForm from './TimerForm';
 import MacroForm from './MacroForm';
-//import KeyForm from './KeyForm';
+import KeyForm from './KeyForm';
 import ButtonForm from './ButtonForm';
 
 
@@ -183,6 +183,13 @@ class Configure extends React.Component {
         sortable: true,
       },
       {
+        list: client.keys,
+        listName: "Keys",
+        Form: KeyForm,
+        immutable: false,
+        sortable: true,
+      },
+      {
         list: client.timers,
         listName: "Timers",
         Form: TimerForm,
@@ -203,15 +210,6 @@ class Configure extends React.Component {
         immutable: true,
         sortable: false,
       },
-/*
-      {
-        list: client.keys,
-        listName: "Keys",
-        Form: KeyForm,
-        immutable: false,
-        sortable: true,
-      },
-*/
     ];
     
     this.state = {
@@ -397,10 +395,12 @@ class Configure extends React.Component {
         </Typography>
         
         <Menu disableEnforceFocus id="template.menu" anchorEl={menuAnchor} open={Boolean(menuAnchor)} onClick={this.hideTemplates} onClose={this.hideTemplates}>
-          {templates && templates.map((tmpl, i) => (
+          {templates && templates.map((tmpl, i) => tmpl.name ? (
             <MenuItem key={i} onClick={this.chooseTemplate(tmpl)}>
               {tmpl.name}
             </MenuItem>
+          ) : (
+            null
           ))}
         </Menu>
         
