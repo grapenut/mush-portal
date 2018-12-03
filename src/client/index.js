@@ -245,10 +245,12 @@ class Client {
    * Load a script from the source URL by appending a <script> tag to the body.
    * @param {string} src - The URL of the script to load.
    */
-  loadScript(src) {
+  loadScript(src, onLoad, onError) {
     var tag = document.createElement('script');
     tag.async = false;
     tag.src = src;
+    tag.onload = onLoad;
+    tag.onerror = onError;
     document.getElementsByTagName('body')[0].appendChild(tag);
   }
   
