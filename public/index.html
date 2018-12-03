@@ -44,6 +44,10 @@
       window.onbeforeunload = function(e) {
         return "Leaving this page will close your connection. Are you sure?";
       }
+      
+      window.onclientload = function(client) {
+        client.loadScript("%PUBLIC_URL%/local.js");
+      }
     </script>
     <div id="root"></div>
     <!--

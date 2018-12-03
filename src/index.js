@@ -3,14 +3,10 @@ import Client from './client';
 /** create the MUSH client */
 var client = new Client();
 
-if (window.local && typeof(window.local) === "function") {
-  // we defined a local() function, use that for customization
-  window.local(client);
+if (window.onclientload) {
+  window.onclientload(client);
 } else {
-  client.loadScript('./local.js', null, () => {
-    // error loading local.js, try remote.js instead
-    client.loadScript('https://mushportal.com/remote.js');
-  });
+  client.loadScript(process.env.PUBLIC_URL + '/local.js');
 }
 
 client.execUserScript('onLoad.js');
