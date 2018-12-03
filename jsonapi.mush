@@ -28,7 +28,7 @@
 &JSON`BBMSGLIST JSONAPI=json(object,id,json(string,%1),messages,\[[iter(xget(setr(0,u(%vb/GET_GROUP,%1)),MESS_LST),u(JSON`BBMSGHEADER,%q0,%i0),,\,)]\])
 &JSON`BOARDHEADER JSONAPI=json(object,name,json(string,name(%1)),lastmod,json(string,xget(%1,LAST_MOD)),posts,json(number,words(xget(%1,MESS_LST))),id,json(string,member(u(%vb/GROUPS),%1)))
 &JSON`BOARDLIST JSONAPI=json(object,boardlist,\[[iter(u(%vb/VALID_GROUPS,%0,READ),u(JSON`BOARDHEADER,%0,%i0),,\,)]\])
-&JSON`CHANGETITLE JSONAPI=json(object,title,json(string,mudname()))
+&JSON`CHANGETITLE JSONAPI=json(object,title,json(string,mudname()),url,json(string,mudurl()))
 &JSON`CONNECT JSONAPI=json(object,gmcp,json(string,connect),msg,json(string,if(%0,%0,Welcome to [mudname()]!)))
 &JSON`DELOBJECT JSONAPI=json(object,name,json(string,name(%0)),player,json(boolean,hastype(%0,PLAYER)))
 &JSON`LISTCONTENTS JSONAPI=json_mod(json_mod(u(JSON`LISTPLAYERS,%0,%1),patch,u(JSON`LISTTHINGS,%0)),patch,u(JSON`LISTEXITS,%0))

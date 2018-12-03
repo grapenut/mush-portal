@@ -105,7 +105,7 @@ class Portal extends React.Component {
       <MuiThemeProvider theme={theme}>
         <div className={classes.frame}>
           <div className={classes.top}>
-            <Taskbar title="MUSH Portal" />
+            <Taskbar title="MUSH Portal" url="http://www.mushportal.com" />
           </div>
           <div className={classes.middle} ref={this.middle}>
             {left && sidebar}

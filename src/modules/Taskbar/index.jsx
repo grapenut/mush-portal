@@ -60,6 +60,9 @@ const styles = theme => ({
   title: {
     margin: '0 ' + theme.spacing.unit + 'px',
     flex: 1,
+    '&:hover': {
+      cursor: "pointer",
+    },
   },
   tasksep: {
     marginRight: theme.spacing.unit,
@@ -209,6 +212,7 @@ class Taskbar extends React.Component {
     this.state = {
       open: false,
       title: props.title,
+      url: props.url,
       taskbar: [ ],
       unreadBB: 0,
       unreadMail: 0,
@@ -242,8 +246,8 @@ class Taskbar extends React.Component {
     window.client.focus(true);
   };
   
-  setTitle = t => {
-    this.setState({title: t});
+  setTitle = (title, url) => {
+    this.setState({ title, url });
   };
 
   clearScreen = () => {
@@ -601,7 +605,7 @@ class Taskbar extends React.Component {
               </Button>
             </Tooltip>
             
-            <Typography variant="h6" color="inherit" noWrap className={classes.title}>
+            <Typography variant="h6" color="inherit" noWrap className={classes.title} onClick={() => { if (url) { window.open(url, "_blank"); }}}>
               {title}
             </Typography>
             
@@ -839,6 +843,8 @@ class Taskbar extends React.Component {
 Taskbar.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
+  title: PropTypes.string,
+  url: PropTypes.string,
 };
 
 export default withStyles(styles, { withTheme: true })(Taskbar);
