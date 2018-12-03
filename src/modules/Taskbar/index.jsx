@@ -583,7 +583,7 @@ class Taskbar extends React.Component {
   render() {
     const input = window.client.input;
     const { classes } = this.props;
-    const { title, taskbar, open, historyAnchor, backupAnchor,
+    const { title, taskbar, open, historyAnchor, backupAnchor, url,
             menuAnchor, uploadAnchor, helpAnchor, logAnchor } = this.state;
     const { sidebarOpen, sidebarAnchor, mobileHideTaskbar } = window.client.settings;
     
