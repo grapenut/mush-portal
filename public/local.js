@@ -307,6 +307,7 @@ client.events.on('connect', function(obj) {
 
 // change the taskbar title
 client.events.on('changetitle', function(obj) {
+  document.title = obj.title;
   client.react.taskbar && client.react.taskbar.setTitle(obj.title, obj.url);
 });
 
