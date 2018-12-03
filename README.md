@@ -29,12 +29,12 @@ The _MUSH Portal_ website at <http://www.mushportal.com> connects to _grapenut's
 > - Sidebar
 >   - Configurable docked panel with interactive context command buttons.
 >   - Show basic information about the room (contents, players, exits).
->   - Sidebar automatically updates when you or another object moves using _JSON API_.
+>   - Sidebar automatically updates via _JSON API_ when you or another object moves.
 
 > - Spawn Windows
 >   - Append text, e.g. from matched triggers, with full 256-color support.
 >   - Update taskbar icon of minimized window on new activity.
->   - Secondary input window with optional command prefix (so you don't have to type +p).
+>   - Secondary input window with optional command prefix so you don't have to type say or +p.
 
 > - Taskbar
 >   - Customize icon buttons that execute MUSH commands or Javascript code.
@@ -47,10 +47,10 @@ The _MUSH Portal_ website at <http://www.mushportal.com> connects to _grapenut's
 >     - Show interactive command history listing.
 >     - Clear the terminal output or reconnect to the server.
 
-> - Mailbox
->   - List, view, and compose @mail messages with full 256-color output.
->   - Automatic player name validation in Sendmail input.
->   - Unread message count is synced with taskbar icons.
+> - Mailbox & BBoard
+>   - List, view, and compose @mail messages and bbposts with full 256-color output.
+>   - Automatic player and bboard name validation in message composer.
+>   - Unread message counts are automatically synced with taskbar icons via _JSON API_.
 
 > - Command Recall
 >   - Press Ctrl+p (previous) and Ctrl+n (next) to cycle history, or use the buttons.
