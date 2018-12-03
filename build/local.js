@@ -307,7 +307,7 @@ client.events.on('connect', function(obj) {
 
 // change the taskbar title
 client.events.on('changetitle', function(obj) {
-  client.react.taskbar && client.react.taskbar.setTitle(obj.title);
+  client.react.taskbar && client.react.taskbar.setTitle(obj.title, obj.url);
 });
 
 // update the unread mail count on the taskbar
