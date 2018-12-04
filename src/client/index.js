@@ -233,11 +233,7 @@ class Client {
     this.render();
     
     // start cron timer loop
-    if (this.settings.timersAutoStart) {
-      this.startTimers();
-    } else {
-      this.settings.timersEnabled = false;
-    }
+    this.startTimers();
     
     // bind keys
     this.bindKeys();
@@ -690,10 +686,14 @@ class Client {
     this.settings = Object.assign({}, this.defaultSettings);
     this.loadLocalStorage(this.settings, "settings");
     
-    if (this.settings['invertHighlight']) {
+    if (this.settings.invertHighlight) {
       this.loadStyle('./inverse.css');
     } else {
       this.unloadStyle('./inverse.css');
+    }
+    
+    if (!this.settings.timersAutoStart) {
+      this.settings.timersEnabled = false;
     }
   }
   

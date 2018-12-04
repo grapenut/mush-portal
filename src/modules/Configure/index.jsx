@@ -247,6 +247,11 @@ class Configure extends React.Component {
     this.setState({ template, edit: true, selected: -1 });
   };
   
+  enableTimers = () => {
+    window.client.changeSetting('timersEnabled', !window.client.settings.timersEnabled);
+    this.forceUpdate();
+  };
+  
   handleSwitch = (item) => (e) => {
     item.disabled = !e.target.checked;
     this.saveList();
@@ -320,6 +325,7 @@ class Configure extends React.Component {
     const tab = this.tabs[this.state.tab];
     const smallName = tab.listName.toLowerCase();
     const templates = window.client.templates.saved[smallName];
+    const isTimer = smallName === "timers";
     
     return (
       <div className={classes.frame}>
@@ -335,6 +341,9 @@ class Configure extends React.Component {
                 <List disablePadding dense subheader={
                   <ListSubheader disableGutters className={classes.subHeader}>
                     {tab.listName}
+                    {isTimer && (
+                      <Switch checked={window.client.settings.timersEnabled} onChange={this.enableTimers} classes={{ switchBase: classes.switchBase }} />
+                    )}
                     <Tooltip title="Reorder list.">
                       <IconButton disabled={!tab.sortable} onClick={this.toggleSort}>
                         {sortList ? (<ExpandLessIcon />) : (<ExpandMoreIcon />)}

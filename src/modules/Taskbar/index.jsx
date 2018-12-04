@@ -156,7 +156,7 @@ const styles = theme => ({
   activity: {
     backgroundColor: theme.palette.background.paper,
 //    '&:hover': {
-//      cursor: "pointer",
+    cursor: "pointer",
 //    },
   },
 });
@@ -663,7 +663,7 @@ class Taskbar extends React.Component {
             
             <SwipeableDrawer
               variant="temporary"
-              anchor="left"
+              anchor="right"
               open={open}
               onClose={this.closeDrawer}
               onOpen={this.openDrawer}

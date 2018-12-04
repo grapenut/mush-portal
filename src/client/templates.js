@@ -122,7 +122,7 @@ class Templates {
       triggers: [
         {
           name: "PerChannel",
-          text: "Window(\"%1\").SaveHistory().Prefix(\"+%1 \").AutoHide().append(\"%0\");",
+          text: "Window(\"%1\").SaveHistory().Prefix(\"+%1 \").AutoHide().ShowActivity().append(\"%0\");",
           javascript: true,
           pattern: "<*> *",
           regex: false,
@@ -130,7 +130,7 @@ class Templates {
         },
         {
           name: "AllChannels",
-          text: "Window(\"Channels\").SaveHistory().append(\"%0\");",
+          text: "Window(\"Channels\").SaveHistory().ShowActivity().append(\"%0\");",
           javascript: true,
           pattern: "<*> *",
           regex: false,
@@ -172,7 +172,7 @@ class Templates {
       macros: [
         {
           name: "OpenWindow",
-          text: "Window(\"%2\").SaveHistory().Prefix(\"+%2 \").Focus();",
+          text: "Window(\"%2\").SaveHistory().Prefix(\"+%2 \").ShowActivity().Focus();",
           javascript: true,
           pattern: "/win(dow)? (.*)",
           regex: true,
