@@ -133,11 +133,14 @@ class Client {
       mobileFontSize: 6,
       mobileHideTaskbar: true,
       mobileHideStatusbar: true,
-      // user configured actions
+      // timer safety
       timersEnabled: false,
       timersAutoStart: false,
+      // activity notification
       activityEnabled: true,
       activityReposition: false,
+      activitySize: 80,
+      activityDelay: 10,
     };
     this.settings = null;
     

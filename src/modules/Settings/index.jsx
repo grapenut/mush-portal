@@ -50,6 +50,8 @@ import TimerOffIcon from '@material-ui/icons/TimerOff';
 import SmsIcon from '@material-ui/icons/Sms';
 import AutorenewIcon from '@material-ui/icons/Autorenew';
 import SwapVertIcon from '@material-ui/icons/SwapVert';
+import UpdateIcon from '@material-ui/icons/Update';
+import ShortTextIcon from '@material-ui/icons/ShortText';
 
 
 //////////////////////////////////////////////////////////////////////
@@ -188,8 +190,8 @@ class Settings extends React.Component {
   render() {
     const { classes, closeDrawer } = this.props;
     const { expanded, expandAll, debugEvents, decompileEditor, decompileKey, ansiFG, ansiBG,
-      invertHighlight, debugActions, serverAddress, serverPort, serverSSL, sidebarLargeCompass,
-      historySize, historySpawnSize, mobileHideTaskbar, mobileHideStatusbar, allowServerChange,
+      invertHighlight, debugActions, serverAddress, serverPort, serverSSL, sidebarLargeCompass, activitySize,
+      historySize, historySpawnSize, mobileHideTaskbar, mobileHideStatusbar, allowServerChange, activityDelay,
       sidebarOpen, sidebarAnchor, sidebarAlwaysShow, sidebarShowPlayers, fontFamily, fontSize, activityReposition,
       recallButtons, recallAnchor, recallSize, mobileFontSize, terminalWidth, timersAutoStart, activityEnabled,
       sidebarShowThings, sidebarShowExits, sidebarShowCompass, sidebarDense, timersEnabled, terminalAutoScroll } = this.state;
@@ -387,7 +389,7 @@ class Settings extends React.Component {
       </List>
     );
     
-    var actions = (
+    var timers = (
       <List className={classes.list} disablePadding dense>
         <ListItem dense>
           <ListItemIcon>
@@ -408,7 +410,11 @@ class Settings extends React.Component {
             <Switch checked={timersAutoStart} value="timersAutoStart" onChange={this.handleSwitch('timersAutoStart')} />
           </ListItemSecondaryAction>
         </ListItem>
+      </List>
+    );
 
+    var activity = (
+      <List className={classes.list} disablePadding dense>
         <ListItem dense>
           <ListItemIcon>
             <SmsIcon />
@@ -427,6 +433,20 @@ class Settings extends React.Component {
           <ListItemSecondaryAction>
             <Switch checked={activityReposition} value="activityReposition" onChange={this.handleSwitch('activityReposition')} />
           </ListItemSecondaryAction>
+        </ListItem>
+        
+        <ListItem dense>
+          <ListItemIcon>
+            <UpdateIcon />
+          </ListItemIcon>
+          <TextField label="Autoclose delay" value={activityDelay} onChange={this.handleValue('activityDelay')} type="number" />
+        </ListItem>
+        
+        <ListItem dense>
+          <ListItemIcon>
+            <ShortTextIcon />
+          </ListItemIcon>
+          <TextField label="Preview size" value={activitySize} onChange={this.handleValue('activitySize')} type="number" />
         </ListItem>
       </List>
     );
@@ -659,12 +679,21 @@ class Settings extends React.Component {
                 </ExpansionPanelDetails>
               </ExpansionPanel>
 
-              <ExpansionPanel className={classes.panel} expanded={expandAll || expanded === 'actions'} onChange={this.handleExpand('actions')}>
+              <ExpansionPanel className={classes.panel} expanded={expandAll || expanded === 'timers'} onChange={this.handleExpand('timers')}>
                 <ExpansionPanelSummary classes={{ root: classes.noPadding }} expandIcon={<ExpandMoreIcon />}>
-                  <Typography className={classes.summaryText}>User-defined Actions</Typography>
+                  <Typography className={classes.summaryText}>User-defined Timers</Typography>
                 </ExpansionPanelSummary>
                 <ExpansionPanelDetails classes={{ root: classes.noPadding }}>
-                  {actions}
+                  {timers}
+                </ExpansionPanelDetails>
+              </ExpansionPanel>
+
+              <ExpansionPanel className={classes.panel} expanded={expandAll || expanded === 'activity'} onChange={this.handleExpand('activity')}>
+                <ExpansionPanelSummary classes={{ root: classes.noPadding }} expandIcon={<ExpandMoreIcon />}>
+                  <Typography className={classes.summaryText}>Activity Notifications</Typography>
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails classes={{ root: classes.noPadding }}>
+                  {activity}
                 </ExpansionPanelDetails>
               </ExpansionPanel>
 

@@ -598,24 +598,26 @@ class Taskbar extends React.Component {
   }
   
   render() {
-    const input = window.client.input;
+    const client = window.client;
+    const input = client.input;
     const { classes } = this.props;
     const { title, taskbar, open, historyAnchor, backupAnchor, url, preview,
             menuAnchor, uploadAnchor, helpAnchor, logAnchor, link, activity } = this.state;
-    const { sidebarOpen, sidebarAnchor, mobileHideTaskbar, activityReposition } = window.client.settings;
+    const { sidebarOpen, sidebarAnchor, mobileHideTaskbar, activityReposition,
+            activityDelay, activitySize } = client.settings;
     
-    const buttons = window.client.buttons;
+    const buttons = client.buttons;
 
     var rev = input && Boolean(historyAnchor) ? input.history.slice().reverse() : [];
 
-    var activityPosition = window.client.mobile ? "top" : "bottom";
+    var activityPosition = client.mobile ? "top" : "bottom";
     if (activityReposition) {
-      activityPosition = window.client.mobile ? "bottom" : "top";
+      activityPosition = client.mobile ? "bottom" : "top";
     }
     
     return (
       <div className={classes.frame}>
-        <AppBar className={classes.root} position="static" onClick={() => window.client.focus()}>
+        <AppBar className={classes.root} position="static" onClick={() => client.focus()}>
           <Toolbar disableGutters={!this.state.open}>
             <Tooltip title={sidebarOpen ? "Open sidebar." : "Close sidebar."}>
               <Button className={classes.sidebarButton} aria-label="open-sidebar" onClick={this.toggleSidebar}>
@@ -638,7 +640,7 @@ class Taskbar extends React.Component {
                   <Button key={task.id} classes={{ label: classes.tasklabel }} className={classes.taskbutton} aria-label="open-task" onClick={() => this.popTask(task)}>
                     <BadgeWrapper count={() => task.count}>
                       <Icon className={classNames(classes.taskicon, task.options.icon)}>{task.options.icon}</Icon>
-                      {!window.client.mobile && task.headertitle.innerText}
+                      {!client.mobile && task.headertitle.innerText}
                     </BadgeWrapper>
                   </Button>
                 </Tooltip>
@@ -860,9 +862,9 @@ class Taskbar extends React.Component {
         <Snackbar
           anchorOrigin={{ vertical: activityPosition, horizontal: "center" }}
           open={activity}
-          autoHideDuration={5000}
+          autoHideDuration={activityDelay * 1000}
           onClose={this.hideActivity}
-          onClick={() => { window.client.focusPanel(link); this.hideActivity(); }}
+          onClick={() => { client.focusPanel(link); this.hideActivity(); }}
         >
           <SnackbarContent
             className={classes.activity}
@@ -870,8 +872,8 @@ class Taskbar extends React.Component {
             message={
               <Typography id="activity">
                 <span className={classes.noHover}>
-                  {preview.slice(0, 50)}
-                  {preview.length > 50 && "..."}
+                  {preview.slice(0, activitySize)}
+                  {preview.length > activitySize && "..."}
                 </span>
               </Typography>
             }
