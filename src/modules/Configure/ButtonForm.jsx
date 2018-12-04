@@ -6,6 +6,7 @@ import { withStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Icon from '@material-ui/core/Icon';
 import IconButton from '@material-ui/core/IconButton';
+import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
 
 
@@ -70,12 +71,18 @@ class ButtonForm extends React.Component {
     
     return (
       <div className={classes.frame}>
-        <Tooltip title="Button preview.">
-          <IconButton>
-            <Icon className={icon ? item.icon : null}>{!icon && item.icon}</Icon>
-          </IconButton>
+        <Tooltip title="Use the name of any icon from Game-Icons.net or Google Material Icons.">
+          <span>
+            <IconButton>
+              <Icon className={icon ? item.icon : null}>{!icon && item.icon}</Icon>
+            </IconButton>
+            <TextField label="Icon" value={item.icon} onChange={handleChange('icon')} inputProps={{ classes: { input: classes.inputBase } }} />
+            <Button color="primary" variant="contained" onClick={() => window.open("https://mushportal.com/icons.html", "_blank") }>
+              Icon list
+            </Button>
+          </span>
         </Tooltip>
-        <TextField label="Icon" value={item.icon} onChange={handleChange('icon')} inputProps={{ classes: { input: classes.inputBase } }} />
+
         <TextField label="Badge Expression" fullWidth value={item.count} onChange={handleChange('count')} inputProps={{ classes: { input: classes.inputBase } }} />
         <TextField label="Tooltip" fullWidth value={item.tooltip} onChange={handleChange('tooltip')} inputProps={{ classes: { input: classes.inputBase } }} />
       </div>

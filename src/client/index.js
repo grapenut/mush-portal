@@ -133,8 +133,11 @@ class Client {
       mobileFontSize: 6,
       mobileHideTaskbar: true,
       mobileHideStatusbar: true,
-      // user defined actions
+      // user configured actions
       timersEnabled: false,
+      timersAutoStart: false,
+      activityEnabled: true,
+      activityReposition: false,
     };
     this.settings = null;
     
@@ -230,7 +233,11 @@ class Client {
     this.render();
     
     // start cron timer loop
-    this.startTimers();
+    if (this.settings.timersAutoStart) {
+      this.startTimers();
+    } else {
+      this.settings.timersEnabled = false;
+    }
     
     // bind keys
     this.bindKeys();
@@ -1634,7 +1641,7 @@ class Client {
   /////////////////////////////////////////////////////////
   
   /** Enable timers, only if not already enabled. */
-  enableTimers = () => {
+  timersEnabled = () => {
     if (this.settings.timersEnabled) return;
     
     this.changeSetting("timersEnabled", true);

@@ -25,6 +25,8 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import IconButton from '@material-ui/core/IconButton';
 import Divider from '@material-ui/core/Divider';
+import Snackbar from '@material-ui/core/Snackbar';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
 
 import MenuIcon from '@material-ui/icons/Menu';
 import BackspaceIcon from '@material-ui/icons/Backspace';
@@ -46,8 +48,6 @@ import Settings from '../Settings';
 
 //////////////////////////////////////////////////////////////////////
 
-
-const drawerHeight = 240;
 
 const styles = theme => ({
   frame: {
@@ -97,7 +97,7 @@ const styles = theme => ({
   },
   drawerPaper: {
     position: 'relative',
-    height: drawerHeight,
+    height: "100%",
   },
   mailButton: {
     margin: theme.spacing.unit,
@@ -152,6 +152,12 @@ const styles = theme => ({
   backup: {
     display: "flex",
     flexFlow: "row wrap",
+  },
+  activity: {
+    backgroundColor: theme.palette.background.paper,
+//    '&:hover': {
+//      cursor: "pointer",
+//    },
   },
 });
 
@@ -222,6 +228,9 @@ class Taskbar extends React.Component {
       logAnchor: null,
       historyAnchor: null,
       backupAnchor: null,
+      activity: false,
+      link: "",
+      preview: "",
     };
     
     this.help = "";
@@ -234,6 +243,14 @@ class Taskbar extends React.Component {
     
     window.client.react.taskbar = this;
   }
+  
+  showActivity = (link, preview) => {
+    this.setState({ activity: true, link, preview });
+  };
+  
+  hideActivity = () => {
+    this.setState({ activity: false, link: "", preview: "" });
+  };
 
   openDrawer = () => {
     this.closeMenu();
@@ -583,13 +600,18 @@ class Taskbar extends React.Component {
   render() {
     const input = window.client.input;
     const { classes } = this.props;
-    const { title, taskbar, open, historyAnchor, backupAnchor, url,
-            menuAnchor, uploadAnchor, helpAnchor, logAnchor } = this.state;
-    const { sidebarOpen, sidebarAnchor, mobileHideTaskbar } = window.client.settings;
+    const { title, taskbar, open, historyAnchor, backupAnchor, url, preview,
+            menuAnchor, uploadAnchor, helpAnchor, logAnchor, link, activity } = this.state;
+    const { sidebarOpen, sidebarAnchor, mobileHideTaskbar, activityReposition } = window.client.settings;
     
     const buttons = window.client.buttons;
 
     var rev = input && Boolean(historyAnchor) ? input.history.slice().reverse() : [];
+
+    var activityPosition = window.client.mobile ? "top" : "bottom";
+    if (activityReposition) {
+      activityPosition = window.client.mobile ? "bottom" : "top";
+    }
     
     return (
       <div className={classes.frame}>
@@ -835,6 +857,26 @@ class Taskbar extends React.Component {
             </AppBar>
           </div>
         )}
+        <Snackbar
+          anchorOrigin={{ vertical: activityPosition, horizontal: "center" }}
+          open={activity}
+          autoHideDuration={5000}
+          onClose={this.hideActivity}
+          onClick={() => { window.client.focusPanel(link); this.hideActivity(); }}
+        >
+          <SnackbarContent
+            className={classes.activity}
+            aria-describedby="activity"
+            message={
+              <Typography id="activity">
+                <span className={classes.noHover}>
+                  {preview.slice(0, 50)}
+                  {preview.length > 50 && "..."}
+                </span>
+              </Typography>
+            }
+          />
+        </Snackbar>
       </div>
     );
   }

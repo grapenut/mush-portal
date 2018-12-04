@@ -47,6 +47,9 @@ import UnfoldMoreIcon from '@material-ui/icons/UnfoldMore';
 import RepeatIcon from '@material-ui/icons/Repeat';
 import TimerIcon from '@material-ui/icons/Timer';
 import TimerOffIcon from '@material-ui/icons/TimerOff';
+import SmsIcon from '@material-ui/icons/Sms';
+import AutorenewIcon from '@material-ui/icons/Autorenew';
+import SwapVertIcon from '@material-ui/icons/SwapVert';
 
 
 //////////////////////////////////////////////////////////////////////
@@ -184,10 +187,11 @@ class Settings extends React.Component {
 
   render() {
     const { classes, closeDrawer } = this.props;
-    const { expanded, expandAll, debugEvents, decompileEditor, decompileKey, ansiFG, ansiBG, terminalWidth,
-      invertHighlight, debugActions, serverAddress, serverPort, serverSSL, sidebarLargeCompass, recallButtons,
-      historySize, historySpawnSize, mobileHideTaskbar, mobileHideStatusbar, allowServerChange, recallAnchor,
-      sidebarOpen, sidebarAnchor, sidebarAlwaysShow, sidebarShowPlayers, fontFamily, fontSize, recallSize, mobileFontSize,
+    const { expanded, expandAll, debugEvents, decompileEditor, decompileKey, ansiFG, ansiBG,
+      invertHighlight, debugActions, serverAddress, serverPort, serverSSL, sidebarLargeCompass,
+      historySize, historySpawnSize, mobileHideTaskbar, mobileHideStatusbar, allowServerChange,
+      sidebarOpen, sidebarAnchor, sidebarAlwaysShow, sidebarShowPlayers, fontFamily, fontSize, activityReposition,
+      recallButtons, recallAnchor, recallSize, mobileFontSize, terminalWidth, timersAutoStart, activityEnabled,
       sidebarShowThings, sidebarShowExits, sidebarShowCompass, sidebarDense, timersEnabled, terminalAutoScroll } = this.state;
     const isMobile = window.client.mobile;
    
@@ -392,6 +396,36 @@ class Settings extends React.Component {
           <ListItemText className={classes.switchText} primary="Enable timers?" />
           <ListItemSecondaryAction>
             <Switch checked={timersEnabled} value="timersEnabled" onChange={this.handleSwitch('timersEnabled')} />
+          </ListItemSecondaryAction>
+        </ListItem>
+
+        <ListItem dense>
+          <ListItemIcon>
+            <AutorenewIcon />
+          </ListItemIcon>
+          <ListItemText className={classes.switchText} primary="Auto-start timers on refresh?" />
+          <ListItemSecondaryAction>
+            <Switch checked={timersAutoStart} value="timersAutoStart" onChange={this.handleSwitch('timersAutoStart')} />
+          </ListItemSecondaryAction>
+        </ListItem>
+
+        <ListItem dense>
+          <ListItemIcon>
+            <SmsIcon />
+          </ListItemIcon>
+          <ListItemText className={classes.switchText} primary="Show spawn activity notification?" />
+          <ListItemSecondaryAction>
+            <Switch checked={activityEnabled} value="activityEnabled" onChange={this.handleSwitch('activityEnabled')} />
+          </ListItemSecondaryAction>
+        </ListItem>
+        
+        <ListItem dense>
+          <ListItemIcon>
+            <SwapVertIcon />
+          </ListItemIcon>
+          <ListItemText className={classes.switchText} primary={isMobile ? "Move notification to bottom?" : "Move notification to top?"} />
+          <ListItemSecondaryAction>
+            <Switch checked={activityReposition} value="activityReposition" onChange={this.handleSwitch('activityReposition')} />
           </ListItemSecondaryAction>
         </ListItem>
       </List>

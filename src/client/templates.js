@@ -8,7 +8,7 @@ class Templates {
         name: "",
         text: "",
         javascript: false,
-        icon: "widgets",
+        icon: "icon-portal",
         count: "0",
         tooltip: "",
         

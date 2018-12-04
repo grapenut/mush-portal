@@ -75,6 +75,7 @@ class Spawn extends React.Component {
       prefix: props.prefix ? props.prefix : "",
       saveHistory: props.saveHistory ? props.saveHistory : false,
       autoHide: props.autoHide ? props.autoHide : false,
+      showActivity: props.showActivity ? props.showActivity : false,
     };
 
     this.refoutput = React.createRef();
@@ -153,6 +154,18 @@ class Spawn extends React.Component {
     return this;
   };
   
+  ShowActivity = showActivity => {
+    if (typeof(showActivity) === "undefined") {
+      showActivity = true;
+    }
+    
+    if (this.state.showActivity !== showActivity) {
+      this.setState({ showActivity });
+    }
+    
+    return this;
+  }
+
   AutoHide = autoHide => {
     if (typeof(autoHide) === "undefined") {
       autoHide = true;
@@ -179,39 +192,39 @@ class Spawn extends React.Component {
   };
   
   // wrapper that scrolls the output if needed
-  scrollIfNeeded(fun) {
+  scrollIfNeeded(text) {
+    const { panel, id } = this.props;
+    const client = window.client;
     var scroll = false;
     
-    if (this.output.nearBottom(window.client.scrollThreshold)) {
+    if (this.output.nearBottom(client.scrollThreshold)) {
       scroll = true;
     }
     
-    fun();
+    this.output.appendText(text);
     
     scroll && this.output.scrollDown();
     
-    this.onChange();
-  }
-
-  onChange = () => {
+    if (panel.status === "minimized") {
+      panel.count++;
+      client.react.taskbar.forceUpdate();
+    }
+    
+    client.settings.activityEnabled && this.state.showActivity && client.react.taskbar.showActivity(id, text.trim());
+        
     if (this.state.saveHistory) {
-      this.output.saveHistory(HISTORY_KEY + this.props.id, Math.min(MAX_HISTORY_SIZE, window.client.settings.historySpawnSize));
+      this.output.saveHistory(HISTORY_KEY + id, Math.min(MAX_HISTORY_SIZE, client.settings.historySpawnSize));
     }
     
     this.setState({ lines: this.output.linesOfScroll() });
-    
-    if (this.props.panel.status === "minimized") {
-      this.props.panel.count++;
-      window.client.react.taskbar.forceUpdate();
-    }
-  };
-  
+  }
+
   appendText(text) {
-    this.scrollIfNeeded(() => this.output.appendText(text));
+    this.scrollIfNeeded(text);
   }
   
   append(text) {
-    this.scrollIfNeeded(() => this.output.appendText(text+"\n"));
+    this.scrollIfNeeded(text+"\n");
   }
   
   render() {
