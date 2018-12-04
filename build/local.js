@@ -178,7 +178,7 @@ if (client.triggers.length === 0) {
 if (client.macros.length === 0) {
   client.macros = [{
     name: "OpenWindow",
-    text: "Window(\"%2\").SaveHistory().Prefix(\"+%2 \").Focus();",
+    text: "Window(\"%2\").SaveHistory().Prefix(\"+%2 \").ShowActivity().Focus();",
     javascript: true,
     pattern: "/win(dow)? (.*)",
     regex: true,
