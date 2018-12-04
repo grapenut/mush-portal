@@ -1,0 +1,2974 @@
+[
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>eslint no-eval: 0</p>",
+      "summary": "<p>eslint no-eval: 0</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1,
+    "codeStart": 2
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>eslint no-unused-vars: 0</p>",
+      "summary": "<p>eslint no-unused-vars: 0</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 2,
+    "codeStart": 4,
+    "code": "import React from 'react';\nimport ReactDOM from 'react-dom';\n\nimport { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';\n\nimport saveAs from 'file-saver';\n\nimport Portal from '../modules/Portal';\nimport Mailbox from '../modules/Mailbox';\nimport Sendmail from '../modules/Sendmail';\nimport BBoard from '../modules/BBoard';\nimport Upload from '../modules/Upload';\nimport Backup from '../modules/Backup';\nimport Configure from '../modules/Configure';\nimport Spawn from '../modules/Spawn';\n\nimport Connection from './connection';\nimport Emulator from './emulator';\nimport UserInput from './userinput';\nimport JSONAPI from './jsonapi';\nimport Templates from './templates';\n\nimport 'jspanel4/dist/jspanel.min.css';\n\nimport { jsPanel } from 'jspanel4';\n\nimport shortid from 'shortid';\n\n//import 'jspanel4/es6module/extensions/hint/jspanel.hint.js';\n//import 'jspanel4/es6module/extensions/modal/jspanel.modal.js';\n//import 'jspanel4/es6module/extensions/contextmenu/jspanel.contextmenu.js';\n//import 'jspanel4/es6module/extensions/tooltip/jspanel.tooltip.js';\n//import 'jspanel4/es6module/extensions/layout/jspanel.layout.js';\n//import 'jspanel4/es6module/extensions/dock/jspanel.dock.js';\n\nconst EventEmitter = require('events');\nconst TinyCon = require('tinycon');\nconst Colors = require('@material-ui/core/colors');",
+    "ctx": false
+  },
+  {
+    "tags": [
+      {
+        "type": "const",
+        "string": "{string[]}",
+        "html": "<p>{string[]}</p>"
+      }
+    ],
+    "description": {
+      "full": "<p>List of standard server login failure messages.</p>",
+      "summary": "<p>List of standard server login failure messages.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 43,
+    "codeStart": 48,
+    "code": "const LOGINFAIL = [\n  /There is no player with that name\\./,\n  /That is not the correct password\\./,\n  /Either that player does not exist, or has a different password\\./,\n  /You cannot connect to that player at this time\\./,\n  /Guest connections not allowed\\./,\n  /Connection to .* (Non-GUEST) not allowed from .* (.*)/,\n  /Too many guests are connected now\\./\n];",
+    "ctx": {
+      "type": "declaration",
+      "name": "LOGINFAIL",
+      "value": "[",
+      "string": "LOGINFAIL"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "const",
+        "string": "{Object.<string, string>}",
+        "html": "<p>{Object.&lt;string, string&gt;}</p>"
+      }
+    ],
+    "description": {
+      "full": "<p>Maps Unicode characters to ASCII characters.</p>",
+      "summary": "<p>Maps Unicode characters to ASCII characters.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 58,
+    "codeStart": 63,
+    "code": "const UnicodeMap = {\n  \"\\u2013\": '-',\n  \"\\u2014\": '-',\n  \"\\u2018\": '\\'',\n  \"\\u2019\": '\\'',\n  \"\\u201B\": '\\'',\n  \"\\u201C\": '\"',\n  \"\\u201D\": '\"',\n  \"\\u201F\": '\"',\n  \"\\u2032\": '\\'',\n  \"\\u2033\": '\"',\n  \"\\u2035\": '\\'',\n  \"\\u2036\": '\"',\n}\n\n\nclass Client {",
+    "ctx": {
+      "type": "declaration",
+      "name": "UnicodeMap",
+      "value": "{",
+      "string": "UnicodeMap"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "constructor",
+        "string": "",
+        "html": ""
+      }
+    ],
+    "description": {
+      "full": "<p>The main Client class controls and links together everything.</p>",
+      "summary": "<p>The main Client class controls and links together everything.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": true,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 82,
+    "codeStart": 86,
+    "code": "constructor() {\n  // Client colors and theme\n  this.colors = Colors;\n  this.theme = this.createTheme();\n  this.mobile = !window.matchMedia(this.theme.breakpoints.up('md').substring(7)).matches;\n  \n  // client settings\n  this.defaultSettings = {\n    // font\n    fontFamily: \"Courier New\",\n    fontSize: 10,\n    // default text colors\n    ansiFG: 'ansi-37',\n    ansiBG: 'ansi-40',\n    invertHighlight: false,\n    // terminal settings\n    terminalWidth: 100,\n    terminalAutoScroll: true,\n    // upload editor\n    decompileEditor: true,\n    decompileKey: 'FugueEdit > ',\n    // sidebar navigation\n    sidebarOpen: true,\n    sidebarAnchor: \"right\",\n    sidebarDense: true,\n    sidebarAlwaysShow: false,\n    sidebarShowPlayers: true,\n    sidebarShowThings: true,\n    sidebarShowExits: true,\n    sidebarShowCompass: true,\n    sidebarLargeCompass: true,\n    // debugging\n    debugEvents: false,\n    debugActions: false,\n    // default connection settings, can override in public/local.js\n    allowServerChange: true,\n    serverAddress: \"node.grapenut.org\",\n    serverSSL: window.location.protocol === \"https:\",\n    serverPort: window.location.protocol === \"https:\" ? 2001 : 2000,\n    // history settings\n    historySize: 1000,\n    historySpawnSize: 100,\n    // command recall\n    recallButtons: true,\n    recallAnchor: \"right\",\n    recallSize: 1000,\n    // mobile settings\n    mobileFontSize: 6,\n    mobileHideTaskbar: true,\n    mobileHideStatusbar: true,\n    // timer safety\n    timersEnabled: false,\n    timersAutoStart: false,\n    // activity notification\n    activityEnabled: true,\n    activityReposition: false,\n    activitySize: 80,\n    activityDelay: 10,\n  };\n  this.settings = null;\n  \n  // map react components to strings\n  this.components = {\n    \"Mailbox\": Mailbox,\n    \"Sendmail\": Sendmail,\n    \"BBoard\": BBoard,\n    \"Upload\": Upload,\n    \"Backup\": Backup,\n    \"Configure\": Configure,\n    \"Spawn\": Spawn,\n  };\n  \n  this.templates = new Templates();\n  \n  this.buttons = [];\n  this.triggers = [];\n  this.timers = [];\n  this.macros = [];\n  this.keys = [];\n  this.scripts = [{ name: \"onLoad.js\", text: \"\" }];\n  this.css = [{ name: \"ansi.css\", text: \"\" },\n              { name: \"inverse.css\", text: \"\" }];\n  \n  this.loadButtons();\n  this.loadTriggers();\n  this.loadTimers();\n  this.loadMacros();\n  this.loadKeys();\n  this.loadCSS();\n  this.loadScripts();\n  \n  // must come after client .css definitions\n  this.loadSettings();\n  \n  // Terminal UI elements\n  this.output = null;\n  this.prompt = null;\n  this.input = null;\n  \n  // External Components\n  this.events = new EventEmitter();\n  this.panels = jsPanel;\n  this.tinycon = TinyCon;\n  \n  // React Components\n  this.react = {\n    portal: null,\n    taskbar: null,\n    terminal: null,\n    input: null,\n    statusbar: null,\n    login: null,\n    mailbox: null,\n    sendmail: null,\n    bboard: null,\n    upload: null,\n    backup: null,\n    configure: null,\n    spawns: [],\n  };\n  \n  // client variables\n  this.conn = null;\n  this.container = null;\n  \n  // app instance toggles\n  this.loggedIn = false;\n  this.jsonapi = false;\n  this.hidden = false;\n  this.updateCounter = 0;\n  this.updateLines = 0;\n  this.eatNewline = false;\n  \n  // delay time for auto-contents\n  this.delayContents = 500;\n  \n  // number of lines of scroll within which the output scroll down when new items are received\n  this.scrollThreshold = 5;\n  \n  // handle auto-reconnects\n  this.reconnectTimer = 2000;\n  this.reconnectCount = 0;\n  this.reconnectMaxCount = 10;\n  \n  // init other libraries\n  window.client = this;\n  this.initPanels();\n  this.initNotifications();\n  \n  // render the app\n  this.render();\n  \n  // start cron timer loop\n  this.startTimers();\n  \n  // bind keys\n  this.bindKeys();\n}\n\n///////////////////////////////////////////////////////////////////////////////////////////////////\n// rendering, themeing, and styling react components",
+    "ctx": {
+      "type": "constructor",
+      "name": "constructor",
+      "string": "constructor()"
+    }
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>Render the main React component.</p>",
+      "summary": "<p>Render the main React component.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 248,
+    "codeStart": 249,
+    "code": "render() {\n  ReactDOM.render(React.createElement(Portal, { theme: this.theme }, null), document.getElementById('root'));\n}",
+    "ctx": {
+      "type": "method",
+      "name": "render",
+      "string": "render()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{string} src - The URL of the script to load.",
+        "name": "src",
+        "description": "<ul>\n<li>The URL of the script to load.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      }
+    ],
+    "description": {
+      "full": "<p>Load a script from the source URL by appending a <script> tag to the body.</p>",
+      "summary": "<p>Load a script from the source URL by appending a <script> tag to the body.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 253,
+    "codeStart": 257,
+    "code": "loadScript(src, onLoad, onError) {\n  var tag = document.createElement('script');\n  tag.async = false;\n  tag.src = src;\n  tag.onload = onLoad;\n  tag.onerror = onError;\n  document.getElementsByTagName('body')[0].appendChild(tag);\n}",
+    "ctx": {
+      "type": "method",
+      "name": "loadScript",
+      "string": "loadScript()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{string} name - Name of the script to execute.",
+        "name": "name",
+        "description": "<ul>\n<li>Name of the script to execute.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      }
+    ],
+    "description": {
+      "full": "<p>Find and execute a user-defined script by name.</p>",
+      "summary": "<p>Find and execute a user-defined script by name.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 266,
+    "codeStart": 270,
+    "code": "execUserScript(name) {\n  // load user customization file\n  const client = this;\n  var script = null;\n  for (let i=0; i < client.scripts.length; i++) {\n    if (client.scripts[i].name === name) {\n      script = client.scripts[i];\n      break;\n    }\n  }\n  \n  if (script && script.text !== \"\") {\n    this.execActionScript(script.text);\n  }\n}",
+    "ctx": {
+      "type": "method",
+      "name": "execUserScript",
+      "string": "execUserScript()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{string} txt - The code to execute.",
+        "name": "txt",
+        "description": "<ul>\n<li>The code to execute.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      },
+      {
+        "type": "param",
+        "string": "{Event} [event] - The event, if present.",
+        "name": "[event]",
+        "description": "<ul>\n<li>The event, if present.</li>\n</ul>",
+        "types": [
+          "Event"
+        ],
+        "typesDescription": "<a href=\"Event.html\">Event</a>",
+        "optional": true,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      }
+    ],
+    "description": {
+      "full": "<p>Evaluate a fragment of Javascript code.</p>",
+      "summary": "<p>Evaluate a fragment of Javascript code.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 286,
+    "codeStart": 291,
+    "code": "execActionScript(txt, event) {\n  const client = this;\n  const Window = (w,c,e) => this.getSpawn(w,c,e);\n  const SendAPI = (cmd) => this.sendAPI(cmd);\n  const Send = (cmd) => this.sendCommand(cmd);\n  const SendText = (cmd) => this.sendText(cmd);\n  const Append = (text) => this.output.appendText(text);\n  const Output = this.output;\n  const Input = this.input;\n  const UI = this.react;\n  \n  try {\n    eval(txt);\n  } catch (e) {\n    client.settings.debugActions && console.log(\"Error executing action:\", e);\n  }\n}",
+    "ctx": {
+      "type": "method",
+      "name": "execActionScript",
+      "string": "execActionScript()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{string} src - The URL of the CSS file to load.",
+        "name": "src",
+        "description": "<ul>\n<li>The URL of the CSS file to load.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      }
+    ],
+    "description": {
+      "full": "<p>Load custom CSS style sheet from the source URL by appending a <link> tag to the head.</p>",
+      "summary": "<p>Load custom CSS style sheet from the source URL by appending a <link> tag to the head.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 309,
+    "codeStart": 313,
+    "code": "loadStyle(src) {\n  const file = src.split('/').slice(-1)[0];\n\n  // see if we have a matching css override\n  var css = null;\n  for (let i=0; i < this.css.length; i++) {\n    if (this.css[i].name === file) {\n      css = this.css[i];\n      break;\n    }\n  }\n  \n  var style;\n  if (css) {\n    // just update the <style> element\n    style = this.updateCSS(css);\n    if (css.text !== \"\") return;\n  }\n  \n  // css is not overridden, try to load a <link>\n  style = document.createElement(\"link\");\n  style.setAttribute(\"rel\", \"stylesheet\");\n  style.setAttribute(\"type\", \"text/css\");\n  style.setAttribute(\"href\", src);\n  document.head.appendChild(style);\n}",
+    "ctx": {
+      "type": "method",
+      "name": "loadStyle",
+      "string": "loadStyle()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{Object.<string, string>} css - The CSS definition object.",
+        "name": "css",
+        "description": "<ul>\n<li>The CSS definition object.</li>\n</ul>",
+        "types": [
+          "Object.<string, string>"
+        ],
+        "typesDescription": "<code>Object</code>.&lt;<code>string</code>, <code>string</code>&gt;",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      },
+      {
+        "type": "param",
+        "string": "{boolean} [erase=false] - Erase the existing style first.",
+        "name": "[erase=false]",
+        "description": "<ul>\n<li>Erase the existing style first.</li>\n</ul>",
+        "types": [
+          "boolean"
+        ],
+        "typesDescription": "<code>boolean</code>",
+        "optional": true,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      },
+      {
+        "type": "return",
+        "string": "{HTMLElement} - The <style> tag with CSS added.",
+        "types": [
+          "HTMLElement"
+        ],
+        "typesDescription": "<code>HTMLElement</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false,
+        "description": "<ul>\n<li>The <style> tag with CSS added.</li>\n</ul>"
+      }
+    ],
+    "description": {
+      "full": "<p>Update the CSS definition object's rules on its <style> element.</p>",
+      "summary": "<p>Update the CSS definition object's rules on its <style> element.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 340,
+    "codeStart": 346,
+    "code": "updateCSS(css, erase=false) {\n  if (!css) return null;\n  \n  var style = document.getElementById(\"override_\" + css.name);\n  if (style) {\n    // remove what's already there\n    while (style.firstChild) {\n      style.removeChild(style.firstChild);\n    }\n  } else {\n    // create a new style element\n    style = document.createElement('style');\n    style.setAttribute('id', 'override_' + css.name);\n    document.head.appendChild(style);\n  }\n  \n  // update the CSS text on the <style> element\n  if (!erase) style.appendChild(document.createTextNode(css.text));\n  \n  return style;\n}",
+    "ctx": {
+      "type": "method",
+      "name": "updateCSS",
+      "string": "updateCSS()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{string} src - The source URL of the CSS file to unload.",
+        "name": "src",
+        "description": "<ul>\n<li>The source URL of the CSS file to unload.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      }
+    ],
+    "description": {
+      "full": "<p>Uunload custom CSS style sheet loading from source URL.</p>",
+      "summary": "<p>Uunload custom CSS style sheet loading from source URL.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 368,
+    "codeStart": 372,
+    "code": "unloadStyle(src) {\n  // remove the <link> if it exists\n  var links = document.getElementsByTagName(\"link\");\n  for (var i = links.length; i >= 0; i--) {\n    if (links[i] && links[i].getAttribute(\"href\") !== null && links[i].getAttribute(\"href\").indexOf(src) !== -1) {\n      links[i].parentNode.removeChild(links[i]);\n    }\n  }\n  \n  // see if we have a css override to erase\n  const file = src.split('/').slice(-1)[0];\n  var css = null;\n  for (let i=0; i < this.css.length; i++) {\n    if (this.css[i].name === file) {\n      css = this.css[i];\n      break;\n    }\n  }\n  \n  // we found a css override, delete the contents\n  if (css) {\n    this.updateCSS(css, true);\n  }\n}",
+    "ctx": {
+      "type": "method",
+      "name": "unloadStyle",
+      "string": "unloadStyle()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{Object.<string,*>} [theme] - The theme configuration object.",
+        "name": "[theme]",
+        "description": "<ul>\n<li>The theme configuration object.</li>\n</ul>",
+        "types": [
+          "Object.<string, *>"
+        ],
+        "typesDescription": "<code>Object</code>.&lt;<code>string</code>, <code>*</code>&gt;",
+        "optional": true,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      },
+      {
+        "type": "return",
+        "string": "{MuiTheme} - The new theme object.",
+        "types": [
+          "MuiTheme"
+        ],
+        "typesDescription": "<a href=\"MuiTheme.html\">MuiTheme</a>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false,
+        "description": "<ul>\n<li>The new theme object.</li>\n</ul>"
+      }
+    ],
+    "description": {
+      "full": "<p>Create a new Material-UI theme from a theme configuration object.</p>",
+      "summary": "<p>Create a new Material-UI theme from a theme configuration object.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 397,
+    "codeStart": 402,
+    "code": "createTheme(theme) {\n  const defaultTheme = {\n    typography: {\n      useNextVariants: true,\n    },\n    palette: {\n      primary: this.colors.indigo,\n      secondary: this.colors.blueGrey,\n      type: 'dark',\n    },\n  };\n  \n  return createMuiTheme(Object.assign(defaultTheme, theme));\n}\n\n///////////////////////////////////////////////////////////////////////////////////////////////////\n// save and load objects from localStorage",
+    "ctx": {
+      "type": "method",
+      "name": "createTheme",
+      "string": "createTheme()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{string} filename - The name of the file to save.",
+        "name": "filename",
+        "description": "<ul>\n<li>The name of the file to save.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      },
+      {
+        "type": "param",
+        "string": "{string} text - The text of the file to save.",
+        "name": "text",
+        "description": "<ul>\n<li>The text of the file to save.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      },
+      {
+        "type": "param",
+        "string": "{string} [type=text/plain] - The MIME type of the file Blob.",
+        "name": "[type=text/plain]",
+        "description": "<ul>\n<li>The MIME type of the file Blob.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": true,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      },
+      {
+        "type": "return",
+        "string": "{boolean} - Whether the save was successful or not.",
+        "types": [
+          "boolean"
+        ],
+        "typesDescription": "<code>boolean</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false,
+        "description": "<ul>\n<li>Whether the save was successful or not.</li>\n</ul>"
+      }
+    ],
+    "description": {
+      "full": "<p>Save a text string to a local file.</p>",
+      "summary": "<p>Save a text string to a local file.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 420,
+    "codeStart": 427,
+    "code": "saveText(filename, text, type) {\n  if (!type) {\n    type = \"text/plain\";\n  }\n  \n  if (text.length > 0) {\n    var blob = new Blob([text], { type });\n    saveAs(blob, filename);\n    return true;\n  } else {\n    return false;\n  }\n}",
+    "ctx": {
+      "type": "method",
+      "name": "saveText",
+      "string": "saveText()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{string} [indent=0] - If indent != 0 we use a pretty printer. If 0 or undefined we minify.",
+        "name": "[indent=0]",
+        "description": "<ul>\n<li>If indent != 0 we use a pretty printer. If 0 or undefined we minify.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": true,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      },
+      {
+        "type": "return",
+        "string": "{string} - The JSON.stringified object text.",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false,
+        "description": "<ul>\n<li>The JSON.stringified object text.</li>\n</ul>"
+      }
+    ],
+    "description": {
+      "full": "<p>Convert localStorage to JSON object text.</p>",
+      "summary": "<p>Convert localStorage to JSON object text.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 441,
+    "codeStart": 446,
+    "code": "localStorageToText(indent) {\n  const store = window.localStorage;\n  var keys = { };\n  Object.keys(store).forEach(key => { keys[key] = store[key]; });\n  \n  if (indent) {\n    return JSON.stringify(keys, (key,value) => {\n      switch (key) {\n        case 'buttons':\n        case 'triggers':\n        case 'timers':\n        case 'macros':\n        case 'keys':\n        case 'css':\n        case 'scripts':\n        case 'settings':\n        case 'recall_history':\n          return JSON.parse(value);\n        default:\n          return value;\n      }\n    }, indent);\n  } else {\n    return JSON.stringify(keys);\n  }\n}",
+    "ctx": {
+      "type": "method",
+      "name": "localStorageToText",
+      "string": "localStorageToText()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{string} text - The string from which to restore localStorage.",
+        "name": "text",
+        "description": "<ul>\n<li>The string from which to restore localStorage.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      },
+      {
+        "type": "return",
+        "string": "{boolean} - Whether the text was succesfully parsed and merged with localStorage.",
+        "types": [
+          "boolean"
+        ],
+        "typesDescription": "<code>boolean</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false,
+        "description": "<ul>\n<li>Whether the text was succesfully parsed and merged with localStorage.</li>\n</ul>"
+      }
+    ],
+    "description": {
+      "full": "<p>Restore localStorage from a string.</p>",
+      "summary": "<p>Restore localStorage from a string.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 473,
+    "codeStart": 478,
+    "code": "restoreLocalStorage(text) {\n  var store;\n  try {\n    store = JSON.parse(text, (key,value) => {\n      switch (key) {\n        case 'buttons':\n        case 'triggers':\n        case 'timers':\n        case 'macros':\n        case 'keys':\n        case 'css':\n        case 'scripts':\n        case 'settings':\n        case 'recall_history':\n          return JSON.stringify(value);\n        default:\n          return value;\n      }\n    });\n  } catch (e) {\n    alert(\"Failed to parse local storage file!\");\n    return false;\n  }\n  \n  if (store) {\n    Object.keys(store).forEach(key => {\n      window.localStorage[key] = store[key];\n      \n      if (key === \"output_history\") {\n        this.output.loadHistory(key);\n      } else if (key.startsWith(\"output_history_\")) {\n        let name = key.split('_').slice(2).join('_');\n        let panel = this.findSpawn(name);\n        panel && panel.react && panel.react.output.loadHistory(key);\n      }\n    });\n    \n    this.loadRecallHistory();\n    this.loadButtons();\n    this.loadTriggers();\n    this.loadTimers();\n    this.loadMacros();\n    this.loadKeys();\n    this.loadCSS();\n    this.loadScripts();\n    this.loadSettings();\n    \n    this.react.portal.forceUpdate();\n  } else {\n    alert(\"Failed to parse local storage file!\");\n    return false;\n  }\n  return true;\n}",
+    "ctx": {
+      "type": "method",
+      "name": "restoreLocalStorage",
+      "string": "restoreLocalStorage()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{Object.<string,*>} obj - The reference onto which to store the retrieved object.",
+        "name": "obj",
+        "description": "<ul>\n<li>The reference onto which to store the retrieved object.</li>\n</ul>",
+        "types": [
+          "Object.<string, *>"
+        ],
+        "typesDescription": "<code>Object</code>.&lt;<code>string</code>, <code>*</code>&gt;",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      },
+      {
+        "type": "param",
+        "string": "{string} key - The key of the object on localStorage.",
+        "name": "key",
+        "description": "<ul>\n<li>The key of the object on localStorage.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      }
+    ],
+    "description": {
+      "full": "<p>Load a configuration object string from localStorage.</p>",
+      "summary": "<p>Load a configuration object string from localStorage.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 533,
+    "codeStart": 538,
+    "code": "loadLocalStorage(obj, key) {\n  if (window.localStorage.hasOwnProperty(key)) {\n    obj = Object.assign(obj, JSON.parse(window.localStorage[key]));\n  }\n}",
+    "ctx": {
+      "type": "method",
+      "name": "loadLocalStorage",
+      "string": "loadLocalStorage()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{string} key - The key of the object on localStorage.",
+        "name": "key",
+        "description": "<ul>\n<li>The key of the object on localStorage.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      }
+    ],
+    "description": {
+      "full": "<p>Delete a configuration object from localStorage.</p>",
+      "summary": "<p>Delete a configuration object from localStorage.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 544,
+    "codeStart": 548,
+    "code": "clearLocalStorage(key) {\n  delete window.localStorage[key];\n}",
+    "ctx": {
+      "type": "method",
+      "name": "clearLocalStorage",
+      "string": "clearLocalStorage()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{Object.<string,*>} obj - The object to be stored.",
+        "name": "obj",
+        "description": "<ul>\n<li>The object to be stored.</li>\n</ul>",
+        "types": [
+          "Object.<string, *>"
+        ],
+        "typesDescription": "<code>Object</code>.&lt;<code>string</code>, <code>*</code>&gt;",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      },
+      {
+        "type": "param",
+        "string": "{string} key - The key of the object on localStorage.",
+        "name": "key",
+        "description": "<ul>\n<li>The key of the object on localStorage.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      }
+    ],
+    "description": {
+      "full": "<p>Save a configuration object to localStorage.</p>",
+      "summary": "<p>Save a configuration object to localStorage.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 552,
+    "codeStart": 557,
+    "code": "saveLocalStorage(obj, key) {\n  window.localStorage[key] = JSON.stringify(obj);\n}",
+    "ctx": {
+      "type": "method",
+      "name": "saveLocalStorage",
+      "string": "saveLocalStorage()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{string} key - The key of the buffer on localStorage.",
+        "name": "key",
+        "description": "<ul>\n<li>The key of the buffer on localStorage.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      },
+      {
+        "type": "return",
+        "string": "{string} - The buffer string.",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false,
+        "description": "<ul>\n<li>The buffer string.</li>\n</ul>"
+      }
+    ],
+    "description": {
+      "full": "<p>Load a history buffer string from localStorage.</p>",
+      "summary": "<p>Load a history buffer string from localStorage.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 561,
+    "codeStart": 566,
+    "code": "loadHistoryBuffer(key) {\n  if (window.localStorage.hasOwnProperty(key)) {\n    return window.localStorage[key];\n  }\n  return \"\";\n}",
+    "ctx": {
+      "type": "method",
+      "name": "loadHistoryBuffer",
+      "string": "loadHistoryBuffer()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{string} key - The key of the buffer on localStorage.",
+        "name": "key",
+        "description": "<ul>\n<li>The key of the buffer on localStorage.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      },
+      {
+        "type": "param",
+        "string": "{string} text - The value of the buffer.",
+        "name": "text",
+        "description": "<ul>\n<li>The value of the buffer.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      }
+    ],
+    "description": {
+      "full": "<p>Save a history buffer string to localStorage.</p>",
+      "summary": "<p>Save a history buffer string to localStorage.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 573,
+    "codeStart": 578,
+    "code": "saveHistoryBuffer(key, text) {\n  window.localStorage[key] = text;\n}",
+    "ctx": {
+      "type": "method",
+      "name": "saveHistoryBuffer",
+      "string": "saveHistoryBuffer()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{Object.<string,*>} obj - The object on which to store the value.",
+        "name": "obj",
+        "description": "<ul>\n<li>The object on which to store the value.</li>\n</ul>",
+        "types": [
+          "Object.<string, *>"
+        ],
+        "typesDescription": "<code>Object</code>.&lt;<code>string</code>, <code>*</code>&gt;",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      },
+      {
+        "type": "param",
+        "string": "{string} key - The key of the value to store on the object.",
+        "name": "key",
+        "description": "<ul>\n<li>The key of the value to store on the object.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      },
+      {
+        "type": "param",
+        "string": "{*} value - The value to be stored.",
+        "name": "value",
+        "description": "<ul>\n<li>The value to be stored.</li>\n</ul>",
+        "types": [],
+        "typesDescription": "<code>*</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      }
+    ],
+    "description": {
+      "full": "<p>Set a value on an object, converting the argument to the correct type.</p>",
+      "summary": "<p>Set a value on an object, converting the argument to the correct type.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 582,
+    "codeStart": 588,
+    "code": "castString(obj, key, value) {\n  if (!obj.hasOwnProperty(key)) return;\n  \n  var type = typeof obj[key];\n  \n  if (typeof value === type) {\n    obj[key] = value;\n  } else {\n    switch (type) {\n      case \"string\":\n        obj[key] = String.bind(null, value)();\n        break;\n      case \"number\":\n        obj[key] = Number.bind(null, value)();\n        break;\n      case \"boolean\":\n        obj[key] = (value === \"true\" ? true : false);\n        break;\n      default:\n        obj[key] = value;\n        break;\n    }\n  }\n}",
+    "ctx": {
+      "type": "method",
+      "name": "castString",
+      "string": "castString()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{string} key - The key of the setting to change.",
+        "name": "key",
+        "description": "<ul>\n<li>The key of the setting to change.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      },
+      {
+        "type": "param",
+        "string": "{string} value - The new value of the setting.",
+        "name": "value",
+        "description": "<ul>\n<li>The new value of the setting.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      }
+    ],
+    "description": {
+      "full": "<p>Change a setting, updating the UI if necessary.</p>",
+      "summary": "<p>Change a setting, updating the UI if necessary.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 613,
+    "codeStart": 618,
+    "code": "changeSetting(key, value) {\n  this.castString(this.settings, key, value);\n  \n  if (key === 'invertHighlight') {\n    if (this.settings[key]) {\n      this.loadStyle('./inverse.css');\n    } else {\n      this.unloadStyle('./inverse.css');\n    }\n  } else if (key === 'terminalWidth') {\n    // send the screen dimensions\n    this.output.calcDimensions();\n    this.sendText(\"SCREENWIDTH \" + this.settings.terminalWidth);\n    this.sendText(\"SCREENHEIGHT \" + Math.floor(this.output.root.parentNode.clientHeight / this.output.dims.height));\n  } else if (key === 'timersEnabled') {\n    if (this.settings[key]) {\n      this.startTimers();\n    } else {\n      this.stopTimers();\n    }\n  }\n}",
+    "ctx": {
+      "type": "method",
+      "name": "changeSetting",
+      "string": "changeSetting()"
+    }
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>Load user-defined taskbar buttons.</p>",
+      "summary": "<p>Load user-defined taskbar buttons.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 641,
+    "codeStart": 642,
+    "code": "loadButtons() {\n  this.loadLocalStorage(this.buttons, \"buttons\");\n//    this.react.taskbar && this.react.taskbar.forceUpdate();\n}",
+    "ctx": {
+      "type": "method",
+      "name": "loadButtons",
+      "string": "loadButtons()"
+    }
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>Load regex/wildcard pattern triggers.</p>",
+      "summary": "<p>Load regex/wildcard pattern triggers.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 647,
+    "codeStart": 648,
+    "code": "loadTriggers() {\n  this.loadLocalStorage(this.triggers, \"triggers\");\n}",
+    "ctx": {
+      "type": "method",
+      "name": "loadTriggers",
+      "string": "loadTriggers()"
+    }
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>Load automatic timers.</p>",
+      "summary": "<p>Load automatic timers.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 652,
+    "codeStart": 653,
+    "code": "loadTimers() {\n  this.loadLocalStorage(this.timers, \"timers\");\n}",
+    "ctx": {
+      "type": "method",
+      "name": "loadTimers",
+      "string": "loadTimers()"
+    }
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>Load slash command macros.</p>",
+      "summary": "<p>Load slash command macros.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 657,
+    "codeStart": 658,
+    "code": "loadMacros() {\n  this.loadLocalStorage(this.macros, \"macros\");\n}",
+    "ctx": {
+      "type": "method",
+      "name": "loadMacros",
+      "string": "loadMacros()"
+    }
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>Load custom keybindings.</p>",
+      "summary": "<p>Load custom keybindings.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 662,
+    "codeStart": 663,
+    "code": "loadKeys() {\n  this.loadLocalStorage(this.keys, \"keys\");\n}",
+    "ctx": {
+      "type": "method",
+      "name": "loadKeys",
+      "string": "loadKeys()"
+    }
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>Load custom css overrides.</p>",
+      "summary": "<p>Load custom css overrides.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 667,
+    "codeStart": 668,
+    "code": "loadCSS() {\n  this.loadLocalStorage(this.css, \"css\");\n  \n  for (let i=0; i < this.css.length; i++) {\n    // override CSS, first check existing styles\n    let css = this.css[i];\n    \n    // autoload CSS changes, except inverse.css\n    if (css.name !== \"inverse.css\") {\n      this.updateCSS(css);\n    }\n  }\n}",
+    "ctx": {
+      "type": "method",
+      "name": "loadCSS",
+      "string": "loadCSS()"
+    }
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>Load custom scripts.</p>",
+      "summary": "<p>Load custom scripts.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 682,
+    "codeStart": 683,
+    "code": "loadScripts() {\n  this.loadLocalStorage(this.scripts, \"scripts\");\n}",
+    "ctx": {
+      "type": "method",
+      "name": "loadScripts",
+      "string": "loadScripts()"
+    }
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>Load client settings.</p>",
+      "summary": "<p>Load client settings.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 687,
+    "codeStart": 688,
+    "code": "loadSettings() {\n  this.settings = Object.assign({}, this.defaultSettings);\n  this.loadLocalStorage(this.settings, \"settings\");\n  \n  if (this.settings.invertHighlight) {\n    this.loadStyle('./inverse.css');\n  } else {\n    this.unloadStyle('./inverse.css');\n  }\n  \n  if (!this.settings.timersAutoStart) {\n    this.settings.timersEnabled = false;\n  }\n}",
+    "ctx": {
+      "type": "method",
+      "name": "loadSettings",
+      "string": "loadSettings()"
+    }
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>Load command recall history.</p>",
+      "summary": "<p>Load command recall history.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 703,
+    "codeStart": 704,
+    "code": "loadRecallHistory() {\n  this.loadLocalStorage(this.input.history, \"recall_history\");\n}",
+    "ctx": {
+      "type": "method",
+      "name": "loadRecallHistory",
+      "string": "loadRecallHistory()"
+    }
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>Save command recall history.</p>",
+      "summary": "<p>Save command recall history.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 708,
+    "codeStart": 709,
+    "code": "saveRecallHistory() {\n  const { recallSize } = this.settings;\n  this.clearLocalStorage(\"recall_history\");\n  this.saveLocalStorage(this.input.history.slice(-recallSize), \"recall_history\");\n}",
+    "ctx": {
+      "type": "method",
+      "name": "saveRecallHistory",
+      "string": "saveRecallHistory()"
+    }
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>Save user-defined taskbar buttons.</p>",
+      "summary": "<p>Save user-defined taskbar buttons.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 715,
+    "codeStart": 716,
+    "code": "saveButtons() {\n  this.clearLocalStorage(\"buttons\");\n  this.saveLocalStorage(this.buttons, \"buttons\");\n  this.react.taskbar && this.react.taskbar.forceUpdate();\n}",
+    "ctx": {
+      "type": "method",
+      "name": "saveButtons",
+      "string": "saveButtons()"
+    }
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>Save regex/wildcard pattern triggers.</p>",
+      "summary": "<p>Save regex/wildcard pattern triggers.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 722,
+    "codeStart": 723,
+    "code": "saveTriggers() {\n  this.clearLocalStorage(\"triggers\");\n  this.saveLocalStorage(this.triggers, \"triggers\");\n}",
+    "ctx": {
+      "type": "method",
+      "name": "saveTriggers",
+      "string": "saveTriggers()"
+    }
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>Save automatic timers.</p>",
+      "summary": "<p>Save automatic timers.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 728,
+    "codeStart": 729,
+    "code": "saveTimers() {\n  this.clearLocalStorage(\"timers\");\n  this.saveLocalStorage(this.timers, \"timers\");\n}",
+    "ctx": {
+      "type": "method",
+      "name": "saveTimers",
+      "string": "saveTimers()"
+    }
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>Save command macros.</p>",
+      "summary": "<p>Save command macros.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 734,
+    "codeStart": 735,
+    "code": "saveMacros() {\n  this.clearLocalStorage(\"macros\");\n  this.saveLocalStorage(this.macros, \"macros\");\n}",
+    "ctx": {
+      "type": "method",
+      "name": "saveMacros",
+      "string": "saveMacros()"
+    }
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>Save custom keybindings.</p>",
+      "summary": "<p>Save custom keybindings.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 740,
+    "codeStart": 741,
+    "code": "saveKeys() {\n  this.clearLocalStorage(\"keys\");\n  this.saveLocalStorage(this.keys, \"keys\");\n}",
+    "ctx": {
+      "type": "method",
+      "name": "saveKeys",
+      "string": "saveKeys()"
+    }
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>Save custom css overrides.</p>",
+      "summary": "<p>Save custom css overrides.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 746,
+    "codeStart": 747,
+    "code": "saveCSS() {\n  this.clearLocalStorage(\"css\");\n  this.saveLocalStorage(this.css, \"css\");\n  \n  for (let i=0; i < this.css.length; i++) {\n    // update rules in css <style> element\n    let css = this.css[i];\n    \n    if (css.name === \"inverse.css\") {\n      // only load inverse.css if we need it\n      if (this.settings.invertHighlight) {\n        // unload inverse.css if it is linked\n        let links = document.getElementsByTagName(\"link\");\n        for (let j = links.length; j >= 0; j--) {\n          if (links[j] && links[j].getAttribute(\"href\") !== null) {\n            let name = links[j].getAttribute(\"href\").split(\"/\").slice(-1)[0];\n            if (name === css.name) {\n              links[j].parentNode.removeChild(links[j]);\n            }\n          }\n        }\n        \n        if (css.text === \"\") {\n          // there is no override, so relink inverse.css\n          this.loadStyle('./inverse.css');\n        } else {\n          // there is an override, update it\n          this.updateCSS(css);\n        }\n      }\n    } else {\n      // autoload all files that aren't inverse.css\n      this.updateCSS(css);\n    }\n  }\n}",
+    "ctx": {
+      "type": "method",
+      "name": "saveCSS",
+      "string": "saveCSS()"
+    }
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>Save custom css overrides.</p>",
+      "summary": "<p>Save custom css overrides.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 784,
+    "codeStart": 785,
+    "code": "saveScripts() {\n  this.clearLocalStorage(\"scripts\");\n  this.saveLocalStorage(this.css, \"scripts\");\n}",
+    "ctx": {
+      "type": "method",
+      "name": "saveScripts",
+      "string": "saveScripts()"
+    }
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>Save client settings.</p>",
+      "summary": "<p>Save client settings.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 790,
+    "codeStart": 791,
+    "code": "saveSettings() {\n  this.clearLocalStorage(\"settings\");\n  this.saveLocalStorage(this.settings, \"settings\");\n}\n\n\n/////////////////////////////////////////////////////////////////////////////////////////////////\n// miscellaneous logging and command links",
+    "ctx": {
+      "type": "method",
+      "name": "saveSettings",
+      "string": "saveSettings()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{string} command - The command string to parse for '??' tokens.",
+        "name": "command",
+        "description": "<ul>\n<li>The command string to parse for '??' tokens.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      },
+      {
+        "type": "return",
+        "string": "{string} - The command string with '??' tokens replace by user input.",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false,
+        "description": "<ul>\n<li>The command string with '??' tokens replace by user input.</li>\n</ul>"
+      }
+    ],
+    "description": {
+      "full": "<p>Detect if more user input is required for a pueblo command.</p>",
+      "summary": "<p>Detect if more user input is required for a pueblo command.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 800,
+    "codeStart": 805,
+    "code": "parseCommand(command) {\n  var cmd = command;\n  var regex = new RegExp('\\\\?\\\\?');\n  \n  // check for the search token '??'\n  if (cmd.search(regex) !== -1) {\n    var val = prompt(command);\n    \n    if (val === null) {\n      // user cancelled the prompt, don't send any command\n      cmd = '';\n    } else {\n      // replace the ?? token with the prompt value\n      cmd = cmd.replace(regex, val);\n    }\n  }\n  \n  return cmd;\n}",
+    "ctx": {
+      "type": "method",
+      "name": "parseCommand",
+      "string": "parseCommand()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{string} cmd - The command string.",
+        "name": "cmd",
+        "description": "<ul>\n<li>The command string.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      }
+    ],
+    "description": {
+      "full": "<p>Execute a Pueblo command link, checking if it requires user input.</p>",
+      "summary": "<p>Execute a Pueblo command link, checking if it requires user input.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 825,
+    "codeStart": 829,
+    "code": "onCommand(cmd) {\n  this.sendCommand && this.sendCommand(this.parseCommand(cmd));\n}",
+    "ctx": {
+      "type": "method",
+      "name": "onCommand",
+      "string": "onCommand()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{string} classid - The CSS class id of the log message.",
+        "name": "classid",
+        "description": "<ul>\n<li>The CSS class id of the log message.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      },
+      {
+        "type": "param",
+        "string": "{string} msg - The message to append to the terminal.",
+        "name": "msg",
+        "description": "<ul>\n<li>The message to append to the terminal.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      }
+    ],
+    "description": {
+      "full": "<p>Log messages to the output terminal.</p>",
+      "summary": "<p>Log messages to the output terminal.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 833,
+    "codeStart": 838,
+    "code": "appendMessage(classid, msg) {\n  var scroll = false;\n  if (this.output) {\n    if (this.output.nearBottom(this.scrollThreshold)) {\n      scroll = true;\n    }\n    \n    this.output.appendMessage(classid, msg);\n    \n    scroll && this.output.scrollDown();\n    \n    this.react.terminal && this.react.terminal.onChange();\n  }\n}\n\n\n/////////////////////////////////////////////////////////////////////////////////////////////////",
+    "ctx": {
+      "type": "method",
+      "name": "appendMessage",
+      "string": "appendMessage()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{boolean} regex - Is the pattern already a regex? If not we will make one.",
+        "name": "regex",
+        "description": "<ul>\n<li>Is the pattern already a regex? If not we will make one.</li>\n</ul>",
+        "types": [
+          "boolean"
+        ],
+        "typesDescription": "<code>boolean</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      },
+      {
+        "type": "param",
+        "string": "{string} pattern - The pattern string.",
+        "name": "pattern",
+        "description": "<ul>\n<li>The pattern string.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      },
+      {
+        "type": "return",
+        "string": "{RegExp} - The compiled regular expression.",
+        "types": [
+          "RegExp"
+        ],
+        "typesDescription": "<code>RegExp</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false,
+        "description": "<ul>\n<li>The compiled regular expression.</li>\n</ul>"
+      }
+    ],
+    "description": {
+      "full": "<p>Create a new RegExp pattern, creating one from a glob wildcard pattern if necessary.</p>",
+      "summary": "<p>Create a new RegExp pattern, creating one from a glob wildcard pattern if necessary.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 856,
+    "codeStart": 862,
+    "code": "createPattern(regex, pattern) {\n  if (regex) {\n    return new RegExp('^' + pattern + '$');\n  } else {\n    return new RegExp('^' + pattern.split(/\\*+/).map(s => s.replace(/[|\\\\{}()[\\]^$+*?.]/g, '\\\\$&')).join('(.*)') + '$');\n  }\n}",
+    "ctx": {
+      "type": "method",
+      "name": "createPattern",
+      "string": "createPattern()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{string[]} args - The arguments array, element 0 is the full string.",
+        "name": "args",
+        "description": "<ul>\n<li>The arguments array, element 0 is the full string.</li>\n</ul>",
+        "types": [
+          "Array.<string>"
+        ],
+        "typesDescription": "<code>Array</code>.&lt;<code>string</code>&gt;",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      },
+      {
+        "type": "param",
+        "string": "{string} text - The text to be scanned for %number tokens which are replaced by args[number].",
+        "name": "text",
+        "description": "<ul>\n<li>The text to be scanned for %number tokens which are replaced by args[number].</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      },
+      {
+        "type": "return",
+        "string": "{string} - The new text with arguments replaced if they are present.",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false,
+        "description": "<ul>\n<li>The new text with arguments replaced if they are present.</li>\n</ul>"
+      }
+    ],
+    "description": {
+      "full": "<p>Replace %-tokens in a text string with match argument strings.</p>",
+      "summary": "<p>Replace %-tokens in a text string with match argument strings.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 870,
+    "codeStart": 876,
+    "code": "replaceArgs(args, text) {\n  let newText = text.slice();\n  for (let i = args.length-1; i > -1; i--) {\n    let tmp = args[i] || \"\";\n    \n    try {\n      let re = new RegExp('(^|[^\\\\%])%'+i, 'g');\n      let escre = new RegExp('[\"\\'`]', 'g');\n      let esc = tmp.replace(escre, '\\\\$&');\n      newText = newText.replace(re, '$1'+esc);\n    } catch (e) {\n      this.settings.debugActions && console.log(\"Unable to compile regular expression:\", e);\n    }\n  }\n  return newText;\n}\n\n\n/////////////////////////////////////////////////////////////////////////////////////////////////\n// initialize terminal elements (input, output, prompt) and clear them",
+    "ctx": {
+      "type": "method",
+      "name": "replaceArgs",
+      "string": "replaceArgs()"
+    }
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>Clear the terminal.</p>",
+      "summary": "<p>Clear the terminal.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 897,
+    "codeStart": 898,
+    "code": "clear() {\n  this.output && this.output.clear();\n  this.prompt && this.prompt.clear();\n  this.input && this.input.clear();\n}",
+    "ctx": {
+      "type": "method",
+      "name": "clear",
+      "string": "clear()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{HTMLElement} input - The HTML element to which the Input object is attached.",
+        "name": "input",
+        "description": "<ul>\n<li>The HTML element to which the Input object is attached.</li>\n</ul>",
+        "types": [
+          "HTMLElement"
+        ],
+        "typesDescription": "<code>HTMLElement</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      }
+    ],
+    "description": {
+      "full": "<p>Initialize the terminal input window.</p>",
+      "summary": "<p>Initialize the terminal input window.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 904,
+    "codeStart": 908,
+    "code": "initInput(input) {\n  // Input window\n  if (input !== null) {\n    this.input = new UserInput(input);\n    this.loadRecallHistory();\n\n    // enter key passthrough from UserInput.pressKey\n    this.input.onEnter = (cmd) => {\n      this.sendCommand(cmd);\n      this.prompt && this.prompt.clear();\n      this.settings.terminalAutoScroll && this.output.scrollDown();\n    };\n\n    // escape key passthrough from UserInput.pressKey\n    this.input.onEscape = () => { this.input.clear(); };\n    \n    // pageup key passthrough from UserInput.pressKey\n    this.input.onPageUp = () => { this.output && this.output.scrollPageUp(); };\n\n    // pagedown key passthrough from UserInput.pressKey\n    this.input.onPageDown = () => { this.output && this.output.scrollPageDown(); };\n  }\n}",
+    "ctx": {
+      "type": "method",
+      "name": "initInput",
+      "string": "initInput()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{HTMLElement} output - The HTML element to which the Emulator object is attached.",
+        "name": "output",
+        "description": "<ul>\n<li>The HTML element to which the Emulator object is attached.</li>\n</ul>",
+        "types": [
+          "HTMLElement"
+        ],
+        "typesDescription": "<code>HTMLElement</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      },
+      {
+        "type": "param",
+        "string": "{HTMLElement} [container=null] - The output elements container.",
+        "name": "[container=null]",
+        "description": "<ul>\n<li>The output elements container.</li>\n</ul>",
+        "types": [
+          "HTMLElement"
+        ],
+        "typesDescription": "<code>HTMLElement</code>",
+        "optional": true,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      }
+    ],
+    "description": {
+      "full": "<p>Initialize the terminal output window.</p>",
+      "summary": "<p>Initialize the terminal output window.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 932,
+    "codeStart": 937,
+    "code": "initOutput(output, container=null) {\n  // Output window\n  if (output !== null) {\n    this.output = new Emulator(output);\n    this.output.container = container;\n    this.output.onCommand = (cmd) => { this.onCommand(cmd); };\n\n    output.onunload = () => { this.sendText('QUIT'); this.close(); };\n    output.onresize = () => { this.output && this.output.scrollDown(); };\n  }\n}",
+    "ctx": {
+      "type": "method",
+      "name": "initOutput",
+      "string": "initOutput()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{HTMLElement} prompt - The HTML element to which the Emulator object is attached.",
+        "name": "prompt",
+        "description": "<ul>\n<li>The HTML element to which the Emulator object is attached.</li>\n</ul>",
+        "types": [
+          "HTMLElement"
+        ],
+        "typesDescription": "<code>HTMLElement</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      }
+    ],
+    "description": {
+      "full": "<p>Initialize the command prompt.</p>",
+      "summary": "<p>Initialize the command prompt.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 949,
+    "codeStart": 953,
+    "code": "initPrompt(prompt) {\n  // Prompt window\n  if (prompt !== null) {\n    this.prompt = new Emulator(prompt);\n  }\n}\n\n/////////////////////////////////////////////////////////////////////////////////////////////////\n// handle input window focus and output window scrolling\n\n//////////////////////////////////////////////////////",
+    "ctx": {
+      "type": "method",
+      "name": "initPrompt",
+      "string": "initPrompt()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{HTMLElement} root - The HTML element to be scrolled down.",
+        "name": "root",
+        "description": "<ul>\n<li>The HTML element to be scrolled down.</li>\n</ul>",
+        "types": [
+          "HTMLElement"
+        ],
+        "typesDescription": "<code>HTMLElement</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      }
+    ],
+    "description": {
+      "full": "<p>Scroll the terminal output window down the very bottom of the current view.</p>",
+      "summary": "<p>Scroll the terminal output window down the very bottom of the current view.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 964,
+    "codeStart": 968,
+    "code": "scrollDown(root) {\n  if (!root) {\n    return;\n  }\n\n  root.scrollTop = this.root.scrollHeight;\n  return;",
+    "ctx": {
+      "type": "method",
+      "name": "scrollDown",
+      "string": "scrollDown()"
+    }
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>// animated scrolling alternative<br />\nvar scrollCount = 0;<br />\nvar scrollDuration = 500.0;<br />\nvar oldTimestamp = performance.now();</p>\n<pre><code>var step = (newTimestamp) =&gt; {\n  var bottom = root.scrollHeight - root.clientHeight;\n  var delta = (bottom - root.scrollTop) / 2.0;\n\n  scrollCount += Math.PI / (scrollDuration / (newTimestamp - oldTimestamp));\n  if (scrollCount &gt;= Math.PI) root.scrollTo(0, bottom);\n  if (root.scrollTop === bottom) { return; }\n  root.scrollTo(0, Math.round(root.scrollTop + delta));\n  oldTimestamp = newTimestamp;\n  window.requestAnimationFrame(step);\n};\n\nwindow.requestAnimationFrame(step);</code></pre>",
+      "summary": "<p>// animated scrolling alternative<br />\nvar scrollCount = 0;<br />\nvar scrollDuration = 500.0;<br />\nvar oldTimestamp = performance.now();</p>\n<pre><code>var step = (newTimestamp) =&gt; {\n  var bottom = root.scrollHeight - root.clientHeight;\n  var delta = (bottom - root.scrollTop) / 2.0;</code></pre>",
+      "body": "<pre><code>  scrollCount += Math.PI / (scrollDuration / (newTimestamp - oldTimestamp));\n  if (scrollCount &gt;= Math.PI) root.scrollTo(0, bottom);\n  if (root.scrollTop === bottom) { return; }\n  root.scrollTo(0, Math.round(root.scrollTop + delta));\n  oldTimestamp = newTimestamp;\n  window.requestAnimationFrame(step);\n};\n\nwindow.requestAnimationFrame(step);</code></pre>"
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 975,
+    "codeStart": 995,
+    "code": "}",
+    "ctx": false
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{boolean} force - Whether to force the Input element to focus even if the normal rules determine it shouldn't.",
+        "name": "force",
+        "description": "<ul>\n<li>Whether to force the Input element to focus even if the normal rules determine it shouldn't.</li>\n</ul>",
+        "types": [
+          "boolean"
+        ],
+        "typesDescription": "<code>boolean</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      }
+    ],
+    "description": {
+      "full": "<p>Passthrough for focusing the Input root.</p>",
+      "summary": "<p>Passthrough for focusing the Input root.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 997,
+    "codeStart": 1001,
+    "code": "focus(force) {\n  if (this.mobile) return;\n  this.input && this.input.focus(force);\n}",
+    "ctx": {
+      "type": "method",
+      "name": "focus",
+      "string": "focus()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "callback",
+        "string": "appendCallback",
+        "html": "<p>appendCallback</p>"
+      }
+    ],
+    "description": {
+      "full": "",
+      "summary": "",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1006,
+    "codeStart": 1009
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{appendCallback} fun - The wrapper function that appends text.",
+        "name": "fun",
+        "description": "<ul>\n<li>The wrapper function that appends text.</li>\n</ul>",
+        "types": [
+          "appendCallback"
+        ],
+        "typesDescription": "<a href=\"appendCallback.html\">appendCallback</a>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      }
+    ],
+    "description": {
+      "full": "<p>Wrapper for appending text that scrolls the output afterwards if needed.</p>",
+      "summary": "<p>Wrapper for appending text that scrolls the output afterwards if needed.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1010,
+    "codeStart": 1014,
+    "code": "scrollIfNeeded(fun) {\n  var scroll = false;\n  \n  if (this.output) {\n    if (this.output.nearBottom(this.scrollThreshold)) {\n      scroll = true;\n    }\n    \n    fun();\n    \n    scroll && this.output.scrollDown();\n    \n    this.react.terminal && this.react.terminal.onChange();\n  }\n}\n\n\n/////////////////////////////////////////////////////////////////////////////////////////////////",
+    "ctx": {
+      "type": "method",
+      "name": "scrollIfNeeded",
+      "string": "scrollIfNeeded()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{string} id - The window id.",
+        "name": "id",
+        "description": "<ul>\n<li>The window id.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      },
+      {
+        "type": "param",
+        "string": "{Object.<string,*>} cfg - The panel configuration.",
+        "name": "cfg",
+        "description": "<ul>\n<li>The panel configuration.</li>\n</ul>",
+        "types": [
+          "Object.<string, *>"
+        ],
+        "typesDescription": "<code>Object</code>.&lt;<code>string</code>, <code>*</code>&gt;",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      },
+      {
+        "type": "param",
+        "string": "{React.Component} [component=Spawn] - The React component that serves as a base.",
+        "name": "[component=Spawn]",
+        "description": "<ul>\n<li>The React component that serves as a base.</li>\n</ul>",
+        "types": [
+          "React.Component"
+        ],
+        "typesDescription": "<a href=\"React.Component.html\">React.Component</a>",
+        "optional": true,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      },
+      {
+        "type": "return",
+        "string": "{Object} - A reference to the panel if it already exists, or undefined if not.",
+        "types": [
+          "Object"
+        ],
+        "typesDescription": "<code>Object</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false,
+        "description": "<ul>\n<li>A reference to the panel if it already exists, or undefined if not.</li>\n</ul>"
+      }
+    ],
+    "description": {
+      "full": "<p>Add a window panel with the given id and configuration, using a particular React component if provided.</p>",
+      "summary": "<p>Add a window panel with the given id and configuration, using a particular React component if provided.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1032,
+    "codeStart": 1039,
+    "code": "addPanel(id, cfg, component) {\n  var spawn = this.findSpawn(id);\n  \n  if (spawn) {\n    this.focusPanel(id);\n    return spawn;\n  }\n  \n  var comp = component || id;\n  var el = this.components[comp];\n  \n  if (!el) {\n    el = Spawn;\n  }\n  \n  var config = cfg || {};\n  \n  if (!config.id) {\n    config.id = id.toLowerCase();\n  }\n  \n  if (!config.headerTitle) {\n    config.headerTitle = id;\n  }\n  \n  if (!config.icon) {\n    config.icon = \"tab\";\n  }\n  \n  if (!config.headerLogo) {\n    var gameicon = config.icon.startsWith('icon-');\n    \n    if (gameicon) {\n      config.headerLogo = \"<i class='\" + config.icon + \"' style='margin-left: \"+this.theme.spacing.unit+\"px'></i>\";\n    } else {\n      config.headerLogo = \"<i class='material-icons' style='margin-left: \"+this.theme.spacing.unit+\"px'>\" + config.icon + \"</i>\";\n    }\n  }\n  \n  if (!config.panelSize) {\n    const margin = this.panels.defaults.maximizedMargin;\n    let wstr = 'calc(50% - ' + 1.5*margin + 'px)';\n\n    if (this.mobile) {\n      wstr = 'calc(100% - ' + 2*margin + 'px)';\n    }\n  \n    config.panelSize = {\n      width: wstr,\n      height: 'calc(100% - ' + 2*margin + 'px)',\n    };\n  }\n  \n  let ref = React.createRef();\n  config.callback = (container) => {\n    container.content.style.backgroundColor = this.theme.palette.background.paper;\n    config.react = React.createElement(el, { innerRef: ref, id: id.toLowerCase(), panel: container, ...config.props }, null);\n    ReactDOM.render(React.createElement(MuiThemeProvider, { theme: this.theme }, config.react), container.content, () => {\n      // add the helpText() controlbar icon\n      let obj = ref.current;\n      if (obj && obj.helpText) {\n        let helpButton = document.createElement('div');\n        helpButton.classList.add(\"jsPanel-btn\",\"jsPanel-btn-help\");\n        helpButton.innerHTML = `<svg class=\"jsPanel-icon\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 512 512\"><circle fill=\"currentColor\" cx=\"255.984\" cy=\"492\" r=\"20\"/><path fill=\"currentColor\" d=\"M412.979,155.775C412.321,69.765,342.147,0,255.984,0c-86.57,0-157,70.43-157,157c0,11.046,8.954,20,20,20 s20-8.954,20-20c0-64.514,52.486-117,117-117s117,52.486,117,117c0,0.356,0.009,0.71,0.028,1.062 c-0.405,46.562-28.227,88.348-71.12,106.661c-40.038,17.094-65.908,56.675-65.908,100.839V412c0,11.046,8.954,20,20,20 c11.046,0,20-8.954,20-20v-46.438c0-28.117,16.334-53.258,41.614-64.051c57.979-24.754,95.433-81.479,95.418-144.516 C413.016,156.585,413.003,156.179,412.979,155.775z\"/></svg>`;\n        helpButton.style.color = this.panels.calcColors(this.panels.defaults.theme)[3];\n        container.controlbar.insertBefore(helpButton, container.controlbar.firstChild);\n        \n        jsPanel.pointerup.forEach((which) => {\n          helpButton.addEventListener(which, (evt) => {\n            obj.helpText(evt.currentTarget);\n          });\n        });\n      }\n      \n      window.client.react.spawns.push(obj);\n    });\n    \n  };\n  \n  config.container = this.container;\n  \n  this.panels.create(config);\n  return ref.current;\n}",
+    "ctx": {
+      "type": "method",
+      "name": "addPanel",
+      "string": "addPanel()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{string} id - The window id.",
+        "name": "id",
+        "description": "<ul>\n<li>The window id.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      },
+      {
+        "type": "param",
+        "string": "{Object.<string,*>} cfg - The panel configuration object.",
+        "name": "cfg",
+        "description": "<ul>\n<li>The panel configuration object.</li>\n</ul>",
+        "types": [
+          "Object.<string, *>"
+        ],
+        "typesDescription": "<code>Object</code>.&lt;<code>string</code>, <code>*</code>&gt;",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      },
+      {
+        "type": "param",
+        "string": "{HTMLElemet} el - The element to create inside the window.",
+        "name": "el",
+        "description": "<ul>\n<li>The element to create inside the window.</li>\n</ul>",
+        "types": [
+          "HTMLElemet"
+        ],
+        "typesDescription": "<a href=\"HTMLElemet.html\">HTMLElemet</a>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      },
+      {
+        "type": "return",
+        "string": "{jsPanel} - The window panel that was found, or the new one created.",
+        "types": [
+          "jsPanel"
+        ],
+        "typesDescription": "<a href=\"jsPanel.html\">jsPanel</a>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false,
+        "description": "<ul>\n<li>The window panel that was found, or the new one created.</li>\n</ul>"
+      }
+    ],
+    "description": {
+      "full": "<p>Create a new window with addPanel if one is not found with findSpawn.</p>",
+      "summary": "<p>Create a new window with addPanel if one is not found with findSpawn.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1124,
+    "codeStart": 1131,
+    "code": "getSpawn(id, cfg, el) {\n  let spawn = this.findSpawn(id);\n  if (spawn) return spawn;\n  \n  return this.addPanel(id, cfg, el);\n}",
+    "ctx": {
+      "type": "method",
+      "name": "getSpawn",
+      "string": "getSpawn()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{string} id - The window id.",
+        "name": "id",
+        "description": "<ul>\n<li>The window id.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      }
+    ],
+    "description": {
+      "full": "<p>Delete spawn window from internal list.</p>",
+      "summary": "<p>Delete spawn window from internal list.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1138,
+    "codeStart": 1142,
+    "code": "delSpawn(id) {\n  const spawns = this.react.spawns;\n  const lower = id.toLowerCase();\n  for (let i=0; i < spawns.length; i++) {\n    if (spawns[i] && spawns[i].props.id === lower) {\n      spawns.splice(i, 1);\n    }\n  }\n}",
+    "ctx": {
+      "type": "method",
+      "name": "delSpawn",
+      "string": "delSpawn()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{string} id - The window id.",
+        "name": "id",
+        "description": "<ul>\n<li>The window id.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      },
+      {
+        "type": "return",
+        "string": "{jsPanel} - The window panel if found, or null.",
+        "types": [
+          "jsPanel"
+        ],
+        "typesDescription": "<a href=\"jsPanel.html\">jsPanel</a>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false,
+        "description": "<ul>\n<li>The window panel if found, or null.</li>\n</ul>"
+      }
+    ],
+    "description": {
+      "full": "<p>Find spawn window in internal list.</p>",
+      "summary": "<p>Find spawn window in internal list.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1152,
+    "codeStart": 1157,
+    "code": "findSpawn(id) {\n  const spawns = this.react.spawns;\n  const lower = id.toLowerCase();\n  for (let i=0; i < spawns.length; i++) {\n    if (spawns[i] && spawns[i].props.id.toLowerCase() === lower) {\n      return spawns[i];\n    }\n  }\n  return null;\n}",
+    "ctx": {
+      "type": "method",
+      "name": "findSpawn",
+      "string": "findSpawn()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{string} id - The window id.",
+        "name": "id",
+        "description": "<ul>\n<li>The window id.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      }
+    ],
+    "description": {
+      "full": "<p>Find and close a window panel.</p>",
+      "summary": "<p>Find and close a window panel.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1168,
+    "codeStart": 1172,
+    "code": "closePanel(id) {\n  var panels = this.panels.getPanels(function() {\n    return (this.id === id || this.headertitle.innerText === id);\n  });\n  \n  if (panels.length > 0) {\n    if (panels[0].status === 'minimized') {\n      this.react.taskbar.popTask(panels[0]);\n    }\n    panels[0].close();\n  }\n}",
+    "ctx": {
+      "type": "method",
+      "name": "closePanel",
+      "string": "closePanel()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{string} id - The window id.",
+        "name": "id",
+        "description": "<ul>\n<li>The window id.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      }
+    ],
+    "description": {
+      "full": "<p>Bring a window panel into focus.</p>",
+      "summary": "<p>Bring a window panel into focus.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1185,
+    "codeStart": 1189,
+    "code": "focusPanel(id) {\n  var panels = this.panels.getPanels(function() {\n    return (this.id === id || this.headertitle.innerText === id);\n  });\n  \n  if (panels.length > 0) {\n    if (panels[0].status === 'minimized') {\n      this.react.taskbar.popTask(panels[0]);\n    } else {\n      panels[0].unsmallify();\n      panels[0].front();\n    }\n  }\n}\n\n/////////////////////////////////////////////////////////////////////////////////////////////////",
+    "ctx": {
+      "type": "method",
+      "name": "focusPanel",
+      "string": "focusPanel()"
+    }
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>Connect to the game server and setup message handlers.</p>",
+      "summary": "<p>Connect to the game server and setup message handlers.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1206,
+    "codeStart": 1209,
+    "code": "connect() {\n  var client = this;\n\n  let serverProto = this.settings.serverSSL ? \"wss://\" : \"ws://\";\n\n  // The connection URL is ws://host:port/wsclient (or wss:// for SSL connections)\n  let serverUrl = serverProto + this.settings.serverAddress + \":\" + this.settings.serverPort + '/wsclient'\n  \n  this.close();\n  this.conn = new Connection(serverUrl);\n\n  // just log a standard message on these socket status events\n  this.conn.onOpen = function (evt) {\n    client.appendMessage('logMessage', '%% Connected.');\n    client.conn.hasData = false;\n    client.reconnectCount = 0;\n  };\n  \n  this.conn.onError = function (evt) {\n    client.appendMessage('logMessage', '%% Connection error!');\n    console.log(evt);\n  };\n  \n  this.conn.onClose = function (evt) {\n    client.appendMessage('logMessage', '%% Connection closed.');\n    setTimeout(() => { client.reconnect() }, (client.serverSSL ? 2.0 : 1.0) * client.reconnectTimer);\n  };",
+    "ctx": {
+      "type": "method",
+      "name": "connect",
+      "string": "connect()"
+    }
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>onMessage callback before data handler</p>",
+      "summary": "<p>onMessage callback before data handler</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1237,
+    "codeStart": 1238,
+    "code": "this.conn.onUpdate = function(channel, data) {\n  if (!client.conn.hasData) {\n    // this is the first update, show the login screen\n    client.react.login && client.react.login.openLogin();\n    \n    // send the screen dimensions\n    client.sendText(\"SCREENWIDTH \" + client.settings.terminalWidth);\n    client.sendText(\"SCREENHEIGHT \" + Math.floor(client.output.root.parentNode.clientHeight / client.output.dims.height));\n  }\n  \n  if (client.hidden && data.endsWith('\\n')) {\n    client.updateCounter++;\n    // eventually set client.updateLines to the number of new lines\n    // and show that instead",
+    "ctx": {
+      "type": "method",
+      "receiver": "this.conn",
+      "name": "onUpdate",
+      "string": "this.conn.onUpdate()"
+    }
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>use a timer to prevent update spamming</p>",
+      "summary": "<p>use a timer to prevent update spamming</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1253,
+    "codeStart": 1254,
+    "code": "clearTimeout(client.setBubble);\nsetTimeout(client.setBubble, 1000);\n      }\n    }",
+    "ctx": {
+      "type": "method",
+      "name": "clearTimeout",
+      "string": "clearTimeout()"
+    }
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>handle incoming text</p>",
+      "summary": "<p>handle incoming text</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1259,
+    "codeStart": 1260,
+    "code": "this.conn.onText = function (text) {\n  if (!client.loggedIn) {\n    // match some login error conditions\n    for (let i = 0; i < LOGINFAIL.length; i++) {\n      if (text.match(LOGINFAIL[i])) {\n        client.react.login && client.react.login.openLogin(text);\n        break;\n      }\n    }\n    \n    // we logged in\n    if (text.match(/Last( FAILED)? connect was from/)) {\n      client.loggedIn = true;\n      setTimeout(() => {\n        if (!client.jsonapi) {\n          client.sendAPI(\"listcontents\");\n        }\n      }, client.delayContents);\n    }\n  }\n\n  // implement @dec/tf\n  var re_fugueedit = new RegExp('^'+client.settings.decompileKey);\n  if (text.match(re_fugueedit)) {\n    var str = text.replace(re_fugueedit, \"\");\n    client.eatNewline = true;\n    \n    // send @dec/tf to the upload editor, or the command window\n    if (client.settings.decompileEditor) {\n      client.addPanel(\"Upload\", { icon: 'cloud_upload' });\n      client.react.upload.editor.current.editor.insert(str+\"\\n\");\n    } else {\n      client.input.root.value = str;\n    }\n    return;\n  }\n  \n  // handle text triggers\n  let suppress = false;\n  client.triggers.forEach((trigger, i) => {\n    if (trigger.disabled) return;\n    \n    let re = client.createPattern(trigger.regex, trigger.pattern);\n    let args = text.match(re);\n    \n    if (args) {\n      let txt = client.replaceArgs(args, trigger.text);\n      if (trigger.javascript) {\n        client.execActionScript(txt);\n      } else {\n        client.sendText(txt);\n      }\n    \n      if (trigger.suppress) {\n        client.eatNewline = true;\n        suppress = true;\n      }\n    }\n  });\n  \n  if (suppress) return;\n  \n  if (client.eatNewline && (text === \"\\n\" || text === \"\\r\\n\")) {\n    client.eatNewline = false;\n    return;\n  }\n  \n  client.eatNewline = false;\n  \n  client.scrollIfNeeded(() => client.output.appendText(text));\n};",
+    "ctx": {
+      "type": "method",
+      "receiver": "this.conn",
+      "name": "onText",
+      "string": "this.conn.onText()"
+    }
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>handle incoming html</p>",
+      "summary": "<p>handle incoming html</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1332,
+    "codeStart": 1333,
+    "code": "this.conn.onHTML = function (fragment) {\n  if (client.output) {\n    client.scrollIfNeeded(() => client.output.appendHTML(fragment));\n  }\n};",
+    "ctx": {
+      "type": "method",
+      "receiver": "this.conn",
+      "name": "onHTML",
+      "string": "this.conn.onHTML()"
+    }
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>handle incoming pueblo</p>",
+      "summary": "<p>handle incoming pueblo</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1339,
+    "codeStart": 1340,
+    "code": "this.conn.onPueblo = function (tag, attrs) {\n  if (client.output) {\n    client.scrollIfNeeded(() => client.output.appendPueblo(tag, attrs));\n  }\n};",
+    "ctx": {
+      "type": "method",
+      "receiver": "this.conn",
+      "name": "onPueblo",
+      "string": "this.conn.onPueblo()"
+    }
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>handle incoming command prompts</p>",
+      "summary": "<p>handle incoming command prompts</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1346,
+    "codeStart": 1347,
+    "code": "this.conn.onPrompt = function (text) {\n  if (client.prompt !== null) {\n    client.prompt.clear();\n    client.prompt.appendText(text + '\\r\\n');\n  }\n};",
+    "ctx": {
+      "type": "method",
+      "receiver": "this.conn",
+      "name": "onPrompt",
+      "string": "this.conn.onPrompt()"
+    }
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>handle incoming JSON objects</p>",
+      "summary": "<p>handle incoming JSON objects</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1354,
+    "codeStart": 1355
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>use the Events handler collection</p>",
+      "summary": "<p>use the Events handler collection</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1355,
+    "codeStart": 1356,
+    "code": "this.conn.onObject = function (obj) {\n  var op = \"\";\n  if (obj.hasOwnProperty('gmcp')) {\n    op = obj.gmcp;\n  } else if (obj.hasOwnProperty('op')) {\n    op = obj.op;\n  }\n  \n  if (op && op !== \"\") {\n    client.settings.debugEvents && console.log(\"JSON \"+op+\":\", obj);\n    client.events.emit(op, obj);\n  } else {\n    client.settings.debugEvents && console.log(\"JSON (unknown):\", obj);\n  }\n};\n  }\n\n  reconnect(force=false) {\nif (!force && this.isConnected()) {\n  return;\n}\n\nif (force || this.reconnectCount < this.reconnectMaxCount) {\n  // The connection URL is ws://host:port/wsclient (or wss:// for SSL connections)\n  let serverProto = window.location.protocol === \"https:\" || this.settings.serverSSL ? \"wss://\" : \"ws://\";\n  let serverUrl = serverProto + this.settings.serverAddress + \":\" + this.settings.serverPort + '/wsclient';\n  \n  this.reconnectCount++;\n  this.conn && this.conn.reconnect(serverUrl);\n} else {\n  this.appendMessage('logMessage', '%% Auto-reconnect aborted.');\n}\n  }\n  \n  isConnected() {\nreturn (this.conn && this.conn.isConnected());\n  }\n  \n  close() {\nthis.conn && this.conn.close();\n  }\n  \n  filterUnicode(text) {\nif (!text) return \"\";\ntry {\n  let re = new RegExp(\"[\\u2013\\u2014\\u2018\\u2019\\u201B\\u201C\\u201D\\u201F\\u2032\\u2033\\u2035\\u2036]\",\"g\");\n  return text.replace(re, code => UnicodeMap[code]);\n} catch (e) {\n  this.settings.debugActions && console.log(\"Unable to filter Unicode:\", e);\n}\nreturn text;\n  }\n\n  sendText(data) {\nthis.conn && this.conn.sendText(data);\n  }\n  \n  /////////////////////////////////////////////////////////////////////////////////////////////////",
+    "ctx": {
+      "type": "method",
+      "receiver": "this.conn",
+      "name": "onObject",
+      "string": "this.conn.onObject()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{string} cmd - The command string to send.",
+        "name": "cmd",
+        "description": "<ul>\n<li>The command string to send.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      }
+    ],
+    "description": {
+      "full": "<p>Send a command string to the server, check macros for a match and append a local echo.</p>",
+      "summary": "<p>Send a command string to the server, check macros for a match and append a local echo.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1415,
+    "codeStart": 1419,
+    "code": "sendCommand(cmd) {\n\n  if (!this.isConnected()) {\n    // connection was broken, let's force a reconnect\n    this.conn && this.conn.reconnect();\n    this.scrollIfNeeded(() => this.appendMessage('logMessage', '%% Reconnecting to server...'));\n    return;\n  }\n  \n  if (cmd === '') return;\n\n  cmd = this.filterUnicode(cmd);\n  this.sendMacro(cmd);\n  this.scrollIfNeeded(() => this.appendMessage('localEcho', cmd));\n  this.saveRecallHistory();\n}",
+    "ctx": {
+      "type": "method",
+      "name": "sendCommand",
+      "string": "sendCommand()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{string} cmds - A string of one or more commands separated by newlines.",
+        "name": "cmds",
+        "description": "<ul>\n<li>A string of one or more commands separated by newlines.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      }
+    ],
+    "description": {
+      "full": "<p>Check a string for multiple commands and match them against the list of macros.</p>",
+      "summary": "<p>Check a string for multiple commands and match them against the list of macros.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1436,
+    "codeStart": 1440,
+    "code": "sendMacro(cmds) {\n  let matched = false;\n  this.macros.forEach((m) => {\n    if (m.disabled) return;\n    \n    let re = this.createPattern(m.regex, m.pattern);\n    \n    cmds.split('\\n').forEach((cmd) => {\n      let args = cmd.match(re);\n    \n      if (args) {\n        matched = true;\n        let text = this.replaceArgs(args, m.text);\n        if (m.javascript) {\n          this.execActionScript(text);\n        } else {\n          this.sendMacro(text);\n        }\n      }\n    });\n  });\n  \n  if (!matched) {\n    this.sendText(cmds);\n  }\n}\n\n/////////////////////////////////////////////////////////////////////////////////////////////////",
+    "ctx": {
+      "type": "method",
+      "name": "sendMacro",
+      "string": "sendMacro()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{string} cmd - The API command name.",
+        "name": "cmd",
+        "description": "<ul>\n<li>The API command name.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      },
+      {
+        "type": "param",
+        "string": "{string[]} args - An array of string arguments to pass to the API command.",
+        "name": "args",
+        "description": "<ul>\n<li>An array of string arguments to pass to the API command.</li>\n</ul>",
+        "types": [
+          "Array.<string>"
+        ],
+        "typesDescription": "<code>Array</code>.&lt;<code>string</code>&gt;",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      }
+    ],
+    "description": {
+      "full": "<p>Send an API command, falling back to player-executed softcode if the server doesn't support it.</p>",
+      "summary": "<p>Send an API command, falling back to player-executed softcode if the server doesn't support it.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1469,
+    "codeStart": 1474,
+    "code": "sendAPI(cmd, args) {\n  if (this.jsonapi) {\n    var str = String(cmd);\n    \n    if (args) {\n      var astr = String(args);\n      if (astr.length > 0) {\n        str += \" \"+astr;\n      }\n    }\n    \n    this.sendText(\"jsonapi/\"+str);\n  } else {\n    if (JSONAPI.hasOwnProperty(cmd)) {\n      JSONAPI[cmd](this, args);\n    }\n  }\n}",
+    "ctx": {
+      "type": "method",
+      "name": "sendAPI",
+      "string": "sendAPI()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "callback",
+        "string": "execCallback",
+        "html": "<p>execCallback</p>"
+      },
+      {
+        "type": "param",
+        "string": "{string} result",
+        "name": "result",
+        "description": "",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false,
+        "html": "<p>{string} result</p>"
+      }
+    ],
+    "description": {
+      "full": "",
+      "summary": "",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1493,
+    "codeStart": 1497
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{string} code - The code string to execute.",
+        "name": "code",
+        "description": "<ul>\n<li>The code string to execute.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      },
+      {
+        "type": "param",
+        "string": "{execCallback} callback - The callback function to execute when we receive the return value.",
+        "name": "callback",
+        "description": "<ul>\n<li>The callback function to execute when we receive the return value.</li>\n</ul>",
+        "types": [
+          "execCallback"
+        ],
+        "typesDescription": "<a href=\"execCallback.html\">execCallback</a>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      }
+    ],
+    "description": {
+      "full": "<p>Execute a MUSH softcode string and return the result as a string in a JSON object.</p>",
+      "summary": "<p>Execute a MUSH softcode string and return the result as a string in a JSON object.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1498,
+    "codeStart": 1503,
+    "code": "execString(code, callback) {\n  var id = \"exec_\"+shortid.generate();\n  var cmd = \"th null(oob(%#,\"+id+\",json(object,result,json(string,\"+code+\"))))\";\n  \n  this.events.on(id, (obj) => {\n    callback(obj.result);\n    this.events.removeAllListeners([id]);\n  });\n  \n  this.sendText(cmd);\n}",
+    "ctx": {
+      "type": "method",
+      "name": "execString",
+      "string": "execString()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{string} code - The code string to execute.",
+        "name": "code",
+        "description": "<ul>\n<li>The code string to execute.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      },
+      {
+        "type": "param",
+        "string": "{execCallback} callback - The callback function to execute when we receive the return object.",
+        "name": "callback",
+        "description": "<ul>\n<li>The callback function to execute when we receive the return object.</li>\n</ul>",
+        "types": [
+          "execCallback"
+        ],
+        "typesDescription": "<a href=\"execCallback.html\">execCallback</a>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      }
+    ],
+    "description": {
+      "full": "<p>Execute a MUSH softcode string that creates a JSON object and return it.</p>",
+      "summary": "<p>Execute a MUSH softcode string that creates a JSON object and return it.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1515,
+    "codeStart": 1520,
+    "code": "execJSON(code, callback) {\n  var id = \"exec_\"+shortid.generate();\n  var cmd = \"th null(oob(%#,\"+id+\",\"+code+\"))\";\n  \n  this.events.on(id, (obj) => {\n    callback(obj);\n    this.events.removeAllListeners([id]);\n  });\n  \n  this.sendText(cmd);\n}\n\n\n/////////////////////////////////////////////////////////////////////////////////////////////////",
+    "ctx": {
+      "type": "method",
+      "name": "execJSON",
+      "string": "execJSON()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{string} filename - The name of the log file to save.",
+        "name": "filename",
+        "description": "<ul>\n<li>The name of the log file to save.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      }
+    ],
+    "description": {
+      "full": "<p>Save the current display to a log file.</p>",
+      "summary": "<p>Save the current display to a log file.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1535,
+    "codeStart": 1539,
+    "code": "saveLog(filename) {\n  if (!this.output) return;\n  var node = this.output.root;\n  var text = (node.innerText || node.textContent);\n  if (!this.saveText(filename, text, \"text/html;charset=utf-8\")) {\n    alert(\"File not saved! The current output is empty.\");\n  }\n}",
+    "ctx": {
+      "type": "method",
+      "name": "saveLog",
+      "string": "saveLog()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{string} filename - The name of the backup file to save.",
+        "name": "filename",
+        "description": "<ul>\n<li>The name of the backup file to save.</li>\n</ul>",
+        "types": [
+          "string"
+        ],
+        "typesDescription": "<code>string</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      }
+    ],
+    "description": {
+      "full": "<p>Save the entire localStorage to a backup file.</p>",
+      "summary": "<p>Save the entire localStorage to a backup file.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1548,
+    "codeStart": 1552,
+    "code": "saveBackup(filename) {\n  var text = this.localStorageToText(2);\n  if (!this.saveText(filename, text)) {\n    alert(\"File not saved! Local storage is empty.\");\n  }\n}\n\n\n/////////////////////////////////////////////////////////////////////////////////////////////////",
+    "ctx": {
+      "type": "method",
+      "name": "saveBackup",
+      "string": "saveBackup()"
+    }
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>Set the activity count when the browser tab is out of view.</p>",
+      "summary": "<p>Set the activity count when the browser tab is out of view.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1562,
+    "codeStart": 1563,
+    "code": "setBubble = () => {\n  if (this.hidden) {\n    this.tinycon.setBubble(this.updateCounter);\n  } else {\n    this.tinycon.setBubble(0);\n  }\n};",
+    "ctx": false
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>Initialize the browser activity notification events.</p>",
+      "summary": "<p>Initialize the browser activity notification events.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1571,
+    "codeStart": 1572,
+    "code": "initNotifications() {\n  // Set the name of the hidden property and the change event for visibility\n  var hidden, visibilityChange; \n  if (typeof document.hidden !== \"undefined\") { // Opera 12.10 and Firefox 18 and later support \n    hidden = \"hidden\";\n    visibilityChange = \"visibilitychange\";\n  } else if (typeof document.msHidden !== \"undefined\") {\n    hidden = \"msHidden\";\n    visibilityChange = \"msvisibilitychange\";\n  } else if (typeof document.webkitHidden !== \"undefined\") {\n    hidden = \"webkitHidden\";\n    visibilityChange = \"webkitvisibilitychange\";\n  }\n  \n  // Warn if the browser doesn't support addEventListener or the Page Visibility API\n  if (typeof document.addEventListener === \"undefined\" || hidden === undefined) {\n    console.log(\"This browser does not support background notifications.\");\n  } else {\n    // Handle page visibility change   \n    document.addEventListener(visibilityChange, () => {\n      this.updateCounter = 0;\n      this.updateLines = 0;\n      if (document[hidden]) {\n        this.hidden = true;\n      } else {\n        this.hidden = false;\n      }\n      this.setBubble();\n    }, false);\n  }\n  \n  // set tinycon options\n  this.tinycon.setOptions({\n    fallback: true,\n    abbreviate: true,\n  });\n}",
+    "ctx": {
+      "type": "method",
+      "name": "initNotifications",
+      "string": "initNotifications()"
+    }
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>Set window panel default parameters and event handlers.</p>",
+      "summary": "<p>Set window panel default parameters and event handlers.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1610,
+    "codeStart": 1611,
+    "code": "initPanels() {\n  this.panels.defaults.minimizeTo = false;\n  this.panels.defaults.onminimized = function(container) {\n    window.client.react.taskbar.pushTask(this);\n    window.client.focus();\n  };\n  \n  this.panels.defaults.onclosed = function(container) {\n    ReactDOM.unmountComponentAtNode(container.content);\n    window.client.delSpawn(this.id);\n    window.client.focus();\n  };\n  \n  this.panels.defaults.dragit.start = function() {\n    window.client.input.saveCursor();\n  };\n  \n  this.panels.defaults.resizeit.start = function() {\n    window.client.input.saveCursor();\n  };\n  \n  this.panels.defaults.dragit.stop = function() {\n    window.client.focus();\n    window.client.input.resetCursor();\n  };\n  \n  this.panels.defaults.resizeit.stop = function() {\n    window.client.focus();\n    window.client.input.resetCursor();\n  };\n}\n\n\n/////////////////////////////////////////////////////////",
+    "ctx": {
+      "type": "method",
+      "name": "initPanels",
+      "string": "initPanels()"
+    }
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>Enable timers, only if not already enabled.</p>",
+      "summary": "<p>Enable timers, only if not already enabled.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1646,
+    "codeStart": 1647,
+    "code": "timersEnabled = () => {\n  if (this.settings.timersEnabled) return;\n  \n  this.changeSetting(\"timersEnabled\", true);\n};",
+    "ctx": false
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>Disable timers, only if already enabled.</p>",
+      "summary": "<p>Disable timers, only if already enabled.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1653,
+    "codeStart": 1654,
+    "code": "disableTimers = () => {\n  if (!this.settings.timersEnabled) return;\n  \n  this.changeSetting(\"timersEnabled\", false);\n};",
+    "ctx": false
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>Start the master timer loop, if timers are enabled.</p>",
+      "summary": "<p>Start the master timer loop, if timers are enabled.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1660,
+    "codeStart": 1661,
+    "code": "startTimers = () => {\n  if (this.settings.timersEnabled) {\n    clearTimeout(this.runTimers);\n    setTimeout(this.runTimers,  1000);\n  }\n};",
+    "ctx": false
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>Stop the master timer loop.</p>",
+      "summary": "<p>Stop the master timer loop.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1668,
+    "codeStart": 1669,
+    "code": "stopTimers = () => {\n  clearTimeout(this.runTimers);\n};",
+    "ctx": false
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>The master timer loop.</p>",
+      "summary": "<p>The master timer loop.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1673,
+    "codeStart": 1674,
+    "code": "runTimers = () => {\n  if (!this.settings.timersEnabled) return;\n  \n  for (let i = 0; i < this.timers.length; i++) {\n    const timer = this.timers[i];\n    if (timer.disabled) {\n      if (timer.timeleft) {\n        delete timer.timeleft;\n      }\n      \n      continue;\n    }\n    \n    if (typeof(timer.timeleft) === \"undefined\") {\n      // set initial time\n      timer.timeleft = Math.max(1, timer.delay);\n    }\n    \n    if (timer.timeleft > 0) {\n      // subtract time\n      timer.timeleft--;\n    } else {\n      // execute timer\n      if (timer.javascript) {\n        this.execActionScript(timer.text);\n      } else {\n        this.sendText(timer.text);\n      }\n      \n      if (timer.repeat && timer.times !== 0) {\n        // repeat timer, reset time left\n        if (timer.times > 0) {\n          timer.times--;\n        }\n        timer.timeleft = timer.delay;\n      } else {\n        // don't repeat, disable timer\n        delete timer.timeleft;\n        timer.disabled = true;\n      }\n    }\n  }\n\n  setTimeout(this.runTimers, 1000);\n};\n\n/////////////////////////////////////////////////////////",
+    "ctx": false
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>Bind key press and key release event handlers.</p>",
+      "summary": "<p>Bind key press and key release event handlers.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1722,
+    "codeStart": 1723,
+    "code": "bindKeys() {\n  document.addEventListener(\"keydown\", this.keyPress);\n  document.addEventListener(\"keyup\", this.keyRelease);\n}",
+    "ctx": {
+      "type": "method",
+      "name": "bindKeys",
+      "string": "bindKeys()"
+    }
+  },
+  {
+    "tags": [],
+    "description": {
+      "full": "<p>Unbind key press and key release event handlers.</p>",
+      "summary": "<p>Unbind key press and key release event handlers.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1728,
+    "codeStart": 1729,
+    "code": "unbindKeys() {\n  document.removeEventListener(\"keydown\", this.keyPress);\n  document.removeEventListener(\"keyup\", this.keyRelease);\n}",
+    "ctx": {
+      "type": "method",
+      "name": "unbindKeys",
+      "string": "unbindKeys()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{Event} event - The key press event object.",
+        "name": "event",
+        "description": "<ul>\n<li>The key press event object.</li>\n</ul>",
+        "types": [
+          "Event"
+        ],
+        "typesDescription": "<a href=\"Event.html\">Event</a>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      }
+    ],
+    "description": {
+      "full": "<p>Handle key press events.</p>",
+      "summary": "<p>Handle key press events.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1734,
+    "codeStart": 1738,
+    "code": "keyPress = (event) => {\n  var key = { code: (event.keyCode ? event.keyCode : event.which),\n              ctrl: event.ctrlKey,\n              shift: event.shiftKey,\n              alt: event.altKey };\n\n  var prevent = false;\n  \n  for (let i=0; i < this.keys.length; i++) {\n    let k = this.keys[i];\n    if (k.disabled || k.release) continue;\n    \n    if ((k.code === key.code) && (k.ctrl === key.ctrl) &&\n        (k.alt === key.alt) && (k.shift === key.shift)) {\n      if (k.javascript) {\n        this.execActionScript(k.text);\n      } else {\n        this.sendText(k.text);\n      }\n      \n      if (k.prevent) {\n        prevent = true;\n      }\n      \n      break;\n    }\n  }\n  \n  if (prevent) {\n    event.preventDefault();\n  }\n};",
+    "ctx": false
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "string": "{Event} event - The key release event object.",
+        "name": "event",
+        "description": "<ul>\n<li>The key release event object.</li>\n</ul>",
+        "types": [
+          "Event"
+        ],
+        "typesDescription": "<a href=\"Event.html\">Event</a>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      }
+    ],
+    "description": {
+      "full": "<p>Handle key release events.</p>",
+      "summary": "<p>Handle key release events.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isClass": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 1771,
+    "codeStart": 1775,
+    "code": "keyRelease = (event) => {\n  var key = { code: (event.keyCode ? event.keyCode : event.which),\n              ctrl: event.ctrlKey,\n              shift: event.shiftKey,\n              alt: event.altKey };\n  \n  var prevent = false;\n\n  for (let i=0; i < this.keys.length; i++) {\n    let k = this.keys[i];\n    if (k.disabled || !k.release) continue;\n    \n    if ((k.code === key.code) && (k.ctrl === key.ctrl) &&\n        (k.alt === key.alt) && (k.shift === key.shift)) {\n      if (k.javascript) {\n        this.execActionScript(k.text, event);\n      } else {\n        this.sendText(k.text);\n      }\n      \n      if (k.prevent) {\n        prevent = true;\n      }\n      \n      break;\n    }\n  }\n  \n  if (prevent) {\n    event.preventDefault();\n  }\n};\n\n\n\n\n}\n\n\n\nexport default Client;\nexport { Connection, Emulator, UserInput };",
+    "ctx": false
+  }
+]
