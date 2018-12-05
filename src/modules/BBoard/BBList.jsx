@@ -6,12 +6,12 @@ import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 
-//import IconButton from '@material-ui/core/IconButton';
-//import Tooltip from '@material-ui/core/Tooltip';
+import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
 
 //import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 //import DeleteSweepIcon from '@material-ui/icons/DeleteSweep';
-//import CreateIcon from '@material-ui/icons/Create';
+import CreateIcon from '@material-ui/icons/Create';
 
 import BBListItem from './BBListItem';
 
@@ -21,7 +21,8 @@ import BBListItem from './BBListItem';
 
 const styles = theme => ({
   frame: {
-    maxHeight: "100%",
+    width: "100%",
+    height: "100%",
     display: "flex",
     "flex-flow": "column nowrap",
   },
@@ -35,7 +36,10 @@ const styles = theme => ({
   },
   container: {
     display: "flex",
-    paddingLeft: "2em",
+    flexFlow: "row wrap",
+    justifyContent: "space-between",
+    paddingLeft: theme.spacing.unit,
+    "align-items": "center",
   },
   flex: {
     flex: 1,
@@ -52,6 +56,10 @@ class BBList extends React.Component {
     this.state = { };
   }
 
+  sendBBPost = () => {
+    window.client.react.bboard.sendBBPost(this.props.board.name, "", "");
+  };
+
   render() {
     const { classes, openBoard, boardlist } = this.props;
     
@@ -62,6 +70,11 @@ class BBList extends React.Component {
             <span className={classes.container}>
               {boardlist.length} Bulletin Boards
               <span className={classes.flex} />
+              <Tooltip title="Make a new BBoard post.">
+                <IconButton onClick={this.sendBBPost}>
+                  <CreateIcon />
+                </IconButton>
+              </Tooltip>
             </span>
           </Typography>
         </div>

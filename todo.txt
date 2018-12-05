@@ -7,9 +7,6 @@ KNOWN BUGS
 CURRENT TODOS
 ------------------
 
-Activity Notifications
-  Show a snackbar notification when a hidden spawn window gets a new message
-
 Help Text and Documentation
   Help text for Configure window explaining the user-defined action API
   Help text for Upload window explaining upload/reset/command delay
@@ -27,15 +24,10 @@ Bottom Navigation Bar
   Option to replace the status bar with the action button bar.
 
 Configure
-  Clean up mobile layout of lists on left
-  Stretch them full width in mobile mode
-  Flex template & new item buttons side by side in mobile only view
-  keys don't work on mushportal.com, maybe rebuild?
+  Stretch list full width in mobile mode
 
 BBoard
-  Navigation icons (back, reload)
   +bbpost front-end
-  Fix the CSS after I "upgraded" it with new stuff from the Mailbox
 
 
 FUTURE IDEAS

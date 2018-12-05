@@ -22,6 +22,9 @@ const styles = theme => ({
     maxHeight: "100%",
     overflowY: "auto",
     overflowX: "hidden",
+    [theme.breakpoints.down('sm')]: {
+      flex: 1,
+    },
   },
   right: {
     flex: 1,
@@ -191,11 +194,11 @@ class Mailbox extends React.Component {
             )}
           </span>
         </div>
-        <div className={classes.right}>
-          { mailitem && (
+        { mailitem && (
+          <div className={classes.right}>
             <MailItem mail={mailitem} />
-          )}
-        </div>
+          </div>
+        )}
       </div>
     );
   }

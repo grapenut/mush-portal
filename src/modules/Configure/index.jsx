@@ -59,6 +59,10 @@ const styles = theme => ({
     },
   },
   left: {
+    height: "100%",
+    display: "flex",
+    flexFlow: "column nowrap",
+    justifyContent: "space-between",
     marginRight: 0,
     [theme.breakpoints.up('md')]: {
       marginRight: 3*theme.spacing.unit,
@@ -91,6 +95,9 @@ const styles = theme => ({
     flex: 1,
     overflowX: "hidden",
     overflowY: "auto",
+  },
+  end: {
+    alignSelf: "flex-end",
   },
   mobileClose: {
     display: 'none',
@@ -335,8 +342,8 @@ class Configure extends React.Component {
           </Tabs>
         </AppBar>
         <Typography className={classes.container} component="div">
-          <div className={classes.left}>
-            <span className={edit || selected > -1 ? classes.mobileClose : classes.mobileOpen}>
+          <div className={edit || selected > -1 ? classes.mobileClose : classes.mobileOpen}>
+            <div className={classes.left}>
               <div className={classes.overflow}>
                 <List disablePadding dense subheader={
                   <ListSubheader disableGutters className={classes.subHeader}>
@@ -380,21 +387,22 @@ class Configure extends React.Component {
                   )}
                 </List>
               </div>
-              
-              {templates && templates.length > 0 && (
-                <Button aria-owns={menuAnchor ? 'template.menu' : null} aria-label="open-templates" aria-haspopup="true" classes={{ label: classes.block }} onClick={this.showTemplates}>
-                  <FileCopyIcon />
-                  Templates
-                </Button>
-              )}
-              
-              {!tab.immutable && (
-                <Button classes={{ label: classes.block }} onClick={() => this.setState({ edit: true, selected: -1, template: null })}>
-                  <AddCircleIcon />
-                  New {tab.listName.slice(0,-1)}
-                </Button>
-              )}
-            </span>
+              <div className={classes.end}>
+                {templates && templates.length > 0 && (
+                  <Button aria-owns={menuAnchor ? 'template.menu' : null} aria-label="open-templates" aria-haspopup="true" classes={{ label: classes.block }} onClick={this.showTemplates}>
+                    <FileCopyIcon />
+                    Templates
+                  </Button>
+                )}
+                
+                {!tab.immutable && (
+                  <Button classes={{ label: classes.block }} onClick={() => this.setState({ edit: true, selected: -1, template: null })}>
+                    <AddCircleIcon />
+                    New {tab.listName.slice(0,-1)}
+                  </Button>
+                )}
+              </div>
+            </div>
           </div>
           <div className={classes.right}>
             <div className={edit || selected > -1 ? classes.mobileOpen : classes.mobileClose}>

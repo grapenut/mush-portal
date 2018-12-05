@@ -9,17 +9,16 @@ import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 //import Typography from '@material-ui/core/Typography';
-
-//import Icon from '@material-ui/core/Icon';
-//import Button from '@material-ui/core/Button';
-//import IconButton from '@material-ui/core/IconButton';
-
-//import Menu from '@material-ui/core/Menu';
+import Icon from '@material-ui/core/Icon';
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import Menu from '@material-ui/core/Menu';
 //import MenuItem from '@material-ui/core/MenuItem';
 
-//import MoreVertIcon from '@material-ui/icons/MoreVert';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 //import ReplyIcon from '@material-ui/icons/Reply';
 //import ForwardIcon from '@material-ui/icons/Forward';
+import CloseIcon from '@material-ui/icons/Close';
 
 import Emulator from '../../client/emulator';
 
@@ -48,8 +47,7 @@ const styles = theme => ({
   },
   body: {
     flex: 1,
-    "overflow-y": "auto",
-    "overflow-x": "hidden",
+    display: "flex",
   },
   actions: {
     "justify-content": "space-evenly",
@@ -62,11 +60,18 @@ const styles = theme => ({
     "font-weight": "normal",
     "font-size": "10pt",
     width: "100%",
-    height: "100%",
-    "overflow-y": "scroll",
+    flex: 1,
+    "overflow-y": "auto",
     "overflow-x": "hidden",
     "white-space": "pre-wrap",
     "word-wrap": "break-word",
+    padding: "0.25em 0.5em",
+  },
+  mobileOnly: {
+    display: 'block',
+    [theme.breakpoints.up('md')]: {
+      display: 'none',
+    },
   },
 });
 
@@ -77,7 +82,10 @@ const styles = theme => ({
 class BBMessage extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { };
+    this.state = {
+      anchorEl: null,
+    };
+    
     this.body = React.createRef();
     this.emulator = null;
   }
@@ -85,15 +93,27 @@ class BBMessage extends React.Component {
   componentDidMount() {
     const { message } = this.props;
     this.emulator = new Emulator(this.body.current);
-    this.emulator.appendText(message.body);
+    this.emulator.appendText(message.body+'\n');
   }
+  
+  showMenu = event => {
+    this.setState({ anchorEl: event.currentTarget });
+  };
+  
+  closeMenu = () => {
+    this.setState({ anchorEl: null });
+  };
   
   render() {
     const { classes, message } = this.props;
+    const { anchorEl } = this.state;
     const { ansiFG, ansiBG } = window.client.settings;
     const { fontFamily, fontSize } = window.client.settings;
 
-    const font = "font-family: '" + fontFamily + "', monospace; font-size: " + (window.client.mobile ? fontSize/2 : fontSize) + "pt;";
+    const font = {
+      fontFamily: "'" + fontFamily + "', monospace",
+      fontSize: fontSize + "pt",
+    };
     
     this.emulator && this.emulator.clear();
     this.emulator && this.emulator.appendText(message.body);
@@ -117,6 +137,21 @@ class BBMessage extends React.Component {
           <div ref={this.body} className={classNames(classes.output, ansiFG, ansiBG)} style={font}></div>
         </CardContent>
         <CardActions className={classes.actions}>
+          <Button className={classes.mobileOnly} onClick={() => window.client.react.bboard.setState({ bbmsg: null })}>
+            <Icon>
+              <CloseIcon />
+            </Icon>
+            Close
+          </Button>
+          <IconButton aria-owns={anchorEl ? 'message.menu' : null} aria-haspopup="true" onClick={this.showMenu}>
+            <MoreVertIcon />
+          </IconButton>
+          <Menu id="message.menu" anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={this.closeMenu}>
+{/*
+            <MenuItem onClick={}></MenuItem>
+            <MenuItem onClick={}> Message</MenuItem>
+*/}
+          </Menu>
         </CardActions>
       </Card>
     );

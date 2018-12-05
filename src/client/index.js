@@ -42,7 +42,6 @@ const Colors = require('@material-ui/core/colors');
 
 /**
  * List of standard server login failure messages.
- *
  * @const {string[]}
  */
 const LOGINFAIL = [
@@ -57,7 +56,6 @@ const LOGINFAIL = [
 
 /**
  * Maps Unicode characters to ASCII characters.
- *
  * @const {Object.<string, string>}
  */
 const UnicodeMap = {
@@ -81,6 +79,7 @@ class Client {
 
   /**
    * The main Client class controls and links together everything.
+   * @class Client
    * @constructor
    */
   constructor() {
@@ -253,6 +252,8 @@ class Client {
   /**
    * Load a script from the source URL by appending a <script> tag to the body.
    * @param {string} src - The URL of the script to load.
+   * @param {function} [onLoad=null] - A callback to run after loading.
+   * @param {function} [onError=null] - A callback to run on errors (e.g. 404).
    */
   loadScript(src, onLoad, onError) {
     var tag = document.createElement('script');
@@ -532,7 +533,7 @@ class Client {
   
   /**
    * Load a configuration object string from localStorage.
-   * @param {Object.<string.*>} obj - The reference onto which to store the retrieved object.
+   * @param {Object.<string,*>} obj - The reference onto which to store the retrieved object.
    * @param {string} key - The key of the object on localStorage.
    */
   loadLocalStorage(obj, key) {
@@ -869,7 +870,7 @@ class Client {
   
   /**
    * Replace %-tokens in a text string with match argument strings.
-   * @param {array[string]} args - The arguments array, element 0 is the full string.
+   * @param {string[]} args - The arguments array, element 0 is the full string.
    * @param {string} text - The text to be scanned for %number tokens which are replaced by args[number].
    * @return {string} - The new text with arguments replaced if they are present.
    */
@@ -1032,7 +1033,7 @@ class Client {
   /**
    * Add a window panel with the given id and configuration, using a particular React component if provided.
    * @param {string} id - The window id.
-   * @param {Object.<string.*>} cfg - The panel configuration.
+   * @param {Object.<string,*>} cfg - The panel configuration.
    * @param {React.Component} [component=Spawn] - The React component that serves as a base.
    * @return {Object} - A reference to the panel if it already exists, or undefined if not.
    */

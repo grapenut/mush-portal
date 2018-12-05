@@ -28,6 +28,12 @@ const styles = theme => ({
   read: {
     opacity: 0.5,
   },
+  odd: {
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+  },
+  even: {
+    backgroundColor: 'rgba(0, 0, 0, 0.05)',
+  },
 });
 
 
@@ -41,7 +47,9 @@ class BBMessageListItem extends React.Component {
   }
   
   render() {
-    const { classes, message, onOpen } = this.props;
+    const { classes, message, onOpen, selected, id } = this.props;
+    
+    var even = (id % 2 === 0);
     
     return (
       <div className={classes.frame}>
@@ -50,7 +58,9 @@ class BBMessageListItem extends React.Component {
           button
           dense
           divider
+          selected={selected}
           onClick={onOpen}
+          className={even ? classes.even : classes.odd}
         >
           <ListItemText
             primary={message.subject}
@@ -76,6 +86,8 @@ BBMessageListItem.propTypes = {
   theme: PropTypes.object.isRequired,
   message: PropTypes.object.isRequired,
   onOpen: PropTypes.func.isRequired,
+  selected: PropTypes.bool,
+  id: PropTypes.number,
 };
 
 export default withStyles(styles, { withTheme: true })(BBMessageListItem);

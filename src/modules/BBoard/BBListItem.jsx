@@ -28,6 +28,12 @@ const styles = theme => ({
   read: {
     opacity: 0.5,
   },
+  odd: {
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+  },
+  even: {
+    backgroundColor: 'rgba(0, 0, 0, 0.05)',
+  },
 });
 
 
@@ -41,7 +47,9 @@ class BBListItem extends React.Component {
   }
   
   render() {
-    const { classes, board, onOpen } = this.props;
+    const { classes, board, onOpen, id } = this.props;
+    
+    var even = (id %2 === 0);
     
     return (
       <div className={classes.frame}>
@@ -51,6 +59,7 @@ class BBListItem extends React.Component {
           dense
           divider
           onClick={onOpen}
+          className={even ? classes.even : classes.odd}
         >
           <ListItemText
             primary={board.name}

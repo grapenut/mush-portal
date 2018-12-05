@@ -6,12 +6,12 @@ import { withStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 
-//import IconButton from '@material-ui/core/IconButton';
-//import Tooltip from '@material-ui/core/Tooltip';
+import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
 
 //import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
-//import DeleteSweepIcon from '@material-ui/icons/DeleteSweep';
-//import CreateIcon from '@material-ui/icons/Create';
+import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import CreateIcon from '@material-ui/icons/Create';
 
 import BBMessageListItem from './BBMessageListItem';
 
@@ -22,6 +22,7 @@ import BBMessageListItem from './BBMessageListItem';
 const styles = theme => ({
   frame: {
     maxHeight: "100%",
+    width: "100%",
     display: "flex",
     "flex-flow": "column nowrap",
   },
@@ -35,7 +36,10 @@ const styles = theme => ({
   },
   container: {
     display: "flex",
-    paddingLeft: "2em",
+    flexFlow: "row wrap",
+    justifyContent: "space-between",
+    paddingLeft: theme.spacing.unit,
+    "align-items": "center",
   },
   flex: {
     flex: 1,
@@ -49,8 +53,14 @@ const styles = theme => ({
 class BBMessageList extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { };
+    this.state = {
+      selected: -1,
+    };
   }
+  
+  sendBBPost = () => {
+    window.client.react.bboard.sendBBPost(this.props.board.name, "", "");
+  };
 
   render() {
     const { classes, openMessage, board } = this.props;
@@ -60,8 +70,18 @@ class BBMessageList extends React.Component {
         <div className={classes.header}>
           <Typography variant="subtitle1" className={classes.title}>
             <span className={classes.container}>
-              {board.messages.length} Posts
+              {board.name} ({board.messages.length} Posts)
               <span className={classes.flex} />
+              <Tooltip title="Go back to the board list.">
+                <IconButton disabled={!Boolean(board)} onClick={() => window.client.react.bboard.setState({ board: null, bbmsg: null })}>
+                  <ArrowBackIcon />
+                </IconButton>
+              </Tooltip>
+              <Tooltip title="Make a new BBoard post.">
+                <IconButton onClick={this.sendBBPost}>
+                  <CreateIcon />
+                </IconButton>
+              </Tooltip>
             </span>
           </Typography>
         </div>
@@ -71,7 +91,10 @@ class BBMessageList extends React.Component {
             disablePadding
           >
             {board.messages.map((msg,i) => (
-              <BBMessageListItem key={i} message={msg} onOpen={() => openMessage(i)} />
+              <BBMessageListItem key={i} message={msg} onOpen={() => {
+                this.setState({ selected: i });
+                openMessage(i);
+              }} />
             ))}
           </List>
         </div>

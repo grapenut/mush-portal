@@ -19,20 +19,36 @@ const styles = theme => ({
     display: "flex",
     "flex-flow": "row nowrap",
   },
-  left: {
+  bblist: {
+    flex: 1,
     position: "relative",
     maxHeight: "100%",
-    flex: 1,
+    overflowY: "auto",
+    overflowX: "hidden",
+  },
+  bbmsglist: {
+    position: "relative",
+    maxHeight: "100%",
+    overflowY: "auto",
+    overflowX: "hidden",
+    [theme.breakpoints.down('sm')]: {
+      flex: 1,
+    },
   },
   right: {
     flex: 1,
     maxHeight: "100%",
     position: "relative",
   },
-  full: {
+  mobileClose: {
+    display: 'none',
+    [theme.breakpoints.up('md')]: {
+      display: 'flex',
+    },
+  },
+  mobileOpen: {
     flex: 1,
-    position: "relative",
-    display: "flex",
+    display: 'flex',
   },
 });
 
@@ -50,6 +66,23 @@ class BBoard extends React.Component {
     };
   }
   
+  sendBBPost(to, subject, body) {
+    if (window.client.react.bbpost) {
+      window.client.focusPanel("BBPost");
+      if (window.confirm("Replace current draft with new mail?")) {
+        window.client.react.bbpost.setFields(to, subject, body);
+      }
+    } else {
+      window.client.addPanel("BBPost", { icon: "forums" });
+      window.client.react.bbpost.setFields(to, subject, body);
+    }  
+  }
+
+  
+
+/////////////////////////////////////////////////////////
+
+
   openBB = (key) => {
     const { boardlist } = this.state;
     const board = boardlist[key];
@@ -96,23 +129,20 @@ class BBoard extends React.Component {
 
     return (
       <div className={classes.frame}>
-        { board ? (
-          <div className={classes.full}>
-            <div className={classes.left}>
+        <span className={bbmsg ? classes.mobileClose : classes.mobileOpen}>
+          {board ? (
+            <div className={classes.bbmsglist}>
               <BBMessageList board={board} openMessage={this.openBBMsg} />
             </div>
-            <div className={classes.right}>
-              { bbmsg && (
-                <BBMessage message={bbmsg} />
-              )}
-            </div>
-          </div>
-        ) : (
-          <div className={classes.full}>
-            <div className={classes.left}>
+          ) : (
+            <div className={classes.bblist}>
               <BBList boardlist={boardlist} openBoard={this.openBB} />
             </div>
-            <div className={classes.right}></div>
+          )}
+        </span>
+        {bbmsg && (
+          <div className={classes.right}>
+            <BBMessage message={bbmsg} />
           </div>
         )}
       </div>
@@ -123,9 +153,9 @@ class BBoard extends React.Component {
 BBoard.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
-  folder: PropTypes.number,
-  maillist: PropTypes.array,
-  mailitem: PropTypes.object,
+  bblist: PropTypes.array,
+  bbmessagelist: PropTypes.array,
+  bbmessage: PropTypes.object,
   unread: PropTypes.number,
 };
 
