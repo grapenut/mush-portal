@@ -23,12 +23,6 @@ Help Text and Documentation
 Bottom Navigation Bar
   Option to replace the status bar with the action button bar.
 
-Configure
-  Stretch list full width in mobile mode
-
-BBoard
-  +bbpost front-end
-
 
 FUTURE IDEAS
 ------------------

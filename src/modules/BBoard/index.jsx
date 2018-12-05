@@ -69,7 +69,7 @@ class BBoard extends React.Component {
   sendBBPost(to, subject, body) {
     if (window.client.react.bbpost) {
       window.client.focusPanel("BBPost");
-      if (window.confirm("Replace current draft with new mail?")) {
+      if (window.confirm("Replace current draft with new message?")) {
         window.client.react.bbpost.setFields(to, subject, body);
       }
     } else {

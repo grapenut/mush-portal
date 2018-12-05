@@ -57,7 +57,7 @@ class BBList extends React.Component {
   }
 
   sendBBPost = () => {
-    window.client.react.bboard.sendBBPost(this.props.board.name, "", "");
+    window.client.react.bboard.sendBBPost("", "", "");
   };
 
   render() {

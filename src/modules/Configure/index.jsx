@@ -98,8 +98,11 @@ const styles = theme => ({
   },
   end: {
     alignSelf: "flex-end",
+    width: "100%",
+    display: "flex",
+    justifyContent: "space-between",
   },
-  mobileClose: {
+  leftMobileClose: {
     display: 'none',
     [theme.breakpoints.up('md')]: {
       height: "100%",
@@ -108,7 +111,28 @@ const styles = theme => ({
       justifyContent: "space-between",
     },
   },
-  mobileOpen: {
+  leftMobileOpen: {
+    height: "100%",
+    display: "flex",
+    flexFlow: "column nowrap",
+    justifyContent: "space-between",
+    flexGrow: 1,
+    [theme.breakpoints.up('md')]: {
+      flexGrow: 0,
+    },
+  },
+  rightMobileClose: {
+    display: 'none',
+    [theme.breakpoints.up('md')]: {
+      flex: 1,
+      height: "100%",
+      display: 'flex',
+      flexFlow: "column nowrap",
+      justifyContent: "space-between",
+    },
+  },
+  rightMobileOpen: {
+    flex: 1,
     height: "100%",
     display: "flex",
     flexFlow: "column nowrap",
@@ -342,14 +366,14 @@ class Configure extends React.Component {
           </Tabs>
         </AppBar>
         <Typography className={classes.container} component="div">
-          <div className={edit || selected > -1 ? classes.mobileClose : classes.mobileOpen}>
+          <div className={edit || selected > -1 ? classes.leftMobileClose : classes.leftMobileOpen}>
             <div className={classes.left}>
               <div className={classes.overflow}>
                 <List disablePadding dense subheader={
                   <ListSubheader disableGutters className={classes.subHeader}>
                     {tab.listName}
                     {isTimer && (
-                      <Switch checked={window.client.settings.timersEnabled} onChange={this.enableTimers} classes={{ switchBase: classes.switchBase }} />
+                      <Switch checked={window.client.settings.timersEnabled} onChange={this.enableTimers} />
                     )}
                     <Tooltip title="Reorder list.">
                       <IconButton disabled={!tab.sortable} onClick={this.toggleSort}>
@@ -404,8 +428,8 @@ class Configure extends React.Component {
               </div>
             </div>
           </div>
-          <div className={classes.right}>
-            <div className={edit || selected > -1 ? classes.mobileOpen : classes.mobileClose}>
+          <div className={edit || selected > -1 ? classes.rightMobileOpen : classes.rightMobileClose}>
+            <div className={classes.right}>
               <FormEditor list={tab.list} listName={smallName} template={template} selected={selected} panel={panel} Form={tab.Form} immutable={tab.immutable} />
             </div>
           </div>

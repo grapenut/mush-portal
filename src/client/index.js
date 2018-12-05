@@ -12,6 +12,7 @@ import Portal from '../modules/Portal';
 import Mailbox from '../modules/Mailbox';
 import Sendmail from '../modules/Sendmail';
 import BBoard from '../modules/BBoard';
+import BBPost from '../modules/BBPost';
 import Upload from '../modules/Upload';
 import Backup from '../modules/Backup';
 import Configure from '../modules/Configure';
@@ -148,6 +149,7 @@ class Client {
       "Mailbox": Mailbox,
       "Sendmail": Sendmail,
       "BBoard": BBoard,
+      "BBPost": BBPost,
       "Upload": Upload,
       "Backup": Backup,
       "Configure": Configure,
@@ -1005,12 +1007,9 @@ class Client {
   }
   
   /**
-   * @callback appendCallback
-   */
-   
-  /**
-   * Wrapper for appending text that scrolls the output afterwards if needed.
-   * @param {appendCallback} fun - The wrapper function that appends text. 
+   * Wrapper for appending text that scrolls the output afterwards 
+   * only if needed (already scrolled to the bottom).
+   * @param {function} fun - The function we are wrapping that appends text. 
    */
   scrollIfNeeded(fun) {
     var scroll = false;
@@ -1492,14 +1491,9 @@ class Client {
   }
   
   /**
-   * @callback execCallback
-   * @param {string} result
-   */
-  
-  /**
    * Execute a MUSH softcode string and return the result as a string in a JSON object.
    * @param {string} code - The code string to execute.
-   * @param {execCallback} callback - The callback function to execute when we receive the return value.
+   * @param {function} callback - The callback function to execute when we receive the return value.
    */
   execString(code, callback) {
     var id = "exec_"+shortid.generate();

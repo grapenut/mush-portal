@@ -12,11 +12,11 @@ import Icon from '@material-ui/core/Icon';
 import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
 import TextField from '@material-ui/core/TextField';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 
 import SendIcon from '@material-ui/icons/Send';
 import CancelIcon from '@material-ui/icons/Cancel';
-
-import ChipInput from 'material-ui-chip-input';
 
 //import AceEditor from 'react-ace';
 //import 'brace/mode/mushcode';
@@ -83,21 +83,30 @@ const styles = theme => ({
 //////////////////////////////////////////////////////////////////////
 
 
-class Sendmail extends React.Component {
+class BBPost extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       subject: props.subject ? props.subject : "",
       body: props.body ? props.body : "",
+      to: props.to ? props.to : "",
       error: null,
-      chips: []
+      board: null,
+      boardlist: [],
     };
     
     this.editor = React.createRef();
   }
 
-  setTarget(to) {
-    this.addChip(to);
+  getBoard(board) {
+    const boardlist = this.state.boardlist;
+    for (let i=0; i < boardlist.length; i++) {
+      if ((boardlist[i].name === board) || (boardlist[i].id === board)) {
+        return boardlist[i];
+      }
+    }
+
+    return null;
   }
   
   setSubject(subject) {
@@ -109,16 +118,20 @@ class Sendmail extends React.Component {
   }
 
   setFields(to, subject, body) {
-    to && this.addChip(to);
-    this.setState({ subject, body });
+    this.setState({ to, subject, body });
   }
   
-  sendMail = () => {
-    const { chips, subject, body } = this.state;
+  sendBBPost = () => {
+    const { to, board, subject, body } = this.state;
     var realsub = subject;
     
-    if (chips.length < 1) {
-      alert("Invalid recipients.");
+    var bb = board;
+    if (!bb) {
+      bb = this.getBoard(to);
+    }
+    
+    if (!bb) {
+      alert("You must choose a BBoard.");
       return;
     }
     
@@ -129,35 +142,44 @@ class Sendmail extends React.Component {
     
     if (!subject || subject === "") {
       if (body.length > 20) {
-        realsub = body.substr(0,20)+"...";
+        realsub = body.substr(0,20) + "...";
       } else {
         realsub = body;
       }
     }
     
-    var to = '"'+chips.join('" "')+'"';
-    window.client.sendCommand("@mail "+to+"="+realsub+"/"+body.split('\n').join('%r'));
+    window.client.sendCommand("+bbpost "+bb.id+"/"+realsub+"="+body.split('\n').join('%r'));
     this.closePanel();
   };
   
   closePanel = () => {
-    window.client.closePanel("Sendmail");
+    window.client.closePanel("BBPost");
   };
   
   componentDidMount() {
-    window.client.react.sendmail = this;
+    window.client.react.bbpost = this;
     
-    const { panel, to } = this.props;
+    const { panel } = this.props;
+    const { to } = this.state;
+    
     panel.options.resizeit.resize = this.onResize;
     window.client.panels.resizeit(panel, panel.options.resizeit);
+    window.client.execJSON('jsonapi(boardlist)', (obj) => {
+      if (obj.boardlist.length > 0) {
+        this.setState({ boardlist: obj.boardlist });
+      }
+
+      if (to && to.length > 0) {
+        this.setState({ board: this.getBoard(to) });
+      }
+    });
     
-    to && this.addChip(to);
   }
   
   componentWillUnmount() {
     const { panel } = this.props;
     panel.options.resizeit.resize = null;
-    window.client.react.sendmail = null;
+    window.client.react.bbpost = null;
   }
   
   handleChange = name => event => {
@@ -183,44 +205,9 @@ class Sendmail extends React.Component {
     this.setError(null);
   };
   
-  addChip = chip => {
-    const { chips } = this.state;
-    var str = chip.replace(/(?!\\)\\/g, '').replace(/(?!\\)"/g, '');
-    window.client.execString('if(setr(0,namelist("'+str+'")),name(%q0))', (result) => {
-      if (result !== "") {
-        if (chips.indexOf(result) === -1) {
-          chips.push(result);
-          this.setState({ chips });
-        }
-        this.setError(null);
-      } else {
-        this.setError("Unknown player.");
-      }
-    });
-
-  };
-  
-  delChip = (chip, i) => {
-    const { chips } = this.state;
-    chips.splice(i, 1);
-    this.setState({ chips });
-    this.setError(null);
-  };
-  
-  beforeAdd = (chip) => {
-    if ((chip.startsWith('"') && !chip.endsWith('"')) || 
-        (chip.startsWith("'") && !chip.endsWith("'")) || chip.endsWith('\\')) {
-      return false;
-    }
-    
-    
-    
-    return true;
-  };
-  
   render() {
     const { classes } = this.props;
-    const { chips, subject, body, error } = this.state;
+    const { to, board, subject, body } = this.state;
     const { ansiFG, ansiBG, fontFamily, fontSize } = window.client.settings;
     
     const font = {
@@ -228,15 +215,33 @@ class Sendmail extends React.Component {
       fontSize: (window.client.mobile ? 16 : fontSize) + "pt",
     };
     
+    var bb = board;
+    if (!bb) {
+      bb = this.getBoard(to);
+    }
+    
     return (
       <Card className={classes.card}>
         <CardHeader className={classes.header}
-          title={(
-            <ChipInput label="Recipients" fullWidth value={chips} blurBehavior="add" onUpdateInput={this.onInput}
+          title={
+/*
+            <TextField label="Board" fullWidth value={chips} blurBehavior="add" onUpdateInput={this.onInput}
               newChipKeyCodes={[13,32,187]} onBeforeAdd={this.beforeAdd} onAdd={this.addChip} classes={{ input: classes.nameInput }}
               onDelete={this.delChip} helperText={error} FormHelperTextProps={{ error: true, className: classes.helperText }}
             />
-          )}
+*/
+            <Select
+              displayEmpty
+              autoWidth
+              value={bb || ""}
+              onChange={(e) => this.setState({ board: e.target.value })}
+            >
+              <MenuItem value="" disabled>Choose a BBoard</MenuItem>
+              {this.state.boardlist.map((b,i) => (
+                <MenuItem key={i} value={b}>{b.name}</MenuItem>
+              ))}
+            </Select>
+          }
           subheader={(
             <TextField label="Subject" value={subject} onChange={this.handleChange("subject")} className={classes.stretch} />
           )}
@@ -265,7 +270,7 @@ class Sendmail extends React.Component {
         </CardContent>
         <CardActions className={classes.actions}>
           <Tooltip title="Send draft.">
-            <Button fullWidth classes={{ label: classes.button }} onClick={this.sendMail}>
+            <Button fullWidth classes={{ label: classes.button }} onClick={this.sendBBPost}>
               <Icon>
                 <SendIcon />
               </Icon>
@@ -286,7 +291,7 @@ class Sendmail extends React.Component {
   }
 }
 
-Sendmail.propTypes = {
+BBPost.propTypes = {
   classes: PropTypes.object.isRequired,
   theme: PropTypes.object.isRequired,
   to: PropTypes.string,
@@ -295,5 +300,5 @@ Sendmail.propTypes = {
   panel: PropTypes.object,
 };
 
-export default withStyles(styles, { withTheme: true })(Sendmail);
+export default withStyles(styles, { withTheme: true })(BBPost);
 
