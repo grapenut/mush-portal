@@ -52,8 +52,9 @@ const styles = theme => ({
   actions: {
     "justify-content": "space-evenly",
   },
-  button: {
-    display: "block",
+  block: {
+    display: "flex",
+    flexFlow: "column nowrap",
   },
   output: {
     "font-family": "'Courier New', monospace",
@@ -137,7 +138,7 @@ class BBMessage extends React.Component {
           <div ref={this.body} className={classNames(classes.output, ansiFG, ansiBG)} style={font}></div>
         </CardContent>
         <CardActions className={classes.actions}>
-          <Button className={classes.mobileOnly} onClick={() => window.client.react.bboard.setState({ bbmsg: null })}>
+          <Button className={classes.mobileOnly} onClick={() => window.client.react.bboard.setState({ bbmsg: null })} classes={{ label: classes.block }}>
             <Icon>
               <CloseIcon />
             </Icon>

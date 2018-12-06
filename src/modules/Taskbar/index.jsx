@@ -44,7 +44,7 @@ import KeyboardArrowRightIcon from '@material-ui/icons/KeyboardArrowRight';
 import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 
 import Settings from '../Settings';
-
+import Buttonbar from '../Buttonbar';
 
 //////////////////////////////////////////////////////////////////////
 
@@ -573,7 +573,7 @@ class Taskbar extends React.Component {
         window.client.sendText(button.text);
       }
     }
-  }
+  };
   
   showCount = button => {
     if (button && button.count && button.count !== "") {
@@ -591,10 +591,12 @@ class Taskbar extends React.Component {
   };
   
   componentDidMount() {
+    window.client.react.taskbar = this;
   }
 
   componentWillUnmount() {
     window.client.react.taskbar = null;
+    window.client.unwatchState(this);
   }
   
   render() {
@@ -604,7 +606,7 @@ class Taskbar extends React.Component {
     const { title, taskbar, open, historyAnchor, backupAnchor, url, preview,
             menuAnchor, uploadAnchor, helpAnchor, logAnchor, link, activity } = this.state;
     const { sidebarOpen, sidebarAnchor, mobileHideTaskbar, activityReposition,
-            activityDelay, activitySize } = client.settings;
+            activityDelay, activitySize, mobileButtonbar } = client.settings;
     
     const buttons = client.buttons;
 
@@ -646,7 +648,7 @@ class Taskbar extends React.Component {
                 </Tooltip>
               ))}
               <div className={classes.tasksep}></div>
-              {buttons.map((button,i) => !button.disabled && (
+              {!mobileButtonbar && buttons.map((button,i) => !button.disabled && (
                 <Tooltip key={i} title={button.tooltip}>
                   <Button aria-label={button.name} onClick={this.pushButton(button)}>
                     <BadgeIcon count={this.showCount(button)}>
@@ -817,22 +819,8 @@ class Taskbar extends React.Component {
           </Toolbar>
         </AppBar>
         
-        {(!mobileHideTaskbar || buttons.length > 0) && (
-          <div className={classes.sectionMobile}>
-            <AppBar position="relative">
-              <Tabs value={false} indicatorColor="primary" scrollable scrollButtons="on" ScrollButtonComponent={TabButton} classes={{ scrollButtons: classes.scrollButtons, flexContainer: classes.buttonBar }}>
-                {buttons.length > 0 && buttons.map((button,i) => !button.disabled && (
-                  <Tooltip key={i} title={button.tooltip}>
-                    <Tab key={i} classes={{ wrapper: classes.tasklabel }}
-                      aria-label={button.name} 
-                      icon={(<BadgeIcon count={this.showCount(button)}>{button.icon}</BadgeIcon>)}
-                      onClick={this.pushButton(button)}
-                    />
-                  </Tooltip>
-                ))}
-              </Tabs>
-            </AppBar>
-          </div>
+        {window.client.mobile && !mobileButtonbar && (
+          <Buttonbar />
         )}
         
         {(!mobileHideTaskbar || taskbar.length > 0) && (

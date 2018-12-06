@@ -89,7 +89,7 @@ class Templates {
           text: "SendAPI(\"maillist\");",
           javascript: true,
           icon: "mail",
-          count: "client.react.taskbar.state.unreadMail",
+          count: 'client.watchState(this, "unreadmail")',
           tooltip: "@mail Inbox",
         },
         {
@@ -97,7 +97,7 @@ class Templates {
           text: "SendAPI(\"boardlist\");",
           javascript: true,
           icon: "forum",
-          count: "client.react.taskbar.state.unreadBB",
+          count: 'client.watchState(this, "unreadbb")',
           tooltip: "Bulletin Boards",
         },
         {

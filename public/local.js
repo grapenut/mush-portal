@@ -313,12 +313,12 @@ client.events.on('changetitle', function(obj) {
 
 // update the unread mail count on the taskbar
 client.events.on('unreadmail', function(obj) {
-  client.react.taskbar && client.react.taskbar.setUnreadMail(obj.unread);
+  client.setState({ "unreadmail": obj.unread });
 });
 
 // update the unread bb message count on the taskbar
 client.events.on('unreadbb', function(obj) {
-  client.react.taskbar && client.react.taskbar.setUnreadBB(obj.unread);
+  client.setState({ 'unreadbb': obj.unread });
 });
 
 // update the status bar after logging in

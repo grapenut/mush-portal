@@ -1,8 +1,6 @@
 KNOWN BUGS
 ------------------
 
-  Terminal wrap width isn't working. Output is full width.
-
 
 CURRENT TODOS
 ------------------
@@ -19,9 +17,6 @@ Help Text and Documentation
   Wiki documentation for Client API.
   Wiki documentation for UI windows.
   Wiki documentation for React Components.
-
-Bottom Navigation Bar
-  Option to replace the status bar with the action button bar.
 
 
 FUTURE IDEAS

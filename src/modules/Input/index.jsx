@@ -15,7 +15,7 @@ import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown';
 
 const styles = theme => ({
   frame: {
-    "background-color": theme.palette.primary.main,
+    "background-color": theme.palette.background.paper,
     display: "flex",
   },
   text: {

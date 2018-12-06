@@ -644,12 +644,15 @@ class Emulator {
     //var txt = "0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789";
     var txt = "0123456789";
     
-    var temp = document.createElement(element.nodeName);
-    temp.setAttribute("style","margin:0px;padding:0px;font-family:"+element.style.fontFamily+";font-size:"+element.style.fontSize);
+    var temp = document.createElement("span");
+    var css = window.getComputedStyle(element, null);
+    var fontFamily = css.getPropertyValue("font-family");
+    var fontSize = css.getPropertyValue("font-size");
+    temp.setAttribute("style","margin:0px;padding:0px;font-family:"+fontFamily+";font-size:"+fontSize);
     temp.innerText = txt;
     temp = element.appendChild(temp);
-    this.dims.width = temp.clientWidth / 10.0;
-    this.dims.height = temp.clientHeight;
+    this.dims.width = temp.offsetWidth / 10.0;
+    this.dims.height = temp.offsetHeight;
     temp.parentNode.removeChild(temp);
     
     return this.dims;

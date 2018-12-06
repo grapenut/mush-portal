@@ -277,7 +277,7 @@ class FormEditor extends React.Component {
 
   onResize = () => {
     this.setState({ needsToResize: false });
-    this.editor.current.editor.resize();
+    this.editor.current && this.editor.current.editor.resize();
   };
   
   onSubmit = (e) => {

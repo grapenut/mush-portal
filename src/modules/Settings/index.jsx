@@ -189,7 +189,7 @@ class Settings extends React.Component {
 
   render() {
     const { classes, closeDrawer } = this.props;
-    const { expanded, expandAll, debugEvents, decompileEditor, decompileKey, ansiFG, ansiBG,
+    const { expanded, expandAll, debugEvents, decompileEditor, decompileKey, ansiFG, ansiBG, mobileButtonbar,
       invertHighlight, debugActions, serverAddress, serverPort, serverSSL, sidebarLargeCompass, activitySize,
       historySize, historySpawnSize, mobileHideTaskbar, mobileHideStatusbar, allowServerChange, activityDelay,
       sidebarOpen, sidebarAnchor, sidebarAlwaysShow, sidebarShowPlayers, fontFamily, fontSize, activityReposition,
@@ -563,6 +563,16 @@ class Settings extends React.Component {
             <FormatSizeIcon />
           </ListItemIcon>
           <TextField label="Terminal Font Size" value={mobileFontSize} onChange={this.handleValue('mobileFontSize')} type="number" />
+        </ListItem>
+        
+        <ListItem dense>
+          <ListItemIcon>
+            <MobileScreenShareIcon />
+          </ListItemIcon>
+          <ListItemText className={classes.switchText} primary="Show buttons on bottom of terminal?" />
+          <ListItemSecondaryAction>
+            <Switch checked={mobileButtonbar} value="mobileButtonbar" onChange={this.handleSwitch('mobileButtonbar')} />
+          </ListItemSecondaryAction>
         </ListItem>
         
         <ListItem dense>

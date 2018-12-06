@@ -133,6 +133,7 @@ class Client {
       mobileFontSize: 6,
       mobileHideTaskbar: true,
       mobileHideStatusbar: true,
+      mobileButtonbar: false,
       // timer safety
       timersEnabled: false,
       timersAutoStart: false,
@@ -208,6 +209,10 @@ class Client {
     // client variables
     this.conn = null;
     this.container = null;
+    
+    // state variables
+    this.state = {};
+    this.watchers = {};
     
     // app instance toggles
     this.loggedIn = false;
@@ -644,7 +649,6 @@ class Client {
   /** Load user-defined taskbar buttons. */
   loadButtons() {
     this.loadLocalStorage(this.buttons, "buttons");
-//    this.react.taskbar && this.react.taskbar.forceUpdate();
   }
   
   /** Load regex/wildcard pattern triggers. */
@@ -719,7 +723,7 @@ class Client {
   saveButtons() {
     this.clearLocalStorage("buttons");
     this.saveLocalStorage(this.buttons, "buttons");
-    this.react.taskbar && this.react.taskbar.forceUpdate();
+    this.react.portal && this.react.portal.forceUpdate();
   }
   
   /** Save regex/wildcard pattern triggers. */
@@ -1212,7 +1216,7 @@ class Client {
     let serverProto = this.settings.serverSSL ? "wss://" : "ws://";
 
     // The connection URL is ws://host:port/wsclient (or wss:// for SSL connections)
-    let serverUrl = serverProto + this.settings.serverAddress + ":" + this.settings.serverPort + '/wsclient'
+    let serverUrl = serverProto + this.settings.serverAddress + ":" + this.settings.serverPort + "/wsclient";
     
     this.close();
     this.conn = new Connection(serverUrl);
@@ -1800,6 +1804,68 @@ class Client {
     }
   };
 
+
+  ////////////////////////////////////////////////////////////////////////////
+  
+  /**
+   * Set global state variable.
+   * @param {string} state - The state object to merge with the current state.
+   */
+  setState(state) {
+    var keys = Object.keys(state);
+    for (let i=0; i < keys.length; i++)
+    {
+      let key = keys[i];
+      if (state[key] !== this.state[key]) {
+        this.state[key] = state[key];
+        
+        let watchers = this.watchers[key];
+        if (watchers) {
+          for (let j=0; j < watchers.length; j++) {
+            if (watchers[j]) {
+              watchers[j].forceUpdate();
+            }
+          }
+        }
+        
+        return;
+      }
+    }
+  }
+  
+  /**
+   * Register a component as using a global state variable.
+   * @param {React.Component} comp - The React Component that should be updated on state changes.
+   * @param {string} key - The key of the state variable to watch.
+   */
+  watchState(comp, key) {
+    let watchers = this.watchers[key];
+    
+    if (watchers && watchers.indexOf(comp) < 0) {
+      watchers.push(comp);
+    } else if (!watchers) {
+      this.watchers[key] = [comp];
+    }
+    
+    return this.state[key];
+  }
+  
+  /**
+   * Unregister a component from watching any keys it may be watching.
+   * @param {React.Component} comp - The React Component that should no longer be updated.
+   */
+  unwatchState(comp) {
+    var keys = Object.keys(this.watchers);
+    
+    for (let i=0; i < keys.length; i++) {
+      let watchers = this.watchers[keys[i]];
+      for (let j=watchers.length-1; j > -1; j--) {
+        if (watchers[j] === this) {
+          watchers.splice(j, 1);
+        }
+      }
+    }
+  }
 
 
 

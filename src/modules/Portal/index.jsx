@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles, MuiThemeProvider } from '@material-ui/core/styles';
 
 import Taskbar from '../Taskbar';
+import Buttonbar from '../Buttonbar';
 import Terminal from '../Terminal';
 import Input from '../Input';
 import Statusbar from '../Statusbar';
@@ -88,7 +89,7 @@ class Portal extends React.Component {
     const { sidebarOpen, sidebarAnchor, ansiFG, ansiBG, terminalWidth,
       sidebarAlwaysShow, sidebarShowExits, sidebarShowPlayers,
       sidebarShowThings, sidebarShowCompass, sidebarDense,
-      sidebarLargeCompass } = window.client.settings;
+      sidebarLargeCompass, mobileButtonbar } = window.client.settings;
       
     var left = sidebarOpen && sidebarAnchor === "left";
     var right = sidebarOpen && sidebarAnchor === "right";
@@ -113,6 +114,7 @@ class Portal extends React.Component {
             {right && sidebar}
           </div>
           <div className={classes.bottom}>
+            {mobileButtonbar && (<Buttonbar />)}
             <Input ansiFG={ansiFG} ansiBG={ansiBG} />
             <Statusbar />
           </div>

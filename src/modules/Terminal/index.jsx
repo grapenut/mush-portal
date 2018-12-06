@@ -162,7 +162,7 @@ class Terminal extends React.Component {
     return (
       <div id="terminal-container" className={classNames(classes.frame)} style={font} onClick={this.focusInput} ref={containerRef}>
         <div ref={this.terminal} className={classNames(classes.terminal, ansiFG, ansiBG)} onScroll={this.onChange}>
-          <div ref={this.output} className={classNames(classes.output, ansiFG, ansiBG)} style={{ maxWidth: dim }}></div>
+          <div ref={this.output} className={classNames(classes.output, ansiFG, ansiBG)} style={{ width: dim, maxWidth: "100%" }}></div>
         </div>
         <div className={classes.taskbar}>
           <div ref={this.prompt} className={classNames(classes.prompt, ansiFG, ansiBG)}></div>
