@@ -13,7 +13,7 @@ that controls everything, there are also a few functions and other objects
 defined for convenience.
 
 | Object | Description |
-------------------------
+|--------|-------------|
 | `client` | The `client` object is the main class that controls everything
 in the MUSH Portal. |
 | `Window(id [, config[, event]])` | Open or create a window named `id`.
@@ -27,7 +27,8 @@ failing over to a player-run version if available. |
 | `Output` | The main terminal output object. |
 | `Input` | The command window input object. |
 | `UI` | A collection of UI components with which you may interact. |
----
+
+
 
 
 
