@@ -14,15 +14,11 @@ defined for convenience.
 
 | Object | Description |
 |--------|-------------|
-| `client` | The `client` object is the main class that controls everything
-in the MUSH Portal. |
-| `Window(id [, config[, event]])` | Open or create a window named `id`.
-Optionally pass the `config` object with panel options, or the `event` if
-the window was spawned by an event. |
+| `client` | The `client` object is the main class that controls everything in the MUSH Portal. |
+| `Window(id [, config[, event]])` | Open or create a window named `id`. Optionally pass the `config` object with panel options, or the `event` if the window was spawned by an event. |
 | `Send(cmd)` | Send a text command to the MUSH, checking for macros. |
 | `SendText(cmd)` | Send a text command directly to the MUSH. |
-| `SendAPI(cmd)` | Send a _JSON API_ command to the MUSH, automatically
-failing over to a player-run version if available. |
+| `SendAPI(cmd)` | Send a _JSON API_ command to the MUSH, automatically failing over to a player-run version if available. |
 | `Append(text)` | Append `text` to the main terminal output. |
 | `Output` | The main terminal output object. |
 | `Input` | The command window input object. |
