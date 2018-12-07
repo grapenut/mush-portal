@@ -18,6 +18,7 @@
 &CMD`JSONAPI`MAILLIST JSONAPI=$jsonapi/maillist*:th oob(%#,maillist,u(JSON`MAILLIST,%#,%0))
 &CMD`JSONAPI`PHASER JSONAPI=$jsonapi/phaser*:th oob(%#,phaser,null)
 &CMD`JSONAPI`SENDMAIL JSONAPI=$jsonapi/sendmail *=*/*:th oob(%#,sendmail,u(JSON`SENDMAIL,%0,%1,%2))
+&FUN`JSONAPI JSONAPI=if(hasattr(%!,JSON`%0),u(JSON`%0,%#,%1,%2,%3,%4,%5,%6,%7,%8,%9),u(JSON`ERROR,%#,#-1 JSONAPI[if(strlen(%0), '%0')] NOT FOUND))
 &HOOK`AFTER`@MAIL JSONAPI=if(setr(p,pmatch(r(LS,args))),iter(%qp,oob(%i0,unreadmail,u(JSON`MAILSTATS,%i0))))[oob(%#,unreadmail,u(JSON`MAILSTATS,%#))]
 &HTML`CREATEFAIL JSONAPI=Unable to register new user "<span style="color: red">%0</span>"[if(%1,\, [after(%1,:)].,.)]
 &HTML`LOGINFAIL JSONAPI=Unable to connect to "<span style="color: red">%0</span>".
@@ -31,6 +32,7 @@
 &JSON`CHANGETITLE JSONAPI=json(object,title,json(string,mudname()),url,json(string,mudurl()))
 &JSON`CONNECT JSONAPI=json(object,gmcp,json(string,connect),msg,json(string,if(%0,%0,Welcome to [mudname()]!)))
 &JSON`DELOBJECT JSONAPI=json(object,name,json(string,name(%0)),player,json(boolean,hastype(%0,PLAYER)))
+&JSON`ERROR JSONAPI=json(object,error,json(string,%1))
 &JSON`LISTCONTENTS JSONAPI=json_mod(json_mod(u(JSON`LISTPLAYERS,%0,%1),patch,u(JSON`LISTTHINGS,%0)),patch,u(JSON`LISTEXITS,%0))
 &JSON`LISTEXITS JSONAPI=json(object,exits,\[[iter(lexits(%0),json(string,fullname(%i0)),,\,)]\])
 &JSON`LISTPLAYERS JSONAPI=json(object,players,\[[iter(remove(lvplayers(%0),%1),json(string,name(%i0)),,\,)]\])
@@ -46,5 +48,5 @@
 &SOCKET`CONNECT JSONAPI=@wait 1=@switch terminfo(%0)=*websocket*,@pemit/port %0=wsjson(u(JSON`CONNECT))
 &SOCKET`CREATEFAIL JSONAPI=@switch terminfo(%0)=*websocket*,@pemit/port %0=wsjson(u(JSON`CONNECT,u(HTML`CREATEFAIL,%4,%3)))
 &SOCKET`LOGINFAIL JSONAPI=@switch terminfo(%0)=*websocket*,@pemit/port %0=wsjson(u(JSON`CONNECT,u(HTML`LOGINFAIL,if(%5,%5,if(%4,name(%4))),%3)))
-&STARTUP JSONAPI=@dol lattr(%!/HOOK`BEFORE`*)=@hook/before [last(%i0,`)]=%!,%i0 ; @dol lattr(%!/HOOK`AFTER`*)=@hook/after [last(%i0,`)]=%!,%i0 ; @dol lattr(%!/HOOK`IGNORE`*)=@hook/ignore [last(%i0,`)]=%!,%i0 ; @dol lattr(%!/HOOK`OVERRIDE`*)=@hook/override/inline [last(%i0,`)]=%!,%i0 ; @dol lattr(%!/HOOK`EXTEND`*)=@hook/extend/inline [last(%i0,`)]=%!,%i0
+&STARTUP JSONAPI=@dol lattr(%!/HOOK`BEFORE`*)=@hook/before [last(%i0,`)]=%!,%i0 ; @dol lattr(%!/HOOK`AFTER`*)=@hook/after [last(%i0,`)]=%!,%i0 ; @dol lattr(%!/HOOK`IGNORE`*)=@hook/ignore [last(%i0,`)]=%!,%i0 ; @dol lattr(%!/HOOK`OVERRIDE`*)=@hook/override/inline [last(%i0,`)]=%!,%i0 ; @dol lattr(%!/HOOK`EXTEND`*)=@hook/extend/inline [last(%i0,`)]=%!,%i0 ; @dol lattr(%!/FUN`*)={@function/delete after(%i0,`) ; @function after(%i0,`)=%!,%i0}
 @set JSONAPI=VB:[lsearch(all,name,bbpocket)]
