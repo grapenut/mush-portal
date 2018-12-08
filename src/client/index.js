@@ -200,6 +200,7 @@ class Client {
       mailbox: null,
       sendmail: null,
       bboard: null,
+      bbpost: null,
       upload: null,
       backup: null,
       configure: null,
