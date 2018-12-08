@@ -45,7 +45,7 @@ main `client` object. For more in-depth `client` documentation see
 | `Append(text)`                  | Alias for `Output.appendText(text)`.
 
 
-| <a name="input>`Input`</a> | The command window [UserInput](https://github.com/grapenut/mush-portal/blob/master/src/client/userinput.js) object, `client.input`.
+| <a name="input">`Input`</a> | The command window [UserInput](https://github.com/grapenut/mush-portal/blob/master/src/client/userinput.js) object, `client.input`.
 |----------------------------|--------------------
 | `Input.cycleBackward()`    | Change the input to the previous command from recall history.
 | `Input.cycleForward()`     | Change the input to the next command from recall history.
