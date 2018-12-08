@@ -4,6 +4,8 @@
 
 The _MUSH Portal_ is an integrated web platform for PennMUSH servers (**PennMUSH v1.8.7p0 or higher required**). The web client has a fully customizable 256-color terminal emulator designed with a **responsive mobile-friendly** UI. The Javascript controlled user interface is completely user configurable using the editing tools. It can integrate with the provided server-side JSON event handler and command API to provide unprecedented interactivity. Automatic _JSON API_ fallbacks executed by the client's player provide enhanced functionality on standard servers without the _JSON API_ installed.
 
+If you are a user looking for help creating your own user-defined action scripts or hacking the client source code, see the [User Documentation](https://github.com/grapenut/mush-portal/blob/master/docs/README.md).
+
 See the [installation instructions](#install) below for information about hosting _MUSH Portal_ on your own website.
 See the [build instructions](#build) if you are interested in modifying the source code.
 
