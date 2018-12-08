@@ -218,6 +218,15 @@ class Spawn extends React.Component {
     
     this.setState({ lines: this.output.linesOfScroll() });
   }
+  
+  Append(text) {
+    if (text.endsWith('\n')) {
+      this.appendText(text);
+    } else {
+      this.append(text);
+    }
+    return this;
+  }
 
   appendText(text) {
     this.scrollIfNeeded(text);
