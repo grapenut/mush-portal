@@ -1,3 +1,4 @@
+/* eslint no-control-regex: 0 */
 
 import React from 'react';
 import classNames from 'classnames';
@@ -210,7 +211,11 @@ class Spawn extends React.Component {
       client.react.taskbar.forceUpdate();
     }
     
-    client.settings.activityEnabled && this.state.showActivity && client.react.taskbar.showActivity(id, text.trim());
+    if (client.settings.activityEnabled && this.state.showActivity) {
+      let re = new RegExp('\\u001b\\[[^m]*m','g');
+      let newtxt = text.replace(re, '');
+      client.react.taskbar.showActivity(id, newtxt);
+    }
         
     if (this.state.saveHistory) {
       this.output.saveHistory(HISTORY_KEY + id, Math.min(MAX_HISTORY_SIZE, client.settings.historySpawnSize));

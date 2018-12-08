@@ -46,6 +46,7 @@ import CloudDownloadIcon from '@material-ui/icons/CloudDownload';
 import Settings from '../Settings';
 import Buttonbar from '../Buttonbar';
 
+
 //////////////////////////////////////////////////////////////////////
 
 
@@ -240,12 +241,19 @@ class Taskbar extends React.Component {
     this.backupname = "";
     this.history = null;
     this.frame = React.createRef();
+    this.activity = React.createRef();
     
     window.client.react.taskbar = this;
   }
   
   showActivity = (link, preview) => {
-    this.setState({ activity: true, link, preview });
+    const { activitySize } = window.client.settings;
+    var text = preview.slice(0, activitySize);
+    if (preview.length > activitySize) {
+      text += "...";
+    }
+
+    this.setState({ activity: true, link, preview: text });
   };
   
   hideActivity = () => {
@@ -614,7 +622,7 @@ class Taskbar extends React.Component {
     const { title, taskbar, open, historyAnchor, backupAnchor, preview,
             menuAnchor, uploadAnchor, helpAnchor, logAnchor, link, activity } = this.state;
     const { sidebarOpen, sidebarAnchor, mobileHideTaskbar, activityReposition,
-            activityDelay, activitySize, mobileButtonbar } = client.settings;
+            activityDelay, mobileButtonbar } = client.settings;
     
     const buttons = client.buttons;
 
@@ -867,9 +875,8 @@ class Taskbar extends React.Component {
             aria-describedby="activity"
             message={
               <Typography id="activity">
-                <span className={classes.noHover}>
-                  {preview.slice(0, activitySize)}
-                  {preview.length > activitySize && "..."}
+                <span className={classes.noHover} ref={this.activity}>
+                  {preview}
                 </span>
               </Typography>
             }
