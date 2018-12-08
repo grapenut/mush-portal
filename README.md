@@ -86,14 +86,6 @@ The _MUSH Portal_ website at <http://www.mushportal.com> connects to _grapenut's
 
 ------------------------------------------------------------------
 
-#### <a name="bugs">Known Bugs</a>
-
-> - Terminal width setting no longer works. Output text spans the full width
->   of the output window. client.output.calcDimensions() gives invalid
->   results.
-
-------------------------------------------------------------------
-
 # <a name="install">Adding _MUSH Portal_ To Your Website</a>
 
 **NOTE: When hosting the website on HTTPS clients may only connect to MUSH servers on the SSL port due to browser security rules. When hosting on HTTP you can connect to either the standard telnet port or the encrypted SSL port.**
