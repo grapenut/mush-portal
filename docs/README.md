@@ -1,9 +1,5 @@
 
-# MUSH Portal API Documentation
-
-If you are hacking the source code you might want to take a look at the
-[Client](https://github.com/grapenut/mush-portal/tree/master/docs/CLIENT.md)
-class.
+# MUSH Portal User Documentation
 
 ## <a name="userscripts">User-defined Action Scripts</a>
 
@@ -11,19 +7,24 @@ Triggers, macros, timers, keys, and buttons can be configured to execute
 either MUSH commands or Javascript code. When executing Javascript code,
 we have defined the following objects and functions for your convenience.
 Most of these are wrappers or links around different parts of the game's
-main `client` object which controls every aspect of the MUSH Portal.
+main [Client](https://github.com/grapenut/mush-portal/tree/master/docs/CLIENT.md) 
+object.
 
-| Object                  | Description
-|-------------------------|------------------
-| `client`                | An instance of the main [Client]() class that controls everything in the MUSH Portal.
-| `UI`                    | A collection of UI components with which you may interact, a link to `client.react`.
-| `Output`                | A link to the main terminal [Emulator]() object, `client.output`.
-| `Append(text)`          | Append `text` to the main terminal output. Alias for `client.output.appendText(text)`.
-| `Input`                 | The command window [UserInput]() object, `client.input`.
-| `Send(cmd)`             | Send a text command or macro to the MUSH, `client.sendCommand(cmd)`.
-| `SendText(cmd)`         | Send a text command directly to the MUSH, `client.sendText(cmd)`.
-| `SendAPI(cmd)`          | Send a _JSON API_ command to the MUSH automatically failing over to a player-run version if available, `client.sendAPI(cmd)`.
-| `Window(id [, config])` | Open or create a window named `id`. Optionally pass the `config` object with panel options. See `client.getPanel()` and `client.addPanel()`.
+|----------------------|---
+| `client`             | An instance of the main [Client]() class that controls everything in the MUSH Portal.
+| `UI`                 | A collection of UI components with which you may interact, a link to `client.react`.
+| `Output`             | A link to the main terminal [Emulator]() object, `client.output`.
+| `Append(text)`       | Append `text` to the main terminal output. Alias for `client.output.appendText(text)`.
+| `Input`              | The command window [UserInput]() object, `client.input`.
+| `Send(cmd)`          | Send a text command or macro to the MUSH, `client.sendCommand(cmd)`.
+| `SendText(cmd)`      | Send a text command directly to the MUSH, `client.sendText(cmd)`.
+| `SendAPI(cmd)`       | Send a _JSON API_ command to the MUSH automatically failing over to a player-run version if available, `client.sendAPI(cmd)`.
+| `Window(id, config)` | Open the app or spawn window named `id`, with optional panel `config` settings. See `client.getPanel()` and `client.addPanel()`.
+
+
+
+| `Window(id)` | Spawn a mini-terminal with it's own input and output.
+
 
 | `Output`                        | The main terminal [Emulator]() object, `client.output`.
 |---------------------------------|---------------------
