@@ -117,6 +117,7 @@ class Emulator {
         anchor.setAttribute('onClick', 'this.onCommand("'+info.xch_cmd+'");');
         anchor.onCommand = that.onCommand;
       } else {
+        anchor.setAttribute('rel','noreferrer noopener');
         anchor.href = info.url;
       }
       anchor.appendChild(middleNode);

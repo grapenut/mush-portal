@@ -161,6 +161,9 @@ const styles = theme => ({
       height: "24px",
     },
   },
+  helpText: {
+    margin: theme.spacing.unit,
+  },
 });
 
 function TabButton(props) {
@@ -447,8 +450,8 @@ class Configure extends React.Component {
         
         
         <Popover anchorEl={helpText} open={Boolean(helpText)} onClose={() => this.setState({ helpText: null })}>
-          <Typography>
-            This is where help text goes.
+          <Typography className={classes.helpText}>
+            See the template examples or the user-defined action script <a rel="noopener noreferrer" target="_blank" href="https://github.com/grapenut/mush-portal/blob/master/docs/README.md">README</a> for help creating your own Javascript actions.
           </Typography>
         </Popover>
       </div>

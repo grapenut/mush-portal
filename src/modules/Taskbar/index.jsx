@@ -598,12 +598,20 @@ class Taskbar extends React.Component {
     window.client.react.taskbar = null;
     window.client.unwatchState(this);
   }
+
+  openMudURL() {
+    if (this.state.url) {
+      var w = window.open(this.state.url, "_blank");
+      w.opener = null;
+      w.location = "";
+    }
+  }
   
   render() {
     const client = window.client;
     const input = client.input;
     const { classes } = this.props;
-    const { title, taskbar, open, historyAnchor, backupAnchor, url, preview,
+    const { title, taskbar, open, historyAnchor, backupAnchor, preview,
             menuAnchor, uploadAnchor, helpAnchor, logAnchor, link, activity } = this.state;
     const { sidebarOpen, sidebarAnchor, mobileHideTaskbar, activityReposition,
             activityDelay, activitySize, mobileButtonbar } = client.settings;
@@ -631,7 +639,7 @@ class Taskbar extends React.Component {
               </Button>
             </Tooltip>
             
-            <Typography variant="h6" color="inherit" noWrap className={classes.title} onClick={() => { if (url) { window.open(url, "_blank"); }}}>
+            <Typography variant="h6" color="inherit" noWrap className={classes.title} onClick={this.openMudURL}>
               {title}
             </Typography>
             

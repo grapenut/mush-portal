@@ -64,6 +64,12 @@ class ButtonForm extends React.Component {
   componentWillUnmount() {
   }
 
+  openIconList = () => {
+    var w = window.open("https://mushportal.com/icons.html", "_blank");
+    w.opener = null;
+    w.location = "";
+  };
+
   render() {
     const { classes, item, handleChange } = this.props;
     
@@ -77,7 +83,7 @@ class ButtonForm extends React.Component {
               <Icon className={icon ? item.icon : null}>{!icon && item.icon}</Icon>
             </IconButton>
             <TextField label="Icon" value={item.icon} onChange={handleChange('icon')} inputProps={{ classes: { input: classes.inputBase } }} />
-            <Button color="primary" variant="contained" onClick={() => window.open("https://mushportal.com/icons.html", "_blank") }>
+            <Button color="primary" variant="contained" onClick={this.openIconList}>
               Icon list
             </Button>
           </span>
