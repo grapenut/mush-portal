@@ -2,23 +2,6 @@ KNOWN BUGS
 ------------------
 
 
-CURRENT TODOS
-------------------
-
-Help Text and Documentation
-  Help text for Configure window explaining the user-defined action API
-  Help text for Upload window explaining upload/reset/command delay
-  Help text for Backup window.
-  Help text for Mailbox window.
-  Help text for Sendmail window.
-  Help text for BBoard window.
-  Help text for BBPost window.
-  Help text for Spawn window.
-  Wiki documentation for Client API.
-  Wiki documentation for UI windows.
-  Wiki documentation for React Components.
-
-
 FUTURE IDEAS
 ------------------
 
