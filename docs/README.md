@@ -12,10 +12,10 @@ main `client` object. For more in-depth `client` documentation see
 
 | Object or Function  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;                   | Description
 |:-------------------------------------|--------------------
-| `client` or `window.client`          | An instance of the main [Client](https://github.com/grapenut/mush-portal/blob/master/src/client/index.js) class that controls everything in the MUSH Portal.
-| [UI](#react) or `client.react`       | A collection of UI components with which you may interact.
-| [Output](#output) or `client.output` | A link to the main terminal [Emulator](https://github.com/grapenut/mush-portal/blob/master/src/client/emulator.js) object.
-| [Input](#input) or `client.input`    | The command window [UserInput](https://github.com/grapenut/mush-portal/blob/master/src/client/userinput.js) object, `client.input`.
+| `client`                             | An instance of the main [Client](https://github.com/grapenut/mush-portal/blob/master/src/client/index.js) class that controls everything in the MUSH Portal.
+| [UI](#react)                         | A collection of UI components with which you may interact, `client.react`.
+| [Output](#output)                    | A link to the main terminal [Emulator](https://github.com/grapenut/mush-portal/blob/master/src/client/emulator.js) object, `client.output`.
+| [Input](#input)                      | The command window [UserInput](https://github.com/grapenut/mush-portal/blob/master/src/client/userinput.js) object, `client.input`.
 | `Append(text)`                       | Append `text` to the main terminal output. Alias for `Output.appendText(text)`.
 | `Send(cmd)`                          | Send a text command or macro to the MUSH, `client.sendCommand(cmd)`.
 | `SendText(cmd)`                      | Send a text command directly to the MUSH, `client.sendText(cmd)`.
