@@ -103,6 +103,8 @@ cp -r mush-portal/build/* /your/html/directory/
 
 ### **Edit the default ```local.js``` file for site-specific configuration.** Change the default server address, theme, and color settings. You can also set default taskbar buttons, text triggers, command macros, key binds and timers. _JSON API_ event handlers are defined to handle JSON objects received from the server.
 
+Integration between the server and client is provided by the included _JSON API_ softcode object `jsonapi.mush`. Quote this file as a Wizard and configure the created object as your event_handler in mush.cnf. The object should be placed in the global master room. It provides web client specific commands and functions to facilitate bi-directional out-of-band communication with JSON objects. In particular, it provides automatic updates of the sidebar when objects move.
+
 ------------------------------------------------------------------
 
 # <a name="build">Rebuilding _MUSH Portal_ From Source</a>
