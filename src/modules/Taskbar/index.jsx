@@ -607,7 +607,7 @@ class Taskbar extends React.Component {
     window.client.unwatchState(this);
   }
 
-  openMudURL() {
+  openMudURL = () => {
     if (this.state.url) {
       var w = window.open(this.state.url, "_blank");
       w.opener = null;
