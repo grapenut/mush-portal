@@ -86,14 +86,6 @@ The _MUSH Portal_ website at <http://www.mushportal.com> connects to _grapenut's
 
 ------------------------------------------------------------------
 
-#### <a name="bugs">Known Bugs</a>
-
-> - Terminal width setting no longer works. Output text spans the full width
->   of the output window. client.output.calcDimensions() gives invalid
->   results.
-
-------------------------------------------------------------------
-
 # <a name="install">Adding _MUSH Portal_ To Your Website</a>
 
 **NOTE: When hosting the website on HTTPS clients may only connect to MUSH servers on the SSL port due to browser security rules. When hosting on HTTP you can connect to either the standard telnet port or the encrypted SSL port.**
@@ -110,6 +102,8 @@ cp -r mush-portal/build/* /your/html/directory/
 ```
 
 ### **Edit the default ```local.js``` file for site-specific configuration.** Change the default server address, theme, and color settings. You can also set default taskbar buttons, text triggers, command macros, key binds and timers. _JSON API_ event handlers are defined to handle JSON objects received from the server.
+
+Integration between the server and client is provided by the included _JSON API_ softcode object `jsonapi.mush`. Quote this file as a Wizard and configure the created object as your event_handler in mush.cnf. The object should be placed in the global master room. It provides web client specific commands and functions to facilitate bi-directional out-of-band communication with JSON objects. In particular, it provides automatic updates of the sidebar when objects move.
 
 ------------------------------------------------------------------
 
