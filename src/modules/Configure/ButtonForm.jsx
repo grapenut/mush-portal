@@ -67,7 +67,7 @@ class ButtonForm extends React.Component {
   openIconList = () => {
     var w = window.open("https://mushportal.com/icons.html", "_blank");
     w.opener = null;
-    w.location = "";
+    w.location = "https://mushportal.com/icons.html";
   };
 
   render() {

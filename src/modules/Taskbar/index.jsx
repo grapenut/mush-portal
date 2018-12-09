@@ -611,7 +611,7 @@ class Taskbar extends React.Component {
     if (this.state.url) {
       var w = window.open(this.state.url, "_blank");
       w.opener = null;
-      w.location = "";
+      w.location = this.state.url;
     }
   }
   
