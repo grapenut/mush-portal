@@ -34,6 +34,8 @@ if (urlAddress) {
   if (path.length > 1) {
     client.settings.serverPath = "/" + path.slice(1).join('/');
     urlAddress = path[0];
+  } else {
+    client.settings.serverPath = "/wsclient";
   }
   
   client.settings.serverAddress = urlAddress.split(":")[0];
