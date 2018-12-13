@@ -29,8 +29,16 @@ client.settings.allowServerChange = true;
 // www.mysite.com/app?address:port
 if (urlAddress) {
   client.settings.serverSSL = urlSSL;
+  
+  path = urlAddress.split("/");
+  if (path.length > 1) {
+    client.settings.serverPath = "/" + path.slice(1).join('/');
+    urlAddress = path[0];
+  }
+  
   client.settings.serverAddress = urlAddress.split(":")[0];
   client.settings.serverPort = urlAddress.split(":")[1];
+  
 }
 
 // initiate the connection, now that we have established the server info
