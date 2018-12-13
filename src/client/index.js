@@ -122,6 +122,7 @@ class Client {
       serverAddress: "node.grapenut.org",
       serverSSL: window.location.protocol === "https:",
       serverPort: window.location.protocol === "https:" ? 2001 : 2000,
+      serverPath: "/wsclient",
       // history settings
       historySize: 1000,
       historySpawnSize: 100,
@@ -1217,7 +1218,7 @@ class Client {
     let serverProto = this.settings.serverSSL ? "wss://" : "ws://";
 
     // The connection URL is ws://host:port/wsclient (or wss:// for SSL connections)
-    let serverUrl = serverProto + this.settings.serverAddress + ":" + this.settings.serverPort + "/wsclient";
+    let serverUrl = serverProto + this.settings.serverAddress + ":" + this.settings.serverPort + this.settings.serverPath;
     
     this.close();
     this.conn = new Connection(serverUrl);
@@ -1383,7 +1384,7 @@ class Client {
     if (force || this.reconnectCount < this.reconnectMaxCount) {
       // The connection URL is ws://host:port/wsclient (or wss:// for SSL connections)
       let serverProto = window.location.protocol === "https:" || this.settings.serverSSL ? "wss://" : "ws://";
-      let serverUrl = serverProto + this.settings.serverAddress + ":" + this.settings.serverPort + '/wsclient';
+      let serverUrl = serverProto + this.settings.serverAddress + ":" + this.settings.serverPort + this.settings.serverPath;
       
       this.reconnectCount++;
       this.conn && this.conn.reconnect(serverUrl);
