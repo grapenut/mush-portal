@@ -637,8 +637,8 @@ class Client {
     } else if (key === 'terminalWidth') {
       // send the screen dimensions
       this.output.calcDimensions();
-      this.sendText("SCREENWIDTH " + this.settings.terminalWidth);
-      this.sendText("SCREENHEIGHT " + Math.floor(this.output.root.parentNode.clientHeight / this.output.dims.height));
+      //this.sendText("SCREENWIDTH " + this.settings.terminalWidth);
+      //this.sendText("SCREENHEIGHT " + Math.floor(this.output.root.parentNode.clientHeight / this.output.dims.height));
     } else if (key === 'timersEnabled') {
       if (this.settings[key]) {
         this.startTimers();
@@ -1247,8 +1247,8 @@ class Client {
         client.react.login && client.react.login.openLogin();
         
         // send the screen dimensions
-        client.sendText("SCREENWIDTH " + client.settings.terminalWidth);
-        client.sendText("SCREENHEIGHT " + Math.floor(client.output.root.parentNode.clientHeight / client.output.dims.height));
+        //client.sendText("SCREENWIDTH " + client.settings.terminalWidth);
+        //client.sendText("SCREENHEIGHT " + Math.floor(client.output.root.parentNode.clientHeight / client.output.dims.height));
       }
       
       if (client.hidden && data.endsWith('\n')) {

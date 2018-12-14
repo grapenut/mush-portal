@@ -117,8 +117,8 @@ class Terminal extends React.Component {
   doResize = () => {
     const client = window.client;
     client.output.calcDimensions();
-    client.sendText("SCREENWIDTH " + Math.min(client.settings.terminalWidth, Math.floor(window.client.output.root.parentNode.clientWidth / window.client.output.dims.width)));
-    client.sendText("SCREENHEIGHT " + Math.floor(client.output.root.parentNode.clientHeight / client.output.dims.height));
+    //client.sendText("SCREENWIDTH " + Math.min(client.settings.terminalWidth, Math.floor(window.client.output.root.parentNode.clientWidth / window.client.output.dims.width)));
+    //client.sendText("SCREENHEIGHT " + Math.floor(client.output.root.parentNode.clientHeight / client.output.dims.height));
     client.output.scrollDown();
     
     client.mobile = !window.matchMedia(this.props.theme.breakpoints.up('md').substring(7)).matches;
