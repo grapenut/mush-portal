@@ -62,8 +62,8 @@ class Templates {
       buttons: [
         {
           name: "look",
-          text: "look",
-          javascript: false,
+          text: "Send('look'); SendAPI('listcontents');",
+          javascript: true,
           icon: "remove_red_eye",
           count: "",
           tooltip: "Look around.",
