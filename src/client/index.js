@@ -17,6 +17,9 @@ import Upload from '../modules/Upload';
 import Backup from '../modules/Backup';
 import Configure from '../modules/Configure';
 import Spawn from '../modules/Spawn';
+import Form from '../modules/Form';
+
+import Game from '../phaser';
 
 import Connection from './connection';
 import Emulator from './emulator';
@@ -156,6 +159,8 @@ class Client {
       "Backup": Backup,
       "Configure": Configure,
       "Spawn": Spawn,
+      "Form": Form,
+      "Phaser": Game,
     };
     
     this.templates = new Templates();

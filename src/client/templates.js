@@ -108,6 +108,14 @@ class Templates {
           count: "",
           tooltip: "Search help files",
         },
+        {
+          name: "Phaser",
+          text: "Window(\"Phaser\", {panelSize:{width: 256, height: 256}})",
+          javascript: true,
+          icon: "videogame_asset",
+          count: "",
+          tooltip: "2D graphics client.",
+        },
 /*
         {
           name: "",

@@ -2,6 +2,34 @@ KNOWN BUGS
 ------------------
 
 
+
+TODO
+------------------
+
+Phaser
+  Show tilemap
+  Show players/items
+  Exit hotspots
+  Click to move
+  Click to interact with Item/player/monster
+    List of context actions    
+
+
+
+
+JSON Form Schema
+  Define a form using JSON and render it using Material-UI components
+  {
+    gmcp: "mushform",
+    children: [
+      { name, type, value } 
+    ],
+    onSubmit: ""
+  }
+    
+    
+
+
 FUTURE IDEAS
 ------------------
 
