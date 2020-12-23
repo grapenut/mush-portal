@@ -1,5 +1,7 @@
 # <a name="top">![][logo] MUSH Portal</a>
 
+# The mushportal.com domain has expired, however you may use https://grapenut.github.io/mush-portal/build/ 
+
 [logo]: https://github.com/grapenut/mush-portal/raw/master/build/favicon-32x32.png "MUSH Portal"
 
 The _MUSH Portal_ is an integrated web platform for PennMUSH servers (**PennMUSH v1.8.7p0 or higher required**). The web client has a fully customizable 256-color terminal emulator designed with a **responsive mobile-friendly** UI. The Javascript controlled user interface is completely user configurable using the editing tools. It can integrate with the provided server-side JSON event handler and command API to provide unprecedented interactivity. Automatic _JSON API_ fallbacks executed by the client's player provide enhanced functionality on standard servers without the _JSON API_ installed.
